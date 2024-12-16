@@ -1,0 +1,24 @@
+header {
+    border-bottom: 1px solid gray; 
+    display: flex;
+    padding: 10px 100px; 
+    justify-content: space-between;
+}
+
+// ul {
+//     display: flex; 
+//     align-items: center;   
+// }
+
+.logo {
+    display: flex;
+    align-items: center;
+    color: #343f44;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.logo i {
+    color: #2e86fd;
+    font-size: 45px;
+}

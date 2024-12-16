@@ -1,1 +1,39 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'material-icons/iconfont/material-icons.css';
+@import 'material-symbols';
+body {
+
+    background-color: #e4eef8;
+    font-family: "Gill Sans", "Gill Sans MT", 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 5px;
+    .input-error {
+        color: red;
+    }
+}
+.form-field input, textarea {
+    height: 50px;
+    border: none;
+    font-size: 16px;
+    color: #a3a3a5; 
+
+    &.ng-invalid.ng-touched.ng-dirty{
+        border: 1px solid red;
+    }
+
+    &.ng-valid.ng-touched.ng-dirty{
+        border: 1px solid green;
+    }
+}
+
+.form-field-label {
+    font-size: 18px;
+    font-weight: 600;    
+}
+
+

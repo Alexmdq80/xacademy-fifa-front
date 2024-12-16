@@ -1,0 +1,11 @@
+<div class="filtro">
+    <input type="checkbox" id="{{ n_filtro }}" name="filtro_{{ n_filtro}}"
+        value="st">
+
+    <select>
+        <option *ngFor="let field of fields" [value]="field.atributo">
+            {{ field.atributo }}
+        </option>
+    </select>
+
+</div>
