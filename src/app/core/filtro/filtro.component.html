@@ -1,11 +1,23 @@
 <div class="filtro">
-    <input type="checkbox" id="{{ n_filtro }}" name="filtro_{{ n_filtro}}"
+    <input type="checkbox" [formControl]="isEnabled" id="{{ n_filtro }}"
+        name="filtro_{{ n_filtro}}"
         value="st">
 
-    <select>
-        <option *ngFor="let field of fields" [value]="field.atributo">
+    <select [(ngModel)]="selectedOption" [disabled]="!isEnabled.value"
+        (change)="onOptionSelected(selectedOption)">
+        <option>Seleccione un Filtro</option>
+        <option *ngFor="let field of fields" [ngValue]="field">
             {{ field.atributo }}
         </option>
     </select>
+
+    <input *ngIf="inputString" [disabled]="!isEnabled.value" type="text"
+        id="nombre_{{ n_filtro}}"
+        name="nombre">
+
+    <input *ngIf="inputNumber" [disabled]="!isEnabled.value" type="number"
+        id="edad_min_{{ n_filtro}}" name="edad_min" placeholder="Mínimo">
+    <input *ngIf="inputNumber" [disabled]="!isEnabled.value" type="number"
+        id="edad_max_{{ n_filtro}}" name="edad_max" placeholder="Máximo">
 
 </div>
