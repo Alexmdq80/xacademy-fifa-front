@@ -1,0 +1,26 @@
+<div>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Club</th>
+                <th>Nacionalidad</th>
+                <th>Calificación</th>
+                <th>Posiciones</th>
+                <th>Imagen</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <!-- <tr *ngFor="let jugador of jugadores"> -->
+                <td>{{ jugador?.long_name }}</td>
+                <td>{{ jugador?.club_name }}</td>
+                <td>{{ jugador?.nationality_name }}</td>
+                <td>{{ jugador?.overall }}</td>
+                <td>{{ jugador?.player_positions }}</td>
+                <td><img src="{{ jugador?.player_face_url }}"
+                        alt="{{ jugador?.long_name }}"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

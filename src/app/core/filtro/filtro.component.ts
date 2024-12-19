@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit, EventEmitter, Output } from '@angular/core';
 import { JugadorFieldService } from '../jugadorField.service';
 import { Input } from '@angular/core';
 import { Subscription } from 'rxjs';
@@ -17,11 +17,12 @@ import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
   templateUrl: './filtro.component.html',
   styleUrl: './filtro.component.scss'
 })
-export class FiltroComponent {
+export class FiltroComponent implements OnInit, OnDestroy {
   // @Input() atributo = 0;   
   // @Input() tipo = '';
   // @Input() _length = 0;
   @Input() n_filtro = 0;
+  @Output() valorNumero = new EventEmitter<any>();
 
   constructor(private jugadorFieldService: JugadorFieldService){}
   
@@ -39,6 +40,25 @@ export class FiltroComponent {
                                    }
   };
  
+ 
+  // onNumberInput(valor: number) {
+  //   this.valorNumero = valor;
+  //   console.log(this.valorNumero);
+  // }
+  devolverNumero(event: any) {
+    const valor = Number(event.target.value); // Convertimos el valor a número
+    if (!isNaN(valor)) {
+      this.valorNumero.emit(valor);
+    } else {
+      // Manejar el caso en que el valor no sea un número
+      console.error('El valor ingresado no es un número válido');
+    }
+    this.valorNumero.emit(valor);
+    console.log(valor);
+  }
+
+
+
   onOptionSelected(opcion: JugadorField) {
 //  Según la opción del "Select", mostrará para llenar un 
 // "Input" para texto (nombre, por ejemplo), o

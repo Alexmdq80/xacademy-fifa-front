@@ -12,12 +12,14 @@
     </select>
 
     <input *ngIf="inputString" [disabled]="!isEnabled.value" type="text"
-        id="nombre_{{ n_filtro}}"
-        name="nombre">
+        id="nombre_{{ n_filtro}} "
+        name="nombre" placeholder="texto">
 
     <input *ngIf="inputNumber" [disabled]="!isEnabled.value" type="number"
-        id="edad_min_{{ n_filtro}}" name="edad_min" placeholder="Mínimo">
-    <input *ngIf="inputNumber" [disabled]="!isEnabled.value" type="number"
-        id="edad_max_{{ n_filtro}}" name="edad_max" placeholder="Máximo">
+        id="valor{{ n_filtro}}" name="valor" placeholder="número"
+        (input)="devolverNumero($event)">
+
+    <!-- <input *ngIf="inputNumber" [disabled]="!isEnabled.value" type="number"
+        id="edad_max_{{ n_filtro}}" name="edad_max" placeholder="Máximo"> -->
 
 </div>
