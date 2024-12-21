@@ -37,7 +37,7 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
     this.subscription.add(this.jugadoresService.getDataxId(this.playerId).subscribe({
       next: res => {
         console.log("Se reciben datos de jugador x ID.");
-        console.log(res);
+        // console.log(res);
         this.jugador = res;
         console.log(this.jugador);
       },

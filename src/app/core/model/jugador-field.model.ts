@@ -1,7 +1,5 @@
 export interface JugadorField {
-    atributo: string,
-    tipo: {
-        options: {},
-        _length: number
-    }
+    name: string,
+    type: string,
+    viewName: string
 }

@@ -7,7 +7,7 @@
         (change)="onOptionSelected(selectedOption)">
         <option>Seleccione un Filtro</option>
         <option *ngFor="let field of fields" [ngValue]="field">
-            {{ field.atributo }}
+            {{ field.viewName }}
         </option>
     </select>
 

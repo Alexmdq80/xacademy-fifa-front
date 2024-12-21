@@ -1,7 +1,6 @@
-import { Component, OnDestroy, OnInit, EventEmitter, Output } from '@angular/core';
-import { JugadorFieldService } from '../jugadorField.service';
+import { Component, EventEmitter, Output } from '@angular/core';
+// import { JugadorFieldService } from '../jugadorField.service';
 import { Input } from '@angular/core';
-import { Subscription } from 'rxjs';
 import { JugadorField } from '../model/jugador-field.model';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -17,34 +16,29 @@ import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
   templateUrl: './filtro.component.html',
   styleUrl: './filtro.component.scss'
 })
-export class FiltroComponent implements OnInit, OnDestroy {
+// export class FiltroComponent implements OnInit, OnDestroy {
+export class FiltroComponent {
+
   // @Input() atributo = 0;   
   // @Input() tipo = '';
   // @Input() _length = 0;
   @Input() n_filtro = 0;
   @Output() valorNumero = new EventEmitter<any>();
 
-  constructor(private jugadorFieldService: JugadorFieldService){}
   
-  fields?: JugadorField[];
+  @Input() fields: JugadorField[] = [];
   
-  subscription = new Subscription();
+  // subscription = new Subscription();
  
   isEnabled = new FormControl(false);
   inputString = false;
   inputNumber = false;
-  selectedOption: JugadorField = { atributo: '',
-                                   tipo: {
-                                    options: {},
-                                    _length: 0
-                                   }
+  selectedOption: JugadorField = { 
+    name: '',
+    type: '',
+    viewName: ''
   };
- 
- 
-  // onNumberInput(valor: number) {
-  //   this.valorNumero = valor;
-  //   console.log(this.valorNumero);
-  // }
+
   devolverNumero(event: any) {
     const valor = Number(event.target.value); // Convertimos el valor a número
     if (!isNaN(valor)) {
@@ -57,8 +51,6 @@ export class FiltroComponent implements OnInit, OnDestroy {
     console.log(valor);
   }
 
-
-
   onOptionSelected(opcion: JugadorField) {
 //  Según la opción del "Select", mostrará para llenar un 
 // "Input" para texto (nombre, por ejemplo), o
@@ -67,18 +59,18 @@ export class FiltroComponent implements OnInit, OnDestroy {
     
     console.log('Opción seleccionada:', this.selectedOption);
 
-    if (!this.selectedOption.atributo) {
+    if (!this.selectedOption.name) {
       this.inputString = false
       this.inputNumber = false
     } else {
-      switch (this.selectedOption.atributo) {
+      switch (this.selectedOption.name) {
         case 'Seleccione un Filtro':
           this.inputString = false
           this.inputNumber = false
           break;
 
         default:
-          if (this.selectedOption.tipo._length == 255) {
+          if (this.selectedOption.type === 'string') {
             // console.log('cadena');
             this.inputNumber = false
             this.inputString = true
@@ -93,22 +85,22 @@ export class FiltroComponent implements OnInit, OnDestroy {
 
   }
 
-  ngOnInit(){
-    this.subscription.add(this.jugadorFieldService.getFields().subscribe({
-      next: res => {
-        console.log("Se reciben datos de los atributos.");
-        this.fields = res;
-      },
-      error: error => {
-        console.warn("Ha ocurrido un error con código: ", error);
-      }
-    }    
-    ));
-  }
+  // ngOnInit(){
+  //   this.subscription.add(this.jugadorFieldService.getFields().subscribe({
+  //     next: res => {
+  //       console.log("Se reciben datos de los atributos.");
+  //       this.fields = res;
+  //     },
+  //     error: error => {
+  //       console.warn("Ha ocurrido un error con código: ", error);
+  //     }
+  //   }    
+  //   ));
+  // }
   
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+  // ngOnDestroy(): void {
+  //   this.subscription.unsubscribe();
 
-  }
+  // }
 
 }
