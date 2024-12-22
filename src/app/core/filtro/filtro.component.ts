@@ -48,7 +48,7 @@ export class FiltroComponent {
       console.error('El valor ingresado no es un número válido');
     }
     this.valorNumero.emit(valor);
-    console.log(valor);
+    // console.log(valor);
   }
 
   onOptionSelected(opcion: JugadorField) {

@@ -6,10 +6,10 @@ export const routes: Routes = [
         path: 'jugadores',
         component: JugadoresComponent
     },
-    {
-        path: '', redirectTo: '/', pathMatch: "full"
-    },
-    {
-        path: '**', redirectTo: '/', pathMatch: "full"
-    }   
+    // {
+    //     path: '', redirectTo: '/', pathMatch: "full"
+    // },
+    // {
+    //     path: '**', redirectTo: '/', pathMatch: "full"
+    // }   
 ];

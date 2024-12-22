@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 export class JugadorFieldService {
   apiUrl = 'http://localhost:8080/player/atributos';
 
-  fields : JugadorField[] = [];
+  // fields : JugadorField[] = [];
 
   constructor(private httpClient: HttpClient) { }
 

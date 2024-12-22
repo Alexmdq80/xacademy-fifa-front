@@ -41,7 +41,6 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
 
   } 
   
-
   ngOnInit(){
     this.subscription.add(this.jugadorFieldService.getFields().subscribe({
       next: res => {

@@ -2,24 +2,31 @@
     <table>
         <thead>
             <tr>
-                <th>Nombre</th>
-                <th>Club</th>
-                <th>Nacionalidad</th>
-                <th>Calificación</th>
-                <th>Posiciones</th>
-                <th>Imagen</th>
+                <th *ngFor="let field of fields"> {{ field.viewName }} </th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <!-- <tr *ngFor="let jugador of jugadores"> -->
-                <td>{{ jugador?.long_name }}</td>
-                <td>{{ jugador?.club_name }}</td>
-                <td>{{ jugador?.nationality_name }}</td>
-                <td>{{ jugador?.overall }}</td>
-                <td>{{ jugador?.player_positions }}</td>
-                <td><img src="{{ jugador?.player_face_url }}"
-                        alt="{{ jugador?.long_name }}"></td>
+            <tr *ngFor="let player of jugadoresMatrizFields; let i = index">
+
+                <td *ngFor="let field of fields; let z = index">
+                    <p *ngIf="field.name==='player_face_url'">
+                        <img src="{{ jugadoresMatrizFields[i][z]}}"
+                            alt="{{ jugadoresMatrizFields[i][4]}}">
+                    </p>
+                    <p *ngIf="field.name!='player_face_url'">
+                        {{ jugadoresMatrizFields[i][z]}}
+                    </p>
+                </td>
+                <!-- <td><img src="{{ jugador?.player_face_url }}"
+                        alt="{{ jugador?.long_name }}">
+                </td> -->
+                <!-- <td *ngFor="let item of jugadorArrayFields">
+                    {{ item }}
+                </td> -->
+
+                <!-- <td> {{ jugadorF.id }} </td>
+                <td> {{ jugadorF.fifa_version }} </td> -->
+
             </tr>
         </tbody>
     </table>

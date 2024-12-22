@@ -11,12 +11,12 @@ export class JugadoresService {
 
   apiUrl = 'http://localhost:8080/player';
 
-  jugador? : Jugador;
+  // jugadores? : Jugador[];
 
   constructor(private httpClient: HttpClient) { }
 
-  getDataxId(playerId: number): Observable<Jugador> {
-    return this.httpClient.get<Jugador>(this.apiUrl + '/' + playerId);
+  getDataxId(playerId: number): Observable<Jugador[]> {
+    return this.httpClient.get<Jugador[]>(this.apiUrl + '/' + playerId);
 
   }
 
