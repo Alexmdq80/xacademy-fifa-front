@@ -15,9 +15,14 @@ export class JugadoresService {
 
   constructor(private httpClient: HttpClient) { }
 
-  getDataxId(playerId: number): Observable<Jugador[]> {
-    return this.httpClient.get<Jugador[]>(this.apiUrl + '/' + playerId);
+  // getDataxId(playerId: number): Observable<Jugador[]> {
+  //   return this.httpClient.get<Jugador[]>(this.apiUrl + '/fitrosNew?filtros[1]=id&valores_min[1]=1&valores_max[1]=100&limit=100');
+
+  // }
+  getDataFiltrada(): Observable<any> {
+    return this.httpClient.get<any>(this.apiUrl + '?filtros[1]=id&valores_min[1]=1&valores_max[1]=100&limit=100');
 
   }
+
 
 }

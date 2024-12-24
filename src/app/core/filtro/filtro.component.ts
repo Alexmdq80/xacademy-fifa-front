@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-// import { JugadorFieldService } from '../jugadorField.service';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { JugadorFieldService } from '../jugadorField.service';
 import { Input } from '@angular/core';
 import { JugadorField } from '../model/jugador-field.model';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-filtro',
@@ -17,7 +18,7 @@ import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
   styleUrl: './filtro.component.scss'
 })
 // export class FiltroComponent implements OnInit, OnDestroy {
-export class FiltroComponent {
+export class FiltroComponent implements OnInit, OnDestroy {
 
   // @Input() atributo = 0;   
   // @Input() tipo = '';
@@ -25,10 +26,13 @@ export class FiltroComponent {
   @Input() n_filtro = 0;
   @Output() valorNumero = new EventEmitter<any>();
 
+  constructor(private jugadorFieldService: JugadorFieldService){}
   
-  @Input() fields: JugadorField[] = [];
+  // @Input() fields: JugadorField[] = [];
   
-  // subscription = new Subscription();
+  fields: JugadorField[] = [];
+ 
+  subscription = new Subscription();
  
   isEnabled = new FormControl(false);
   inputString = false;
@@ -85,22 +89,22 @@ export class FiltroComponent {
 
   }
 
-  // ngOnInit(){
-  //   this.subscription.add(this.jugadorFieldService.getFields().subscribe({
-  //     next: res => {
-  //       console.log("Se reciben datos de los atributos.");
-  //       this.fields = res;
-  //     },
-  //     error: error => {
-  //       console.warn("Ha ocurrido un error con código: ", error);
-  //     }
-  //   }    
-  //   ));
-  // }
+  ngOnInit(){
+    this.subscription.add(this.jugadorFieldService.getFields().subscribe({
+      next: res => {
+        console.log("Se reciben datos de los atributos.");
+        this.fields = res;
+      },
+      error: error => {
+        console.warn("Ha ocurrido un error con código: ", error);
+      }
+    }    
+    ));
+  }
   
-  // ngOnDestroy(): void {
-  //   this.subscription.unsubscribe();
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
 
-  // }
+  }
 
 }

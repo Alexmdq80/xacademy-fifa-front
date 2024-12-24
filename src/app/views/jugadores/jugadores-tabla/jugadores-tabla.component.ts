@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { map, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { JugadoresService } from '../../../core/jugadores.service';
 import { Jugador } from '../../../core/model/jugador.model';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { JugadorField } from '../../../core/model/jugador-field.model';
+import { JugadorFieldService } from '../../../core/jugadorField.service'; 
 
 @Component({
   selector: 'app-jugadores-tabla',
@@ -19,9 +20,12 @@ import { JugadorField } from '../../../core/model/jugador-field.model';
 })
 export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
   
-  constructor(private jugadoresService : JugadoresService){}
+  constructor(private jugadoresService : JugadoresService, 
+              private jugadorFieldService: JugadorFieldService){}
   @Input() valor = 0;
-  @Input() fields: JugadorField[] = [];
+  // @Input() fields: JugadorField[] = [];
+  
+  fields: JugadorField[] = [];
 
   playerId: number = this.valor;
   jugadores: Jugador[] = []; 
@@ -31,7 +35,8 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
   jugadorArrayFields: string[] = [];
 
   subscription = new Subscription();
-  
+  subscriptionField = new Subscription();
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes['valor']) {
       this.playerId = changes['valor'].currentValue;
@@ -40,25 +45,40 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   hacerGet() {    
-    this.subscription.add(this.jugadoresService.getDataxId(this.playerId).subscribe({
+    this.subscriptionField.add(this.jugadorFieldService.getFields().subscribe({
+      next: res => {
+        console.log("Se reciben datos de los atributos.");
+        this.fields = res;
+      },
+      error: error => {
+        console.warn("Ha ocurrido un error con código: ", error);
+      }
+    }    
+    ));
+
+    this.subscription.add(this.jugadoresService.getDataFiltrada().subscribe({
       next: res => {
         console.log("Se reciben datos de jugador x ID.");
-
+        console.log(res);
         if (!res) {
           console.log("Consulta vacía.");
         }       
-        this.jugadores = res;
+        this.jugadores = res.data ;
+
+        // console.log(this.jugadores.length);
         for (let x = 0; x < this.jugadores.length; x++) {
           // this.jugador = this.jugadores[x];
+          this.jugadorArrayFields = [];
           this.jugadorArrayFields = Object.values(this.jugadores[x]);
-          console.log(this.jugadorArrayFields.length);
-          for (let z=0; z < this.jugadorArrayFields.length; z++ ){
+          // console.log(this.jugadorArrayFields);
+          // console.log(this.jugadoresMatrizFields);
+          for (let z = 0; z < this.jugadorArrayFields.length; z++ ){
             this.jugadoresMatrizFields[x].push(this.jugadorArrayFields[z]);
           }
+          this.jugadoresMatrizFields.push([]);
         }
-        console.log(this.jugadorArrayFields);
-        console.log(this.jugadoresMatrizFields);
-        
+        // console.log(this.jugadorArrayFields);
+        // console.log(this.jugadoresMatrizFields);
       },
       error: error => {
         console.warn("Ha ocurrido un error con código: ", error);

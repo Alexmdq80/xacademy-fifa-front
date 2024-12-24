@@ -9,17 +9,25 @@
     </app-filtro> -->
 
     <app-filtro (valorNumero)="recibirValor($event)"
+        [n_filtro]="1">
+    </app-filtro>
+
+    <!-- <app-filtro (valorNumero)="recibirValor($event)"
         [n_filtro]="1"
         [fields]="fields">
-    </app-filtro>
+    </app-filtro> -->
 
 </section>
 <section>
     <!-- <p>Valor recibido del hijo: {{ valorNumeroRecibido }}</p> -->
     <app-jugadores-tabla
+        [valor]="valorNumeroRecibido">
+    </app-jugadores-tabla>
+    <!-- <app-jugadores-tabla
         [valor]="valorNumeroRecibido"
         [fields]="fields">
-    </app-jugadores-tabla>
+    </app-jugadores-tabla> -->
+
 </section>
 <!-- <section>
     <h2>Filtrar Jugadores</h2>
