@@ -7,7 +7,6 @@
         [atributo]="field.atributo"
         [tipo]="field.tipo">
     </app-filtro> -->
-
     <app-filtro (valorNumero)="recibirValor($event)"
         [n_filtro]="1">
     </app-filtro>
@@ -20,6 +19,7 @@
 </section>
 <section>
     <!-- <p>Valor recibido del hijo: {{ valorNumeroRecibido }}</p> -->
+
     <app-jugadores-tabla
         [valor]="valorNumeroRecibido">
     </app-jugadores-tabla>

@@ -31,11 +31,22 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
   jugadores: Jugador[] = []; 
   jugador?: Jugador;
 
+  n_pagina: number = 1;
+  n_paginas: number = 1;
+  n_cantidad?: number;
+
   jugadoresMatrizFields: string[][] = [[]];
   jugadorArrayFields: string[] = [];
 
   subscription = new Subscription();
   subscriptionField = new Subscription();
+
+  cambiarPagina(movimiento:number){
+    this.n_pagina = this.n_pagina + movimiento;
+    console.log(this.n_pagina);
+    this.hacerGetEncabezado();
+    this.hacerGetDatos(this.n_pagina); 
+  }  
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['valor']) {
@@ -44,10 +55,11 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  hacerGet() {    
+  hacerGetEncabezado() {    
     this.subscriptionField.add(this.jugadorFieldService.getFields().subscribe({
       next: res => {
         console.log("Se reciben datos de los atributos.");
+        console.log(res);
         this.fields = res;
       },
       error: error => {
@@ -55,16 +67,21 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
       }
     }    
     ));
+  }
 
-    this.subscription.add(this.jugadoresService.getDataFiltrada().subscribe({
+  hacerGetDatos(pagina:number){
+    this.subscription.add(this.jugadoresService.getDataFiltrada(pagina).subscribe({
       next: res => {
         console.log("Se reciben datos de jugador x ID.");
         console.log(res);
+
         if (!res) {
           console.log("Consulta vacía.");
         }       
         this.jugadores = res.data ;
-
+        this.n_cantidad = res.count;
+        this.n_paginas = res.pages;
+        this.jugadoresMatrizFields = [[]];
         // console.log(this.jugadores.length);
         for (let x = 0; x < this.jugadores.length; x++) {
           // this.jugador = this.jugadores[x];
@@ -88,75 +105,8 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit(){
-    this.playerId = 1;
-    this.hacerGet(); 
-    
-    // this.jugador = { 
-    //   id: 0,
-    //   fifa_version: '',
-    //   fifa_update: '',
-    //   player_face_url: '',
-    //   long_name: '',	
-    //   player_positions: '',
-    //   club_name: '',	
-    //   nationality_name: '',
-    //   overall: 0,
-    //   potential: 0,
-    //   value_eur: 0,
-    //   wage_eur: 0,
-    //   age: 0,
-    //   gender: '',
-    //   height_cm: 0,
-    //   weight_kg: 0,
-    //   preferred_foot: '',
-    //   weak_foot: 0,
-    //   skill_moves: 0,
-    //   international_reputation: 0,
-    //   work_rate: '',
-    //   body_type: '',
-    //   pace: 0,
-    //   shooting: 0,
-    //   passing: 0,
-    //   dribbling: 0,
-    //   defending: 0,
-    //   physic: 0,
-    //   attacking_crossing: 0,
-    //   attacking_finishing: 0,
-    //   attacking_heading_accuracy: 0,
-    //   attacking_short_passing: 0,
-    //   attacking_volleys: 0,
-    //   skill_dribbling: 0,
-    //   skill_curve: 0,
-    //   skill_fk_accuracy: 0,
-    //   skill_long_passing: 0,
-    //   skill_ball_control: 0,
-    //   movement_acceleration: 0,
-    //   movement_sprint_speed: 0,
-    //   movement_agility: 0,
-    //   movement_reactions: 0,
-    //   movement_balance: 0,
-    //   power_shot_power: 0,
-    //   power_jumping: 0,
-    //   power_stamina: 0,
-    //   power_strength: 0,
-    //   power_long_shots: 0,
-    //   mentality_aggression: 0,
-    //   mentality_interceptions: 0,
-    //   mentality_positioning: 0,
-    //   mentality_vision: 0,
-    //   mentality_penalties: 0,
-    //   mentality_composure: 0,
-    //   defending_marking: 0,
-    //   defending_standing_tackle: 0,
-    //   defending_sliding_tackle: 0,
-    //   goalkeeping_diving: 0,
-    //   goalkeeping_handling: 0,
-    //   goalkeeping_kicking: 0,
-    //   goalkeeping_positioning: 0,
-    //   goalkeeping_reflexes: 0,
-    //   goalkeeping_speed: 0,
-    //   player_traits: ''   
-    // };
+    this.hacerGetEncabezado();
+    this.hacerGetDatos(1); 
   }
   
   ngOnDestroy(): void {

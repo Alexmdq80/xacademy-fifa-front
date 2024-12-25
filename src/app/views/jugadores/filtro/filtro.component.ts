@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { JugadorFieldService } from '../jugadorField.service';
+import { JugadorFieldService } from '../../../core/jugadorField.service';
 import { Input } from '@angular/core';
-import { JugadorField } from '../model/jugador-field.model';
+import { JugadorField } from '../../../core/model/jugador-field.model';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';

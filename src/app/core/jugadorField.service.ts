@@ -11,22 +11,18 @@ import { shareReplay } from 'rxjs';
 export class JugadorFieldService {
   apiUrl = 'http://localhost:8080/player/atributos';
 
-  // fields : JugadorField[] = [];
-
   private getFields$?: Observable<JugadorField[]>;
   
   constructor(private httpClient: HttpClient) { }
 
-  // getFields(): Observable<JugadorField[]> {
-  //   return this.httpClient.get<JugadorField[]>(this.apiUrl);
-  // }
-  
+ 
   getFields(): Observable<JugadorField[]> {
+    console.log(this.getFields$);
     if (this.getFields$ === undefined) {
-        console.log('Trae atributos haciendo petición al servidor');
+        // console.log('Trae atributos haciendo petición al servidor');
         this.getFields$ = this.httpClient.get<JugadorField[]>(this.apiUrl).pipe(shareReplay(1));
-    } else {
-      console.log('Trae atributos SIN HACER petición al servidor');
+    // } else {
+    //   console.log('Trae atributos SIN HACER petición al servidor');
 
     }
     return this.getFields$;

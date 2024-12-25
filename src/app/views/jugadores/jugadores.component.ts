@@ -4,7 +4,7 @@ import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 // import { CommonModule } from '@angular/common';
 // import { JugadorFieldService } from '../../core/jugadorField.service';
 // import { Subscription } from 'rxjs';
-import { FiltroComponent } from '../../core/filtro/filtro.component';
+import { FiltroComponent } from './filtro/filtro.component';
 import { JugadoresTablaComponent } from './jugadores-tabla/jugadores-tabla.component';
 import { JugadorFieldService } from '../../core/jugadorField.service'; 
 import { Subscription } from 'rxjs';
@@ -34,6 +34,7 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
   valorNumeroRecibido: number = 1;
 
   n_filtro = 1;
+
 
   recibirValor($event: any) {
     console.log('Datos recibidos:', $event);

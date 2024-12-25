@@ -1,4 +1,11 @@
 <div>
+    <div>
+        <button>Previa</button>
+        <p>Mostrando 100 de {{ n_cantidad }} - Pagína: {{ n_pagina }} de {{
+            n_paginas
+            }} </p>
+        <button (click)="cambiarPagina(1)" type="button" >Siguiente</button>
+    </div>
     <table>
         <thead>
             <tr>
