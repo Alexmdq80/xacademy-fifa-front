@@ -14,7 +14,6 @@ import { JugadorField } from '../../core/model/jugador-field.model';
   selector: 'app-jugadores',
   standalone: true,
   imports: [
-        // OutlineButtonComponent,
         FiltroComponent,
         JugadoresTablaComponent,
         // CommonModule

@@ -1,10 +1,38 @@
 <div>
     <div>
-        <button>Previa</button>
-        <p>Mostrando 100 de {{ n_cantidad }} - Pagína: {{ n_pagina }} de {{
-            n_paginas
-            }} </p>
-        <button (click)="cambiarPagina(1)" type="button" >Siguiente</button>
+        <span>Mostrar</span>
+        <select [(ngModel)]="amountView" (change)="mostrarItems()">
+            <option [value]=5>5</option>
+            <option [value]=10>10</option>
+            <option [value]=15>15</option>
+            <option [value]=20>20</option>
+        </select>
+
+        <button (click)="primerPagina()"
+            type="button">Inicio</button>
+
+        <button (click)="cambiarPagina(-1)" type="button">Previa</button>
+        <span>- Total: {{ n_cantidad }} - Página: </span>
+
+        <!-- <select>
+            <option *ngFor="let i = 1; i < 10; i++">
+                {{ i }}
+            </option>
+        </select> -->
+        <input type="number" id="v_pagina" name="valor" placeholder="número"
+            [min]="1" [max]="(n_paginas)"
+            (change)="mostrarPagina($event)" [value]="n_pagina"
+            [(ngModel)]="n_pagina">
+
+        <span> de {{ n_paginas }} </span>
+        <!-- <button outline-button (click)="cambiarPagina(1)"
+            type="button">Siguiente</button> -->
+        <button (click)="cambiarPagina(1)"
+            type="button">Siguiente</button>
+
+        <button (click)="ultimaPagina()"
+            type="button">Fin</button>
+
     </div>
     <table>
         <thead>
