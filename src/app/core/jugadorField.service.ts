@@ -14,10 +14,9 @@ export class JugadorFieldService {
   private getFields$?: Observable<JugadorField[]>;
   
   constructor(private httpClient: HttpClient) { }
-
  
   getFields(): Observable<JugadorField[]> {
-    console.log(this.getFields$);
+    // console.log(this.getFields$);
     if (this.getFields$ === undefined) {
         // console.log('Trae atributos haciendo petición al servidor');
         this.getFields$ = this.httpClient.get<JugadorField[]>(this.apiUrl).pipe(shareReplay(1));

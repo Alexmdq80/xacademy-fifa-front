@@ -1,10 +1,14 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+// import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+
 import { JugadorFieldService } from '../../../core/jugadorField.service';
-import { Input } from '@angular/core';
+// import { Input } from '@angular/core';
 import { JugadorField } from '../../../core/model/jugador-field.model';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { JugadorFiltro } from '../../../core/model/jugador-filtro.model';
+import { JugadoresFiltroService  } from '../../../core/jugadores-filtro.service';
 
 @Component({
   selector: 'app-filtro',
@@ -17,21 +21,31 @@ import { Subscription } from 'rxjs';
   templateUrl: './filtro.component.html',
   styleUrl: './filtro.component.scss'
 })
-// export class FiltroComponent implements OnInit, OnDestroy {
+
 export class FiltroComponent implements OnInit, OnDestroy {
 
-  // @Input() atributo = 0;   
-  // @Input() tipo = '';
-  // @Input() _length = 0;
-  @Input() n_filtro = 0;
-  @Output() valorNumero = new EventEmitter<any>();
+  // @Input() n_filtro = 0;
+  
+  // @Output() valorNumero = new EventEmitter<any>();
 
-  constructor(private jugadorFieldService: JugadorFieldService){}
+  constructor(private jugadorFieldService: JugadorFieldService,
+              private jugadoresFiltros: JugadoresFiltroService
+  ){}
   
-  // @Input() fields: JugadorField[] = [];
-  
+  id: number = 0;
+
   fields: JugadorField[] = [];
- 
+  
+  filtro: JugadorFiltro = {
+    id: 0,
+    field: '',
+    value: '',
+    value_min: 0,
+    value_max: 0
+  };
+
+  filtros: JugadorFiltro[] = [];
+
   subscription = new Subscription();
  
   isEnabled = new FormControl(false);
@@ -43,16 +57,21 @@ export class FiltroComponent implements OnInit, OnDestroy {
     viewName: ''
   };
 
-  devolverNumero(event: any) {
-    const valor = Number(event.target.value); // Convertimos el valor a número
-    if (!isNaN(valor)) {
-      this.valorNumero.emit(valor);
-    } else {
-      // Manejar el caso en que el valor no sea un número
-      console.error('El valor ingresado no es un número válido');
-    }
-    this.valorNumero.emit(valor);
-    // console.log(valor);
+  // devolverNumero(event: any) {
+  //   const valor = Number(event.target.value); // Convertimos el valor a número
+  //   if (!isNaN(valor)) {
+  //     this.valorNumero.emit(valor);
+  //   } else {
+  //     // Manejar el caso en que el valor no sea un número
+  //     console.error('El valor ingresado no es un número válido');
+  //   }
+  //   this.valorNumero.emit(valor);
+  //   // console.log(valor);
+  // }
+  removeFiltro() {
+    console.log('filtro.id ' + this.filtro.id)
+    this.jugadoresFiltros.removeFiltro(this.filtro.id);   
+    // this.filtros = this.jugadoresFiltros.getFiltros();
   }
 
   onOptionSelected(opcion: JugadorField) {
@@ -90,6 +109,10 @@ export class FiltroComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(){
+    this.filtros = this.jugadoresFiltros.getFiltros();
+    
+    this.filtro.id = this.filtros[this.filtros.length - 1].id;
+    
     this.subscription.add(this.jugadorFieldService.getFields().subscribe({
       next: res => {
         console.log("Se reciben datos de los atributos.");

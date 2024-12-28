@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+// import { Component, OnDestroy, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnDestroy, OnInit, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { JugadoresService } from '../../../core/jugadores.service';
 import { Jugador } from '../../../core/model/jugador.model';
@@ -6,6 +7,8 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { JugadorField } from '../../../core/model/jugador-field.model';
 import { JugadorFieldService } from '../../../core/jugadorField.service'; 
+import { JugadorFiltro } from '../../../core/model/jugador-filtro.model';
+import { JugadoresFiltroService } from '../../../core/jugadores-filtro.service';
 // import { OutlineButtonComponent } from '../../../core/outline-button/outline-button.component';
 
 @Component({
@@ -20,10 +23,13 @@ import { JugadorFieldService } from '../../../core/jugadorField.service';
   templateUrl: './jugadores-tabla.component.html',
   styleUrl: './jugadores-tabla.component.scss'
 })
-export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
+// export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
+export class JugadoresTablaComponent implements OnInit, OnDestroy {
   
   constructor(private jugadoresService : JugadoresService, 
-              private jugadorFieldService: JugadorFieldService){}
+              private jugadorFieldService: JugadorFieldService,
+              private jugadoresFiltroService: JugadoresFiltroService){}
+
   @Input() valor = 0;
   // @Input() fields: JugadorField[] = [];
   
@@ -41,8 +47,11 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
   jugadoresMatrizFields: string[][] = [[]];
   jugadorArrayFields: string[] = [];
 
+  filtros: JugadorFiltro[] = [];
+
   subscription = new Subscription();
   subscriptionField = new Subscription();
+  subscriptionJugadoresFiltro = new Subscription();
 
   amountView: number = 5;
   
@@ -55,16 +64,11 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
     }
     this.n_pagina_old = this.n_pagina;
     
-    // console.log(this.n_pagina);
-    // this.hacerGetEncabezado();
     this.hacerGetDatos(this.n_pagina, this.amountView); 
   }  
 
   mostrarItems(){
-    // this.hacerGetEncabezado();
-
-    this.hacerGetDatos(this.n_pagina, this.amountView); 
-  }
+    this.hacerGetDatos(this.n_pagina, this.amountView);   }
 
   ultimaPagina(){
     this.n_pagina = this.n_paginas;
@@ -79,10 +83,7 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
 
   mostrarPagina(event: any){
     const valor = Number(event.target.value); // Convertimos el valor a número
-    // if (!isNaN(valor)) {
-    //   console.log('NaN' + this.n_pagina);
-    //   this.n_pagina = this.n_pagina_old;
-    // } else
+
     if (valor < 1 || valor > this.n_paginas) {
       this.n_pagina = this.n_pagina_old;
     } else {
@@ -90,23 +91,20 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
       this.n_pagina_old= valor;
       this.hacerGetDatos(this.n_pagina, this.amountView); 
     }
-    console.log(this.n_pagina);    
-
 
   }  
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['valor']) {
-      this.playerId = changes['valor'].currentValue;
-      // this.hacerGet();
-    }
-  }
+  // ngOnChanges(changes: SimpleChanges) {
+  //   if (changes['valor']) {
+  //     this.playerId = changes['valor'].currentValue;
+  //     // this.hacerGet();
+  //   }
+  // }
 
   hacerGetEncabezado() {    
     this.subscriptionField.add(this.jugadorFieldService.getFields().subscribe({
       next: res => {
         console.log("Se reciben datos de los atributos.");
-        console.log(res);
         this.fields = res;
       },
       error: error => {
@@ -117,11 +115,20 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   hacerGetDatos(pagina:number, limit:number){
+    this.subscriptionJugadoresFiltro.add(this.jugadoresFiltroService.data$.subscribe({
+      next: res => {
+        console.log("Se reciben filtros.");
+        this.filtros = res;
+      },
+      error: error => {
+        console.warn("Ha ocurrido un error con código: ", error);
+      }
+    }    
+    ));
+
     this.subscription.add(this.jugadoresService.getDataFiltrada(pagina,limit).subscribe({
       next: res => {
         console.log("Se reciben datos de jugador x ID.");
-        // console.log(res);
-
         if (!res) {
           console.log("Consulta vacía.");
         }       
@@ -158,7 +165,8 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
   
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
-
+    this.subscriptionField.unsubscribe();
+    this.subscriptionJugadoresFiltro.unsubscribe();
   }
 
 }

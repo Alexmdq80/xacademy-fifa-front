@@ -1,25 +1,30 @@
 <div class="filtro">
-    <input type="checkbox" [formControl]="isEnabled" id="{{ n_filtro }}"
+    <!-- <input type="checkbox" [formControl]="isEnabled" id="{{ n_filtro }}"
         name="filtro_{{ n_filtro}}"
-        value="st">
+        value="st"> -->
 
-    <select [(ngModel)]="selectedOption" [disabled]="!isEnabled.value"
+    <button (click)="removeFiltro()"
+        id="{{ filtro.id }}  ">- Filtro</button>
+
+    <!-- <select [(ngModel)]="selectedOption" [disabled]="!isEnabled.value" -->
+    <select [(ngModel)]="selectedOption"
         (change)="onOptionSelected(selectedOption)">
         <option>Seleccione un Filtro</option>
         <option *ngFor="let field of fields" [ngValue]="field">
             {{ field.viewName }}
         </option>
     </select>
+    <!-- <input *ngIf="inputString" [disabled]="!isEnabled.value" type="text" -->
+    <input *ngIf="inputString" type="text"
+        id="valor_{{ filtro.id }} "
+        name="valor" placeholder="texto">
 
-    <input *ngIf="inputString" [disabled]="!isEnabled.value" type="text"
-        id="nombre_{{ n_filtro}} "
-        name="nombre" placeholder="texto">
+    <!-- <input *ngIf="inputNumber" [disabled]="!isEnabled.value" type="number" -->
+    <input *ngIf="inputNumber" type="number"
+        id="valor_min_{{ filtro.id }}" name="valor_min" placeholder="número">
 
-    <input *ngIf="inputNumber" [disabled]="!isEnabled.value" type="number"
-        id="valor{{ n_filtro}}" name="valor" placeholder="número"
-        (input)="devolverNumero($event)">
+    <!-- (input)="devolverNumero($event)"> -->
 
-    <!-- <input *ngIf="inputNumber" [disabled]="!isEnabled.value" type="number"
-        id="edad_max_{{ n_filtro}}" name="edad_max" placeholder="Máximo"> -->
-
+    <input *ngIf="inputNumber" type="number"
+        id="valor_max_{{ filtro.id}}" name="valor_max" placeholder="Máximo">
 </div>

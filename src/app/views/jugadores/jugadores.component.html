@@ -7,9 +7,15 @@
         [atributo]="field.atributo"
         [tipo]="field.tipo">
     </app-filtro> -->
-    <app-filtro (valorNumero)="recibirValor($event)"
+    <button (click)="addFiltro()"> + Filtro </button>
+    <!-- <app-filtro (valorNumero)="recibirValor($event)"
         [n_filtro]="1">
+    </app-filtro> -->
+    <app-filtro *ngFor="let filtroView of this.filtros">
+        {{ filtroView }}
     </app-filtro>
+    <button *ngIf="this.filtros.length > 0" (click)="aplicarFiltro()"> Aplicar
+        Filtro </button>
 
     <!-- <app-filtro (valorNumero)="recibirValor($event)"
         [n_filtro]="1"
@@ -20,9 +26,11 @@
 <section>
     <!-- <p>Valor recibido del hijo: {{ valorNumeroRecibido }}</p> -->
 
-    <app-jugadores-tabla
+    <app-jugadores-tabla></app-jugadores-tabla>
+
+    <!-- <app-jugadores-tabla
         [valor]="valorNumeroRecibido">
-    </app-jugadores-tabla>
+    </app-jugadores-tabla> -->
     <!-- <app-jugadores-tabla
         [valor]="valorNumeroRecibido"
         [fields]="fields">
