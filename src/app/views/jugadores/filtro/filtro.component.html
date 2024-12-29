@@ -7,24 +7,28 @@
         id="{{ filtro.id }}  ">- Filtro</button>
 
     <!-- <select [(ngModel)]="selectedOption" [disabled]="!isEnabled.value" -->
-    <select [(ngModel)]="selectedOption"
-        (change)="onOptionSelected(selectedOption)">
+    <select [(ngModel)]="selectedOption[filtro.id]"
+        (ngModelChange)="onOptionSelected(selectedOption[filtro.id], filtro.id)"
+        id="field_{{ filtro.id }}">
         <option>Seleccione un Filtro</option>
         <option *ngFor="let field of fields" [ngValue]="field">
             {{ field.viewName }}
         </option>
     </select>
     <!-- <input *ngIf="inputString" [disabled]="!isEnabled.value" type="text" -->
-    <input *ngIf="inputString" type="text"
+    <input [(ngModel)]="valor[filtro.id]" *ngIf="inputString" type="text"
         id="valor_{{ filtro.id }} "
-        name="valor" placeholder="texto">
+        name="valor" placeholder="texto"
+        (ngModelChange)="updateValorFiltro(filtro.id, valor[filtro.id], 0, false )">
 
     <!-- <input *ngIf="inputNumber" [disabled]="!isEnabled.value" type="number" -->
-    <input *ngIf="inputNumber" type="number"
-        id="valor_min_{{ filtro.id }}" name="valor_min" placeholder="número">
+    <input [(ngModel)]="valor_min[filtro.id]" *ngIf="inputNumber" type="number"
+        id="valor_min_{{ filtro.id }}" name="valor_min" placeholder="número"
+        (ngModelChange)="updateValorFiltro(filtro.id, '', valor_min[filtro.id], true)">
 
     <!-- (input)="devolverNumero($event)"> -->
 
-    <input *ngIf="inputNumber" type="number"
-        id="valor_max_{{ filtro.id}}" name="valor_max" placeholder="Máximo">
+    <input [(ngModel)]="valor_max[filtro.id]" *ngIf="inputNumber" type="number"
+        id="valor_max_{{ filtro.id}}" name="valor_max" placeholder="Máximo"
+        (ngModelChange)="updateValorFiltro(filtro.id, '', valor_max[filtro.id], false)">
 </div>

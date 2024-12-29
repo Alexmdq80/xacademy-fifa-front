@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnChanges, OnDestroy, OnInit, ViewChild  } from '@angular/core';
 // import { Component, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 // import { OutlineButtonComponent } from '../../core/outline-button/outline-button.component';
 // import { JugadorField } from '../../core/model/jugador-field.model';
@@ -46,9 +46,8 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
 
   subscription = new Subscription();
 
-  // @ViewChild(FiltroComponent) valorNumero?: FiltroComponent;
-  // valorNumeroRecibido: number = 1;
-
+  @ViewChild(JugadoresTablaComponent) JugadorTabla?: JugadoresTablaComponent;
+ 
   // n_filtro = 1;
 
   // recibirValor($event: any) {
@@ -57,17 +56,14 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
 
   // }
   addFiltro() {
-    // this.indice = this.indice + 1;
-    // this.filtros = this.jugadoresFiltros.getFiltros();
-    // this.filtro.id = this.indice;
-    // console.log(this.filtro.id);
-    this.jugadoresFiltros.addFiltro();   
-   
-    // this.filtros.push(this.filtro);       
+    this.jugadoresFiltros.addFiltro();
   }
 
   aplicarFiltro() {
     this.jugadoresFiltros.aplicarFiltro();
+    if (this.JugadorTabla) {
+      this.JugadorTabla.mostrarItems();
+    }
   }
 
   ngOnInit(){
@@ -83,7 +79,9 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
     ));
 
     this.subscription.add(this.jugadoresFiltros.data$.subscribe(data => {
-      this.filtros = data;
+      if (data) {
+        this.filtros = data;
+      }  
     }));
   }
   

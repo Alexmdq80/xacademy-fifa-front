@@ -51,12 +51,16 @@ export class FiltroComponent implements OnInit, OnDestroy {
   isEnabled = new FormControl(false);
   inputString = false;
   inputNumber = false;
-  selectedOption: JugadorField = { 
-    name: '',
-    type: '',
-    viewName: ''
-  };
+  // selectedOption: JugadorField [] = [{ 
+  //   name: '',
+  //   type: '',
+  //   viewName: ''
+  // }];
+  selectedOption: JugadorField [] = [];
 
+  valor: string[] = [];
+  valor_min: number[] = [];
+  valor_max: number[] = [];
   // devolverNumero(event: any) {
   //   const valor = Number(event.target.value); // Convertimos el valor a número
   //   if (!isNaN(valor)) {
@@ -68,32 +72,57 @@ export class FiltroComponent implements OnInit, OnDestroy {
   //   this.valorNumero.emit(valor);
   //   // console.log(valor);
   // }
+  updateValorFiltro(id_filtro: number, valor: string, valor_num: number, isMin: boolean){
+    this.filtro.field = this.selectedOption[id_filtro].name;
+    this.filtro.id = id_filtro;
+    if (this.selectedOption[id_filtro].type === 'string') {
+      this.filtro.value = valor;
+      this.filtro.value_max = 0;
+      this.filtro.value_min = 0;
+    } else if (this.selectedOption[id_filtro].type === 'integer') {
+       this.filtro.value = '';
+        if (isMin) {
+          this.filtro.value_min = valor_num;
+       } else {
+         this.filtro.value_max = valor_num;
+       }
+    } else {
+      console.warn("Error inesperado en updateValorFiltro.");
+    } 
+    // ACTUALIZAR EL ARREGLO DE FILTROS ***////
+    console.log(this.filtro);
+    console.log(this.filtros);
+    this.jugadoresFiltros.setFiltros(this.filtro);
+    console.log(this.filtros);
+
+  }
+  
   removeFiltro() {
     console.log('filtro.id ' + this.filtro.id)
     this.jugadoresFiltros.removeFiltro(this.filtro.id);   
     // this.filtros = this.jugadoresFiltros.getFiltros();
   }
 
-  onOptionSelected(opcion: JugadorField) {
+  onOptionSelected(opcion: JugadorField, id_filtro: number) {
 //  Según la opción del "Select", mostrará para llenar un 
 // "Input" para texto (nombre, por ejemplo), o
 //  un rango numérico (mínimo y máximo)...
-    this.selectedOption = opcion;
+    this.selectedOption[id_filtro] = opcion;
     
     console.log('Opción seleccionada:', this.selectedOption);
 
-    if (!this.selectedOption.name) {
+    if (!this.selectedOption[id_filtro].name) {
       this.inputString = false
       this.inputNumber = false
     } else {
-      switch (this.selectedOption.name) {
+      switch (this.selectedOption[id_filtro].name) {
         case 'Seleccione un Filtro':
           this.inputString = false
           this.inputNumber = false
           break;
 
         default:
-          if (this.selectedOption.type === 'string') {
+          if (this.selectedOption[id_filtro].type === 'string') {
             // console.log('cadena');
             this.inputNumber = false
             this.inputString = true

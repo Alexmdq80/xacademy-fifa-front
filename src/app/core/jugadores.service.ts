@@ -19,9 +19,10 @@ export class JugadoresService {
   //   return this.httpClient.get<Jugador[]>(this.apiUrl + '/fitrosNew?filtros[1]=id&valores_min[1]=1&valores_max[1]=100&limit=100');
 
   // }
-  getDataFiltrada(page:number, limit:number): Observable<any> {
+  getDataFiltrada(page:number, limit:number, strFiltro:string): Observable<any> {
     // return this.httpClient.get<any>(this.apiUrl + '?filtros[1]=id&valores_min[1]=1&valores_max[1]=100&limit=100');
-    return this.httpClient.get<any>(this.apiUrl + '?page=' + page + '&limit=' + limit);
+    console.log(strFiltro);
+    return this.httpClient.get<any>(this.apiUrl + '?' + strFiltro + '&page=' + page + '&limit=' + limit);
 
   }
 

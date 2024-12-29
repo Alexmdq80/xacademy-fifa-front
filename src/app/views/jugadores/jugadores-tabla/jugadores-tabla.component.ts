@@ -54,7 +54,8 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
   subscriptionJugadoresFiltro = new Subscription();
 
   amountView: number = 5;
-  
+  strFiltros: string = '';
+
   cambiarPagina(movimiento:number){
     this.n_pagina = this.n_pagina + movimiento;
     if (this.n_pagina < 1) {
@@ -64,20 +65,20 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
     }
     this.n_pagina_old = this.n_pagina;
     
-    this.hacerGetDatos(this.n_pagina, this.amountView); 
+    this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
   }  
 
   mostrarItems(){
-    this.hacerGetDatos(this.n_pagina, this.amountView);   }
+    this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros);   }
 
   ultimaPagina(){
     this.n_pagina = this.n_paginas;
-    this.hacerGetDatos(this.n_pagina, this.amountView); 
+    this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
   }
   
   primerPagina(){
     this.n_pagina = 1;
-    this.hacerGetDatos(this.n_pagina, this.amountView); 
+    this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
   }
 
 
@@ -89,7 +90,7 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
     } else {
       this.n_pagina = valor;
       this.n_pagina_old= valor;
-      this.hacerGetDatos(this.n_pagina, this.amountView); 
+      this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
     }
 
   }  
@@ -114,11 +115,13 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
     ));
   }
 
-  hacerGetDatos(pagina:number, limit:number){
-    this.subscriptionJugadoresFiltro.add(this.jugadoresFiltroService.data$.subscribe({
+  hacerGetDatos(pagina:number, limit:number, strFiltros$: string){
+
+    
+    this.subscriptionJugadoresFiltro.add(this.jugadoresFiltroService.filtro$.subscribe({
       next: res => {
         console.log("Se reciben filtros.");
-        this.filtros = res;
+        this.strFiltros = res;
       },
       error: error => {
         console.warn("Ha ocurrido un error con código: ", error);
@@ -126,9 +129,9 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
     }    
     ));
 
-    this.subscription.add(this.jugadoresService.getDataFiltrada(pagina,limit).subscribe({
+    this.subscription.add(this.jugadoresService.getDataFiltrada(pagina,limit, strFiltros$).subscribe({
       next: res => {
-        console.log("Se reciben datos de jugador x ID.");
+        console.log("Se reciben datos de jugador.");
         if (!res) {
           console.log("Consulta vacía.");
         }       
@@ -160,7 +163,7 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
 
   ngOnInit(){
     this.hacerGetEncabezado();
-    this.hacerGetDatos(this.n_pagina, this.amountView); 
+    this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
   }
   
   ngOnDestroy(): void {
@@ -169,4 +172,5 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
     this.subscriptionJugadoresFiltro.unsubscribe();
   }
 
+  
 }

@@ -9,11 +9,14 @@ export class JugadoresFiltroService {
 
   constructor() { }
 
+// en data$ se almacenan los filtros
   private dataSubject = new BehaviorSubject<any>(null);
   data$ = this.dataSubject.asObservable();
     
-  private filtroSubject = new BehaviorSubject<any>(null);
+// '***EN filtro$ almaceno la  strFiltro para generar la query que enviaré a la API
+  private filtroSubject = new BehaviorSubject<string>('');
   filtro$ = this.filtroSubject.asObservable();
+  
   // private contadorSubject = new BehaviorSubject<number>(0);
   // contador$ = this.contadorSubject.asObservable();
   // contador$ = this.contadorSubject;
@@ -30,6 +33,15 @@ export class JugadoresFiltroService {
 
   getFiltros() {
     return this.filtros;
+  }
+
+  setFiltros(filtro: JugadorFiltro) {
+    const indiceFiltro = this.filtros.findIndex(f => f.id === filtro.id);
+    
+    this.filtros[indiceFiltro].field = filtro.field;
+    this.filtros[indiceFiltro].value = filtro.value;
+    this.filtros[indiceFiltro].value_min = filtro.value_min;
+    this.filtros[indiceFiltro].value_max = filtro.value_max;
   }
 
   addFiltro() {
@@ -58,8 +70,27 @@ export class JugadoresFiltroService {
   }
 
   aplicarFiltro() {
+    let strFiltro: string = '';
+    let n: number = 1;
 
-    this.filtroSubject.next(this.filtros);
+    // TRANSFORMAR EL ARREGLO DE FILTROS EN UNA CADENA
+    for (let filtro of this.filtros) {
+      if (n > 1) {
+        strFiltro =   strFiltro + '&'
+      } 
+      strFiltro =   strFiltro + 'filtros[' + n + ']=' + filtro.field + '&';
+      if (filtro.value !== '') {
+        strFiltro =   strFiltro + 'valores_min[' + n + ']=' + filtro.value + '&';
+        strFiltro =   strFiltro + 'valores_max[' + n + ']=0';
+      } else {
+        strFiltro =   strFiltro + 'valores_min[' + n + ']=' + filtro.value_min + '&';
+        strFiltro =   strFiltro + 'valores_max[' + n + ']=' + filtro.value_max;
+      }      
+      n++;
+    }
+
+    // console.log(strFiltro);
+    this.filtroSubject.next(strFiltro);
   }
 
   updateData(newData: any) {
