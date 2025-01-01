@@ -42,7 +42,9 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let player of jugadoresMatrizFields; let i = index">
+            <tr [class.resaltado]="isHovered" (mouseenter)="onMouseEnter()"
+                (mouseleave)="onMouseLeave()" (click)="seleccionarFila(player)"
+                *ngFor="let player of jugadoresMatrizFields; let i = index">
 
                 <td *ngFor="let field of fields; let z = index">
                     <p *ngIf="field.name==='player_face_url'">
@@ -66,4 +68,9 @@
             </tr>
         </tbody>
     </table>
+</div>
+<div class="col-lg-4">
+    <h2>Radar Chart</h2>
+    <canvas id="radarchart"></canvas>
+
 </div>
