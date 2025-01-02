@@ -5,14 +5,13 @@ import { HeaderMenuComponent } from './header-menu/header-menu.component';
 import { MenuItem } from '../model/menu-item.model';
 
 @Component({
-selector: 'app-header',
-standalone: true,
-imports: [
+    selector: 'app-header',
+    imports: [
         OutlineButtonComponent,
         HeaderMenuComponent,
-        ],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+    ],
+    templateUrl: './header.component.html',
+    styleUrl: './header.component.scss'
 })
 
 export class HeaderComponent {

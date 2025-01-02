@@ -4,15 +4,14 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MenuItem } from '../../model/menu-item.model';
 
 @Component({
-  selector: 'app-header-menu',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink,
-    RouterLinkActive
-  ],
-  templateUrl: './header-menu.component.html',
-  styleUrl: './header-menu.component.scss'
+    selector: 'app-header-menu',
+    imports: [
+        CommonModule,
+        RouterLink,
+        RouterLinkActive
+    ],
+    templateUrl: './header-menu.component.html',
+    styleUrl: './header-menu.component.scss'
 })
 export class HeaderMenuComponent {
   @Input() menuItems?: Array<MenuItem>;

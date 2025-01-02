@@ -15,15 +15,14 @@ import { JugadorFiltro } from '../../core/model/jugador-filtro.model';
 
 
 @Component({
-  selector: 'app-jugadores',
-  standalone: true,
-  imports: [
+    selector: 'app-jugadores',
+    imports: [
         FiltroComponent,
         JugadoresTablaComponent,
         CommonModule
-      ],
-  templateUrl: './jugadores.component.html',
-  styleUrl: './jugadores.component.scss'
+    ],
+    templateUrl: './jugadores.component.html',
+    styleUrl: './jugadores.component.scss'
 })
 
 export class JugadoresComponent implements OnInit, OnDestroy  {

@@ -18,16 +18,15 @@ import { JugadoresModalComponent } from './jugadores-modal/jugadores-modal.compo
 Chart.register(...registerables);
 
 @Component({
-  selector: 'app-jugadores-tabla',
-  standalone: true,
-  imports: [
-      CommonModule,
-      ReactiveFormsModule,
-      FormsModule
-      // OutlineButtonComponent
-  ],
-  templateUrl: './jugadores-tabla.component.html',
-  styleUrl: './jugadores-tabla.component.scss'
+    selector: 'app-jugadores-tabla',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        FormsModule
+        // OutlineButtonComponent
+    ],
+    templateUrl: './jugadores-tabla.component.html',
+    styleUrl: './jugadores-tabla.component.scss'
 })
 // export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
 export class JugadoresTablaComponent implements OnInit, OnDestroy {

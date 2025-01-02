@@ -11,15 +11,14 @@ import { JugadorFiltro } from '../../../core/model/jugador-filtro.model';
 import { JugadoresFiltroService  } from '../../../core/jugadores-filtro.service';
 
 @Component({
-  selector: 'app-filtro',
-  standalone: true,
-  imports: [
-      CommonModule,
-      ReactiveFormsModule,
-      FormsModule,
-   ],
-  templateUrl: './filtro.component.html',
-  styleUrl: './filtro.component.scss'
+    selector: 'app-filtro',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        FormsModule,
+    ],
+    templateUrl: './filtro.component.html',
+    styleUrl: './filtro.component.scss'
 })
 
 export class FiltroComponent implements OnInit, OnDestroy {

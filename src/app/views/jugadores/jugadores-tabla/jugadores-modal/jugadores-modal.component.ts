@@ -11,12 +11,10 @@ import { JugadorField } from '../../../../core/model/jugador-field.model';
 
 
 @Component({
-  selector: 'app-jugadores-modal',
-  standalone: true,
-  imports: [
-  ],
-  templateUrl: './jugadores-modal.component.html',
-  styleUrl: './jugadores-modal.component.scss'
+    selector: 'app-jugadores-modal',
+    imports: [],
+    templateUrl: './jugadores-modal.component.html',
+    styleUrl: './jugadores-modal.component.scss'
 })
 
 

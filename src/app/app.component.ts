@@ -5,15 +5,14 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
-  imports: [RouterOutlet,
-            CommonModule,
-            HeaderComponent  
-            // LandingPageComponent
-            ]
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss',
+    imports: [RouterOutlet,
+        CommonModule,
+        HeaderComponent
+        // LandingPageComponent
+    ]
 })
 export class AppComponent {
   title = 'FIFA Players';
