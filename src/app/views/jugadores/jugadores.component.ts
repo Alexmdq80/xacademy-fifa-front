@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnDestroy, OnInit, ViewChild  } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild  } from '@angular/core';
 // import { Component, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 // import { OutlineButtonComponent } from '../../core/outline-button/outline-button.component';
 // import { JugadorField } from '../../core/model/jugador-field.model';
@@ -12,15 +12,17 @@ import { JugadoresFiltroService } from '../../core/jugadores-filtro.service';
 import { Subscription } from 'rxjs';
 import { JugadorField } from '../../core/model/jugador-field.model';
 import { JugadorFiltro } from '../../core/model/jugador-filtro.model';
+import { AgregarPersonaComponent } from "./jugadores-tabla/agregar-persona/agregar-persona.component";
 
 
 @Component({
     selector: 'app-jugadores',
     imports: [
-        FiltroComponent,
-        JugadoresTablaComponent,
-        CommonModule
-    ],
+    FiltroComponent,
+    JugadoresTablaComponent,
+    CommonModule,
+    AgregarPersonaComponent
+],
     templateUrl: './jugadores.component.html',
     styleUrl: './jugadores.component.scss'
 })
@@ -30,6 +32,8 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
   constructor(private jugadorFieldService: JugadorFieldService,
               private jugadoresFiltros: JugadoresFiltroService
   ){}
+
+  lista: boolean = true;
 
   fields: JugadorField[] = [];
   
@@ -54,6 +58,10 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
   //   this.valorNumeroRecibido = $event;
 
   // }
+  agregarPersona() {
+    this.lista = !this.lista;
+  }
+
   addFiltro() {
     this.jugadoresFiltros.addFiltro();
   }
@@ -66,6 +74,7 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
   }
 
   ngOnInit(){
+    this.lista = true;
     this.subscription.add(this.jugadorFieldService.getFields().subscribe({
       next: res => {
         console.log("Se reciben datos de los atributos.");

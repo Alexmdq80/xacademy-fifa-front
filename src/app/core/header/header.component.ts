@@ -20,6 +20,6 @@ export class HeaderComponent {
     // funciona de las dos maneras, sólo que en la que quedó en el código
     // es más clara. Ya que le decimos a Angular que vamos a usar ese modelo de objeto
     // o esa interfaz.
-    {text: 'Consultar Jugadores', route: '/jugadores'},
+    {text: 'Jugadores', route: '/jugadores'},
   ]
 }

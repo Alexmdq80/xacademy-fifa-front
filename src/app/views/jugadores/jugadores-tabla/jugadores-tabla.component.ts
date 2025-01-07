@@ -12,8 +12,8 @@ import { JugadoresFiltroService } from '../../../core/jugadores-filtro.service';
 // import { OutlineButtonComponent } from '../../../core/outline-button/outline-button.component';
 import { Chart, registerables } from 'chart.js';
 import { JugadoresModalComponent } from './jugadores-modal/jugadores-modal.component';
-// import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-// import { Dialog } from '@angular/cdk/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+//  import { Dialog } from '@angular/cdk/dialog';
 
 Chart.register(...registerables);
 
@@ -72,12 +72,16 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
 
   seleccionarFila(player: string[]){
     const config = new MatDialogConfig();
-    config.width = '100%';
+    config.enterAnimationDuration = 500;
+    config.maxHeight = '100%';
+    config.maxWidth = '100%';
+    config.width = '70%';
     config.height = '100%';
-    
-    config.hasBackdrop = false;
-    config.disableClose = true;
-    config.closeOnNavigation = true;    
+    config.id = 'graficoHabilidades';
+    config.hasBackdrop = true;
+    config.disableClose = false;
+    config.panelClass = "grafico"
+ 
     config.data = { player: player,
                     fields: this.fields
                   };

@@ -1,5 +1,6 @@
 export interface JugadorField {
     name: string,
     type: string,
-    viewName: string
+    viewName: string,
+    esSkill: boolean
 }

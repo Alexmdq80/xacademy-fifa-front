@@ -1,0 +1,40 @@
+<form class="form-container" [formGroup]="playerForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="fill">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="longName" required>
+        <mat-error *ngIf="playerForm.get('longName')?.hasError('required')">
+            El nombre es requerido.
+        </mat-error>
+    </mat-form-field>
+</form>
+<!-- <form class="form-container" [formGroup]="playerForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+        <label for="longName">Nombre:</label>
+        <input type="text" id="longName" formControlName="longName" required>
+        <div class="error-messages"
+            *ngIf="playerForm.get('longName')?.invalid && (playerForm.get('longName')?.touched || playerForm.get('longName')?.dirty)">
+            <span *ngIf="playerForm.get('longName')?.errors?.['required']">El
+                nombre es requerido.</span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="age">Edad:</label>
+        <input type="number" id="age" formControlName="age">
+    </div>
+
+    <div class="form-group">
+        <label for="gender">Género:</label>
+        <select id="gender" formControlName="gender">
+            <option value="Male">Masculino</option>
+            <option value="Female">Femenino</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="heightCm">Altura (cm):</label>
+        <input type="number" id="heightCm" formControlName="heightCm">
+    </div>
+
+    <button type="submit" [disabled]="!playerForm.valid">Guardar</button>
+</form> -->

@@ -6,20 +6,23 @@ import { JugadorHabilidades } from '../../../../core/model/jugador-habilidades.m
 import { ChartObject } from '../../../../core/model/chart-object.model';
 import { JugadorField } from '../../../../core/model/jugador-field.model';
 // import { BaseChartDirective } from 'ng2-charts'; 
-// import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogContent } from '@angular/material/dialog';
 
 
 
 @Component({
     selector: 'app-jugadores-modal',
-    imports: [],
+    imports: [
+      MatDialogContent      
+    ],
     templateUrl: './jugadores-modal.component.html',
     styleUrl: './jugadores-modal.component.scss'
 })
 
 
 export class JugadoresModalComponent  implements OnInit, OnDestroy {
- 
+
   // readonly dialog = inject(MatDialog);
   myChart!: Chart;
   player: string[] = [];
@@ -56,12 +59,13 @@ export class JugadoresModalComponent  implements OnInit, OnDestroy {
     ];
 
     for (let i = 0; i < this.player.length; i++) {
-      if (this.fields[i].name !== 'id' && 
-          this.fields[i].name !== 'value_eur' &&
-          this.fields[i].name !== 'wage_eur' &&
-          this.fields[i].name !== 'height_cm' &&
-          this.fields[i].name !== 'weight_kg' &&
-          this.fields[i].type === 'integer'){
+      // if (this.fields[i].name !== 'id' && 
+      //     this.fields[i].name !== 'value_eur' &&
+      //     this.fields[i].name !== 'wage_eur' &&
+      //     this.fields[i].name !== 'height_cm' &&
+      //     this.fields[i].name !== 'weight_kg' &&
+      //     this.fields[i].type === 'integer'){
+      if (this.fields[i].esSkill === true) {
         habilidadesJugador[this.fields[i].viewName] = this.player[i];
         dataset[0].data.push(Number(this.player[i]));
       }
@@ -83,7 +87,6 @@ export class JugadoresModalComponent  implements OnInit, OnDestroy {
   } 
 
   Renderchart(labeldata: string[], dataset:ChartObject[], chartid:string, charttype:any) {
-  
       this.myChart = new Chart(chartid, {
         type: charttype,
         data: {
@@ -99,13 +102,43 @@ export class JugadoresModalComponent  implements OnInit, OnDestroy {
           ]
         },
         options: {
+          responsive: true, // Ajusta el tamaño al contenedor
+          maintainAspectRatio: true, // Deshabilita el aspecto de relación
+          legend: {
+            labels: {
+              font: {
+                size: 8
+              }
+            }
+          },
+          font: {
+            size: 32
+          },
           scales: {
+            x: {
+              ticks: {
+                font: {
+                  size: 10
+                }
+              }
+            },
             y: {
-              beginAtZero: false
+              beginAtZero: false,
+              ticks: {
+                font: {
+                  size: 10
+                }
+              }
+            },
+            r: {
+              ticks: {
+                font: {
+                  size: 10
+                }
+              }
             }
           }
-        }
-  
+        }  
       });
     }
     // **************

@@ -1,6 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
-@import 'material-icons/iconfont/material-icons.css';
-@import 'material-symbols';
+// @import 'material-icons/iconfont/material-icons.css';
+
+@use 'material-symbols';
+
+@use 'material-icons';
 body {
 
     background-color: #e4eef8;

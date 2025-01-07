@@ -2,7 +2,12 @@
     <button outline-button (click)="newFiltro()" type="button">Agregar
         Filtro</button>
 </section> -->
-<section class="filtro">
+<div>
+    <button (click)="agregarPersona()">
+        <i class="material-icons-outlined">person_add</i>
+    </button>
+</div>
+<div *ngIf="lista" class="filtro">
     <!-- <app-filtro *ngFor="let field of fields"
         [atributo]="field.atributo"
         [tipo]="field.tipo">
@@ -22,8 +27,8 @@
         [fields]="fields">
     </app-filtro> -->
 
-</section>
-<section>
+</div>
+<div *ngIf="lista">
     <!-- <p>Valor recibido del hijo: {{ valorNumeroRecibido }}</p> -->
 
     <app-jugadores-tabla></app-jugadores-tabla>
@@ -36,7 +41,10 @@
         [fields]="fields">
     </app-jugadores-tabla> -->
 
-</section>
+</div>
+<div *ngIf="!lista">
+    <app-agregar-persona></app-agregar-persona>
+</div>
 <!-- <section>
     <h2>Filtrar Jugadores</h2>
 
