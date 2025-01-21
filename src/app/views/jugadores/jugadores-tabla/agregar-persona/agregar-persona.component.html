@@ -11,9 +11,10 @@
 
 <form class="form-contenedor" [formGroup]="playerForm">
     <mat-form-field class="form-campo" appearance="fill">
-        <mat-label class="form-etiqueta" for="longName"> Nombre </mat-label>
-        <input class="form-input" matInput id="longName"
-            formControlName="longName"
+        <mat-label class="form-etiqueta" for="long_name"> Nombres y Apellidos
+        </mat-label>
+        <input class="form-input" matInput id="long_name"
+            formControlName="long_name"
             (blur)="updateErrorMessage()"
             placeholder="Nombres y Apellidos"
             (input)="onInput($event)" />
@@ -24,10 +25,10 @@
                 El nombre es requerido.
             </span>
         </mat-error> -->
-        @if (playerForm.get('longName')?.invalid) {
-        <mat-error>{{errorMessage['longName']()}}</mat-error>
+        @if (playerForm.get('long_name')?.invalid) {
+        <mat-error>{{errorMessage['long_name']()}}</mat-error>
         }
-        <mat-hint align="end">{{value.longName().length}}/255</mat-hint>
+        <mat-hint align="end">{{value['long_name']().length}}/255</mat-hint>
     </mat-form-field>
 
     <mat-form-field class="form-campo-numero" appearance="fill">
@@ -89,7 +90,8 @@
         @if (playerForm.get('nationalityName')?.invalid) {
         <mat-error>{{errorMessage['nationalityName']()}}</mat-error>
         }
-        <mat-hint align="end">{{value.nationalityName().length}}/255</mat-hint>
+        <mat-hint
+            align="end">{{value['nationalityName']().length}}/255</mat-hint>
     </mat-form-field>
 
     <mat-form-field class="form-campo" appearance="fill">
@@ -102,7 +104,7 @@
         @if (playerForm.get('clubName')?.invalid) {
         <mat-error>{{errorMessage['clubName']()}}</mat-error>
         }
-        <mat-hint align="end">{{value.clubName().length}}/255</mat-hint>
+        <mat-hint align="end">{{value['clubName']().length}}/255</mat-hint>
     </mat-form-field>
 
     <mat-form-field class="form-campo-numero" appearance="fill">
@@ -130,8 +132,8 @@
     </mat-form-field>
 
     <mat-form-field class="form-campo" appearance="fill">
-        <mat-label for="playerFaceUrl">URL de la foto:</mat-label>
-        <input matInput type="text" id="playerFaceUrl"
+        <mat-label for="playerFaceUrl">URL de la Foto:</mat-label>
+        <input matInput type="url" id="playerFaceUrl"
             formControlName="playerFaceUrl"
             (blur)="updateErrorMessage()"
             placeholder="https://"
@@ -139,7 +141,7 @@
         @if (playerForm.get('playerFaceUrl')?.invalid) {
         <mat-error>{{errorMessage['playerFaceUrl']()}}</mat-error>
         }
-        <mat-hint align="end">{{value.playerFaceUrl().length}}/255</mat-hint>
+        <mat-hint align="end">{{value['playerFaceUrl']().length}}/255</mat-hint>
     </mat-form-field>
 
     <mat-form-field class="form-campo-multiselect" appearance="fill">
@@ -149,9 +151,9 @@
         <mat-select class="form-select" id="playerPositions"
             formControlName="playerPositions"
             (blur)="updateErrorMessage()" multiple>
-            <mat-option *ngFor="let posicion of jugadorPosiciones"
-                value="{{ posicion.codigo }}">
-                {{ posicion.view }}
+            <mat-option *ngFor="let position of jugadorPositions"
+                value="{{ position.codigo }}">
+                {{ position.view }}
             </mat-option>
 
         </mat-select>
@@ -203,76 +205,209 @@
         <mat-hint align="end">0-100</mat-hint>
     </mat-form-field>
 
-    <div>
-        <label for="overall">Overall:</label>
-        <input type="number" id="overall" formControlName="overall">
+    <mat-form-field class="form-campo-numero" appearance="fill">
+        <mat-label for="overall">Puntuación General:</mat-label>
+        <input matInput type="number" id="overall"
+            formControlName="overall"
+            (blur)="updateErrorMessage()"
+            placeholder="1" />
+        @if (playerForm.get('overall')?.invalid) {
+        <mat-error>{{errorMessage['overall']()}}</mat-error>
+        }
+        <mat-hint align="end">0-100</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field class="form-campo-select" appearance="fill">
+        <mat-label class="form-etiqueta" for="preferredFoot"> Pie preferido
+        </mat-label>
+        <mat-select class="form-select" id="preferredFoot"
+            formControlName="preferredFoot"
+            (blur)="updateErrorMessage()">
+            <mat-option value="Left">Izquierdo</mat-option>
+            <mat-option value="Rigth">Derecho</mat-option>
+        </mat-select>
+        @if (playerForm.get('preferredFoot')?.invalid) {
+        <mat-error>{{errorMessage['preferredFoot']()}}</mat-error>
+        }
+        <mat-hint align="end">Menú Desplegable ^</mat-hint>
+    </mat-form-field>
+
+    <!-- <mat-form-field class="form-campo-select" appearance="fill">
+        <mat-label class="form-etiqueta" for="weakFoot"> Debilidad de pie
+        </mat-label>
+        <mat-select class="form-select" id="weakFoot"
+            formControlName="weakFoot"
+            (blur)="updateErrorMessage()">
+            <mat-option value="1">1</mat-option>
+            <mat-option value="2">2</mat-option>
+            <mat-option value="3">3</mat-option>
+            <mat-option value="4">4</mat-option>
+            <mat-option value="5">5</mat-option>
+        </mat-select>
+        @if (playerForm.get('weakFoot')?.invalid) {
+        <mat-error>{{errorMessage['weakFoot']()}}</mat-error>
+        }
+        <mat-hint align="end">Menú Desplegable ^</mat-hint>
+    </mat-form-field> -->
+
+    <mat-slider min="1" max="5" showTickMarks discrete>
+        <mat-label class="form-etiqueta" for="weakFoot">
+            Debilidad de pie
+        </mat-label>
+        <input matSliderThumb>
+    </mat-slider>
+
+    <!-- <mat-form-field class="form-campo-select" appearance="fill">
+        <mat-label class="form-etiqueta" for="skillMoves"> Habilidades
+            Especiales
+        </mat-label>
+        <mat-select class="form-select" id="skillMoves"
+            formControlName="skillMoves"
+            (blur)="updateErrorMessage()">
+            <mat-option value="1">1</mat-option>
+            <mat-option value="2">2</mat-option>
+            <mat-option value="3">3</mat-option>
+            <mat-option value="4">4</mat-option>
+            <mat-option value="5">5</mat-option>
+        </mat-select>
+        @if (playerForm.get('skillMoves')?.invalid) {
+        <mat-error>{{errorMessage['skillMoves']()}}</mat-error>
+        }
+        <mat-hint align="end">Menú Desplegable ^</mat-hint>
+    </mat-form-field> -->
+
+    <mat-slider min="1" max="5" showTickMarks discrete>
+        <mat-label class="form-etiqueta" for="skillMoves">
+            Habilidades
+            Especiales
+        </mat-label>
+        <input matSliderThumb>
+    </mat-slider>
+
+    <!-- <mat-form-field class="form-campo-select" appearance="fill">
+        <mat-label class="form-etiqueta" for="internationalReputation">
+            Reputación Internacional
+        </mat-label>
+        <mat-select class="form-select" id="internationalReputation"
+            formControlName="internationalReputation"
+            (blur)="updateErrorMessage()">
+            <mat-option value="1">1</mat-option>
+            <mat-option value="2">2</mat-option>
+            <mat-option value="3">3</mat-option>
+            <mat-option value="4">4</mat-option>
+            <mat-option value="5">5</mat-option>
+        </mat-select>
+        @if (playerForm.get('internationalReputation')?.invalid) {
+        <mat-error>{{errorMessage['internationalReputation']()}}</mat-error>
+        }
+        <mat-hint align="end">Menú Desplegable ^</mat-hint>
+    </mat-form-field> -->
+
+    <mat-slider min="1" max="5" showTickMarks discrete>
+        <mat-label class="form-etiqueta" for="internationalReputation">
+            Reputación Internacional
+        </mat-label>
+        <input matSliderThumb>
+    </mat-slider>
+
+    <mat-slider min="0" max="2" showTickMarks>
+        <mat-label class="form-etiqueta" for="workRate">
+            Ritmo de trabajo
+        </mat-label>
+        <input value="0" matSliderStartThumb #slider1>
+        <input value="2" matSliderEndThumb #slider2>
+    </mat-slider>
+    <div class="example-label-container">
+        <!-- <label id="example-name-label" class="example-name-label">Value</label> -->
+        <label
+            class="example-value-label">{{this.jugadorWorkRate[slider1.value].view}}/{{this.jugadorWorkRate[slider2.value].view}}</label>
     </div>
 
-    <div>
-        <label for="preferredFoot">Pie preferido:</label>
-        <select id="preferredFoot" formControlName="preferredFoot">
-            <option value="Left">Izquierdo</option>
-            <option value="Right">Derecho</option>
-        </select>
-    </div>
+    <!-- <mat-form-field class="form-campo-select" appearance="fill">
+        <mat-label class="form-etiqueta" for="workRate">
+            Ritmo de trabajo
+        </mat-label>
+        <mat-select class="form-select" id="workRate"
+            formControlName="workRate"
+            (blur)="updateErrorMessage()">
+            <mat-option *ngFor="let workRate of jugadorWorkRate"
+                value="{{ workRate.codigo }}">
+                {{ workRate.view }}
+            </mat-option>
+        </mat-select> -->
 
-    <div>
-        <label for="weakFoot">Debilidad de pie:</label>
-        <select id="weakFoot" formControlName="weakFoot">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-        </select>
-    </div>
+    <!-- @if (playerForm.get('workRate')?.invalid) {
+        <mat-error>{{errorMessage['workRate']()}}</mat-error>
+        }
+        <mat-hint align="end">Menú Desplegable ^</mat-hint>
+    </mat-form-field> -->
 
-    <div>
-        <label for="skillMoves">Movimientos hábiles:</label>
-        <select id="skillMoves" formControlName="skillMoves">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-        </select>
-    </div>
+    <mat-form-field class="form-campo-select" appearance="fill">
+        <mat-label class="form-etiqueta" for="bodyType">
+            Tipo de cuerpo
+        </mat-label>
+        <mat-select class="form-select" id="bodyType"
+            formControlName="bodyType"
+            (blur)="updateErrorMessage()">
+            <mat-option *ngFor="let bodyType of jugadorBodyType"
+                value="{{ bodyType.codigo }}">
+                {{ bodyType.view }}
+            </mat-option>
+        </mat-select>
 
-    <div>
-        <label for="internationalReputation">Reputación internacional:</label>
-        <select id="internationalReputation"
-            formControlName="internationalReputation">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-        </select>
-    </div>
+        @if (playerForm.get('bodyType')?.invalid) {
+        <mat-error>{{errorMessage['bodyType']()}}</mat-error>
+        }
+        <mat-hint align="end">Menú Desplegable ^</mat-hint>
+    </mat-form-field>
 
-    <div>
-        <label for="workRate">Ritmo de trabajo:</label>
-        <input type="text" id="workRate" formControlName="workRate">
-    </div>
+    <!-- <mat-slider min="0" max="9" step="1" showTickMarks discrete
+        [displayWith]="formatLabel">
+        <input matSliderThumb>
+    </mat-slider> -->
+    <mat-form-field class="form-campo-numero" appearance="fill">
+        <mat-label for="pace">Velocidad:</mat-label>
+        <input matInput type="number" id="pace"
+            formControlName="pace"
+            (blur)="updateErrorMessage()"
+            placeholder="50"
+            (input)="onInput($event)" />
+        @if (playerForm.get('pace')?.invalid) {
+        <mat-error>{{errorMessage['pace']()}}</mat-error>
+        }
+        <mat-hint align="end">0-100</mat-hint>
+    </mat-form-field>
 
-    <div>
-        <label for="bodyType">Tipo de cuerpo:</label>
-        <input type="text" id="bodyType" formControlName="bodyType">
-    </div>
+    <mat-form-field class="form-campo-numero" appearance="fill">
+        <mat-label for="shooting">Disparo:</mat-label>
+        <input matInput type="number" id="shooting"
+            formControlName="shooting"
+            (blur)="updateErrorMessage()"
+            placeholder="50"
+            (input)="onInput($event)" />
+        @if (playerForm.get('shooting')?.invalid) {
+        <mat-error>{{errorMessage['shooting']()}}</mat-error>
+        }
+        <mat-hint align="end">0-100</mat-hint>
+    </mat-form-field>
 
-    <div>
-        <label for="pace">Velocidad:</label>
-        <input type="number" id="pace" formControlName="pace">
-    </div>
-
-    <div>
-        <label for="shooting">Disparo:</label>
-        <input type="number" id="shooting" formControlName="shooting">
-    </div>
+    <mat-form-field class="form-campo-numero" appearance="fill">
+        <mat-label for="passing">Pase:</mat-label>
+        <input matInput type="number" id="passing"
+            formControlName="passing"
+            (blur)="updateErrorMessage()"
+            placeholder="50"
+            (input)="onInput($event)" />
+        @if (playerForm.get('passing')?.invalid) {
+        <mat-error>{{errorMessage['passing']()}}</mat-error>
+        }
+        <mat-hint align="end">0-100</mat-hint>
+    </mat-form-field>
+    <!--     
     <div>
         <label for="passing">Pase:</label>
         <input type="number" id="passing" formControlName="passing">
-    </div>
+    </div> -->
 
     <div>
         <label for="dribbling">Regate:</label>
