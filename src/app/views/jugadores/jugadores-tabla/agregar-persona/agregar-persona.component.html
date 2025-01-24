@@ -14,12 +14,12 @@
 <form class="form-contenedor" [formGroup]="playerForm">
     <mat-form-field class="form-campo" appearance="fill">
         <mat-label class="form-etiqueta" for="long_name">
-            {{ this.fields[trackByNombre('long_name')].viewName }}
+            {{ namesByCampo('viewName','long_name') }}
         </mat-label>
         <input class="form-input" matInput id="long_name"
             formControlName="long_name"
             (blur)="updateErrorMessage('long_name')"
-            placeholder="{{ this.fields[trackByNombre('long_name')].viewName}}"
+            placeholder="{{ namesByCampo('viewName','long_name') }}"
             (input)="onInput($event)" />
         <!--         
         <mat-error class="input-error"
@@ -38,7 +38,7 @@
         <mat-label class="form-etiqueta" for="age">Edad:</mat-label>
         <input matInput type="number" id="age"
             formControlName="age"
-            (blur)="updateErrorMessage('age')"
+            (blur)="updateErrorMessage('age'); onBlur($event)"
             placeholder="16" />
         @if (playerForm.get('age')?.invalid) {
         <mat-error>{{errorMessage['age']()}}</mat-error>
@@ -226,7 +226,7 @@
         </mat-label>
         <mat-select class="form-select" id="preferred_foot"
             formControlName="preferred_foot"
-            (blur)="updateErrorMessage('preferred_foot')">
+            (blur)="updateErrorMessage('overall')">
             <mat-option value="Left">Izquierdo</mat-option>
             <mat-option value="Rigth">Derecho</mat-option>
         </mat-select>

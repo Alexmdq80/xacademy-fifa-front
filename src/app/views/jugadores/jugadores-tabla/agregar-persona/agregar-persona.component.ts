@@ -21,7 +21,6 @@ interface ErrorMessage {
   [key: string]: WritableSignal<string>; 
 }
 
-
 @Component({
   selector: 'app-agregar-persona',
   imports: [
@@ -45,94 +44,82 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
   fields: JugadorField[] = [];
 
   formulario: any = {};
-  
-  protected readonly value: Valores = { long_name: signal(''),
-                               nationality_name: signal(''),
-                               club_name: signal(''),
-                               player_face_url: signal(''),
-                               pace: signal(''),
-                               passing: signal('')
-                             };
-                             
-  errorMessage: ErrorMessage = { 
-                  long_name: signal(''),
-                  age: signal(''),
-                  gender: signal(''),
-                  height_cm: signal(''),
-                  weight_kg: signal(''),
-                  nationality_name: signal(''),
-                  club_name: signal(''),
-                  fifa_version: signal(''),
-                  fifa_update: signal(''),
-                  player_face_url: signal(''),
-                  player_positions: signal(''),
-                  value_eur: signal(''),
-                  wage_eur: signal(''),
-                  potential: signal(''),
-                  overall: signal(''),
-                  preferred_foot: signal(''),
-                  weak_foot: signal(''),
-                  skill_moves: signal(''),
-                  international_reputation: signal(''),
-                  work_rate: signal(''),
-                  body_type: signal(''),
-                  pace: signal(''),
-                  shooting: signal(''),
-                  passing: signal(''),
-                  dribbling: signal(''),
-                  defending: signal(''),
-                  physic:signal(''),
-                  attacking_crossing: signal(''),
-                  attacking_finishing: signal(''),
-                  attacking_heading_accuracy: signal(''),
-                  attacking_short_passing: signal(''), 
-                  attacking_volleys: signal(''),
-                  skill_dribbling: signal(''),
-                  skill_curve: signal(''),
-                  skill_fk_accuracy: signal(''),
-                  skill_long_passing: signal(''),
-                  skill_ball_control: signal(''),
-                  movement_acceleration: signal(''),
-                  movement_sprint_speed: signal(''),
-                  movement_agility: signal(''),
-                  movement_reactions: signal(''),
-                  movement_balance: signal(''),
-                  power_shot_power: signal(''),
-                  power_jumping: signal(''),
-                  power_stamina: signal(''),
-                  power_strength: signal(''),
-                  power_long_shots: signal(''),
-                  mentality_aggression: signal(''),
-                  mentality_interceptions: signal(''),
-                  mentality_positioning: signal(''),
-                  mentality_vision: signal(''),
-                  mentality_penalties: signal(''),
-                  mentality_composure: signal(''),
-                  defending_marking: signal(''),
-                  defending_standing_tackle: signal(''),
-                  defending_sliding_tackle: signal(''),
-                  goalkeeping_diving: signal(''),
-                  goalkeeping_handling: signal(''),
-                  goalkeeping_kicking: signal(''),
-                  goalkeeping_positioning: signal(''),
-                  goalkeeping_reflexes: signal(''),
-                  goalkeeping_speed: signal(''),
-                  player_traits: signal('')
-                };
+  protected readonly value: Valores = { };
+  // protected readonly value: Valores = { long_name: signal(''),
+  //                              nationality_name: signal(''),
+  //                              club_name: signal(''),
+  //                              player_face_url: signal(''),
+  //                              pace: signal(''),
+  //                              passing: signal('')
+  //                            };
+  errorMessage: ErrorMessage = { };
+  // errorMessage: ErrorMessage = { 
+  //                 long_name: signal(''),
+  //                 age: signal(''),
+  //                 gender: signal(''),
+  //                 height_cm: signal(''),
+  //                 weight_kg: signal(''),
+  //                 nationality_name: signal(''),
+  //                 club_name: signal(''),
+  //                 fifa_version: signal(''),
+  //                 fifa_update: signal(''),
+  //                 player_face_url: signal(''),
+  //                 player_positions: signal(''),
+  //                 value_eur: signal(''),
+  //                 wage_eur: signal(''),
+  //                 potential: signal(''),
+  //                 overall: signal(''),
+  //                 preferred_foot: signal(''),
+  //                 weak_foot: signal(''),
+  //                 skill_moves: signal(''),
+  //                 international_reputation: signal(''),
+  //                 work_rate: signal(''),
+  //                 body_type: signal(''),
+  //                 pace: signal(''),
+  //                 shooting: signal(''),
+  //                 passing: signal(''),
+  //                 dribbling: signal(''),
+  //                 defending: signal(''),
+  //                 physic:signal(''),
+  //                 attacking_crossing: signal(''),
+  //                 attacking_finishing: signal(''),
+  //                 attacking_heading_accuracy: signal(''),
+  //                 attacking_short_passing: signal(''), 
+  //                 attacking_volleys: signal(''),
+  //                 skill_dribbling: signal(''),
+  //                 skill_curve: signal(''),
+  //                 skill_fk_accuracy: signal(''),
+  //                 skill_long_passing: signal(''),
+  //                 skill_ball_control: signal(''),
+  //                 movement_acceleration: signal(''),
+  //                 movement_sprint_speed: signal(''),
+  //                 movement_agility: signal(''),
+  //                 movement_reactions: signal(''),
+  //                 movement_balance: signal(''),
+  //                 power_shot_power: signal(''),
+  //                 power_jumping: signal(''),
+  //                 power_stamina: signal(''),
+  //                 power_strength: signal(''),
+  //                 power_long_shots: signal(''),
+  //                 mentality_aggression: signal(''),
+  //                 mentality_interceptions: signal(''),
+  //                 mentality_positioning: signal(''),
+  //                 mentality_vision: signal(''),
+  //                 mentality_penalties: signal(''),
+  //                 mentality_composure: signal(''),
+  //                 defending_marking: signal(''),
+  //                 defending_standing_tackle: signal(''),
+  //                 defending_sliding_tackle: signal(''),
+  //                 goalkeeping_diving: signal(''),
+  //                 goalkeeping_handling: signal(''),
+  //                 goalkeeping_kicking: signal(''),
+  //                 goalkeeping_positioning: signal(''),
+  //                 goalkeeping_reflexes: signal(''),
+  //                 goalkeeping_speed: signal(''),
+  //                 player_traits: signal('')
+  //               };
 
-  protected onInput(event: Event) {
-    const target = event.target as HTMLInputElement;
-
-    // event.target as HTMLInputElement).value
-  
-    console.log(this.fields);
-    for (const field of this.fields) {
-      if (target.id === field.name) {
-        this.value[target.id].set(target.value);
-        break;
-      }
-    }  
-
+ 
 
     // if (target.id === 'longName') {
     //   this.value[target.id].set(target.value);
@@ -152,7 +139,7 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     //     target.value = '100';
     //   }
     // }
-  }
+  
   
   playerForm: FormGroup;
   constructor(private fb: FormBuilder,
@@ -171,16 +158,45 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
         }
       }    
     ));
-    // console.log(this.fields);
     for (const field of this.fields) {
-      console.log(field);
-      this.formulario[field.name] = ['', [Validators.required, Validators.minLength(field.minLen), Validators.maxLength(field.maxLen)]];
+      // *** ARMAR MENSAJES DE ERROR / VALIDADORES / Y SINGALS PARA INPUTS**
+
+      this.errorMessage[field.name] = signal('');     
+
+      if (field.type === 'string') {
+        this.value[field.name] = signal('');         
+      }
+      // *****************
+      let validadores: ValidationErrors[] = [];
+      
+      if (field.required) {
+         validadores.push(Validators.required);
+      }
+      if (field.esNombre) {
+        validadores.push(Validators.pattern(/^[a-zA-ZçÇà-ÿ'`'\s]+$/));
+      }
+
+      if (field.minLen != -1 || field.maxLen != -1) {
+        validadores.push(Validators.minLength(field.minLen));
+        validadores.push(Validators.maxLength(field.maxLen));
+      } 
+
+      if (field.minVal != -1 || field.maxVal != -1) {
+        validadores.push(Validators.min(field.minVal));
+        validadores.push(Validators.max(field.maxVal));
+      } 
+      // Validators.minLength(field.minLen), Validators.maxLength(field.maxLen);
+      // console.log(validadores);
+
+      this.formulario[field.name] = ['', validadores];
+      // console.log(this.formulario);
+
+      
     }  
-    // console.log(this.formulario);
 
     this.playerForm = this.fb.group(this.formulario);
     // this.playerForm = this.fb.group({
-    //   long_name: ['', [Validators.required, Validators.maxLength(255),Validators.pattern(/^[a-zA-ZçÇà-ÿ'`'\s]+$/)]],
+    //   long_name: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(255),Validators.pattern(/^[a-zA-ZçÇà-ÿ'`'\s]+$/)]],
     //   age: ['', [Validators.required, Validators.min(16), Validators.max(65)]],
     //   gender: ['', Validators.required], 
     //   height_cm: ['', [Validators.required, Validators.min(120), Validators.max(235)]], 
@@ -244,10 +260,26 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     //   goalkeeping_speed: ['', Validators.required, Validators.min(0), Validators.max(99)],
     //   player_traits: [''], 
     // });
+   
+       //  SUSCRIPCIONES???
+    // for (const field of this.fields) {
+    //   if (this.playerForm.get(field.name)){
+    //     this.playerForm.get(field.name)?.valueChanges.pipe(takeUntilDestroyed()).subscribe(value => {
+    //     console.log('El valor del campo ' + field.name + ' ha cambiado a: ' + value);
+    //     });
+    //   };
+    // }
+    // this.playerForm.valueChanges.pipe(takeUntilDestroyed()).subscribe(value => {
+    //   console.log(value);
+    // });
+   
+      // *****
 
-    merge(this.playerForm.statusChanges, this.playerForm.valueChanges)
-    .pipe(takeUntilDestroyed())
-    .subscribe(() => this.updateErrorMessage(''));
+      
+    // merge(this.playerForm.statusChanges, this.playerForm.valueChanges)
+    // .pipe(takeUntilDestroyed())
+    // .subscribe(() => this.updateErrorMessage(''));
+
 
   };
 
@@ -255,7 +287,9 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     this.jugadorPositions = this.jugadorDatosServicio.getJugadorPositions();
     this.jugadorWorkRate = this.jugadorDatosServicio.getJugadorWorkRate();
     this.jugadorBodyType = this.jugadorDatosServicio.getJugadorBodyType();
-     
+    
+
+
     // this.subscriptionField.add(this.jugadorFieldService.getFields().subscribe({
     //     next: res => {
     //       console.log("Se reciben datos de los atributos.");
@@ -268,6 +302,56 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     // ));
 
 
+  }
+
+  protected onInput(event: Event) {
+    const target = event.target as HTMLInputElement;
+
+    // event.target as HTMLInputElement).value
+    // console.log(this.fields);
+    for (const field of this.fields) {
+      if (target.id === field.name) {
+        if (field.type === 'integer') {
+          if (Number(target.value) < field.minVal) {
+            this.value[target.id].set(String(field.minVal));
+            target.value = String(field.minVal);
+          } else if (Number(target.value) > field.maxVal) {
+            this.value[target.id].set(String(field.maxVal));
+            target.value = String(field.maxVal);
+          }
+        } else {
+          this.value[target.id].set(target.value);
+        } 
+        this.updateErrorMessage(field.name);
+        break;
+      }
+    }  
+  }
+
+  protected onBlur(event: Event) {
+    const target = event.target as HTMLInputElement;
+  
+    // event.target as HTMLInputElement).value
+    // console.log(this.fields);
+    for (const field of this.fields) {
+      if (target.id === field.name) {
+        if (field.type === 'integer') {
+          if (target.value) {
+            if (Number(target.value) < field.minVal) {
+              // this.value[target.id].set(String(field.minVal));
+              target.value = String(field.minVal);
+            } else if (Number(target.value) > field.maxVal) {
+              // this.value[target.id].set(String(field.maxVal));
+              target.value = String(field.maxVal);
+            }
+          }  
+        } 
+        // else {
+        //    this.value[target.id].set(target.value);
+        // } 
+        break;
+      }
+    } 
   }
 
   // async getFields() {
@@ -292,29 +376,98 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     
   onSubmit() {
 
-
   }
 
-  trackByNombre(nombre: string): number {
-    const indiceField = this.fields.findIndex(f => f.name === nombre);
-    // return this.fields[indiceField].viewName; 
-    return indiceField;
-  }
-
-  updateErrorMessage(nombre: string) {
-    // console.log(this.fields);
-    if (this.playerForm.get(nombre)) {
-      if (this.playerForm.get(nombre)?.hasError('required')) {
-        this.errorMessage[nombre].set('Debe ingresar ' + this.fields[this.trackByNombre(nombre)].viewName );
-      } else if (this.playerForm.get(nombre)?.hasError('minlength')) { 
-          this.errorMessage[nombre].set(this.fields[this.trackByNombre(nombre)].viewName + ' debe tener al menos ' + this.fields[this.trackByNombre(nombre)].minLen + ' caracteres');
-        } else if (this.playerForm.get(nombre)?.hasError('maxlength')) {
-        this.errorMessage[nombre].set(this.fields[this.trackByNombre(nombre)].viewName + ' debe tener menos de ' + this.fields[this.trackByNombre(nombre)].maxLen + ' caracteres');
-      } else {
-        this.errorMessage[nombre].set('Error sin definir en ' + this.fields[this.trackByNombre(nombre)].viewName);
-      }
-    }
   
+  trackByCampo(campo: string): number {
+    // const indiceField = this.fields.findIndex(f => f.name === campo);
+    // return this.fields[indiceField].viewName; 
+    return this.fields.findIndex(f => f.name === campo);
+  }
+
+  valorByCampo(campo: string, nombre: string): number {
+    let valor: number;
+
+    const id = this.trackByCampo(nombre);
+
+    if (campo === 'minLen') {
+      valor = this.fields[id].minLen;   
+    } else if (campo === 'maxLen') {
+      valor = this.fields[id].maxLen;   
+    } else if (campo === 'minVal') {
+      valor = this.fields[id].minVal;   
+    } else if (campo === 'maxVal') {
+      valor = this.fields[id].maxVal;   
+    }  
+    else {
+      valor = -1;
+    }
+
+    return valor;
+
+  }
+
+
+  booleanByCampo(campo: string, nombre: string): boolean {
+    let valor: boolean;
+
+    const id = this.trackByCampo(nombre);
+
+    if (campo === 'esfield.name') {
+      valor = this.fields[id].esNombre;   
+    } else if (campo === 'esSkill') {
+      valor = this.fields[id].esSkill;   
+    } else {
+      valor = false;
+    }
+
+    return valor;
+
+  }
+
+  namesByCampo(campo: string, nombre: string): string {
+    let valor;
+
+    const id = this.trackByCampo(nombre);
+ 
+    if (campo === 'viewName') {
+      valor = this.fields[id].viewName;
+    } else if (campo === 'name') {
+      valor = this.fields[id].name;   
+    } else {
+      valor = ''
+    }
+
+    return valor;
+
+  }
+ 
+  
+  updateErrorMessage(nombre: string) {
+      
+    // console.log('error en ' + field.name);
+    // for (let field of this.fields) {  
+  // console.log(nombre);
+
+  if (this.playerForm.get(nombre)) { 
+    if (this.playerForm.get(nombre)?.hasError('required')) {
+      this.errorMessage[nombre].set('Debe ingresar ' + this.namesByCampo('viewName', nombre));
+    } else if (this.playerForm.get(nombre)?.hasError('minlength')) { 
+      this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener al menos ' + this.valorByCampo('minLen', nombre) + ' caracteres');
+    } else if (this.playerForm.get(nombre)?.hasError('maxlength')) {
+      this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener menos de ' + this.valorByCampo('maxLen', nombre) + ' caracteres');
+    } else if (this.playerForm.get(nombre)?.hasError('min')) { 
+      this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener un mínimo de ' + this.valorByCampo('minVal', nombre));
+    } else if (this.playerForm.get(nombre)?.hasError('max')) {
+      this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener un máximo de ' + this.valorByCampo('maxVal', nombre));
+    } else if (this.playerForm.get(nombre)?.hasError('pattern')) {
+      this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' no es válido');
+    } else {
+      this.errorMessage[nombre].set('Error sin definir en ' + this.namesByCampo('viewName', nombre));
+    }
+  }
+    // }
+  }
   
 
     // for (const field of this.fields) {
@@ -333,13 +486,13 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     //   }
     // }
     // // if (this.playerForm.get('long_name')?.hasError('required')) {
-    //   this.errorMessage['long_name'].set('Debe ingresar el nombre y el apellido');
+    //   this.errorMessage['long_name'].set('Debe ingresar el field.name y el apellido');
     // } else if (this.playerForm.get('long_name')?.hasError('pattern')) {
-    //   this.errorMessage['long_name'].set('No es un nombre válido');
+    //   this.errorMessage['long_name'].set('No es un field.name válido');
     // } else if (this.playerForm.get('long_name')?.hasError('maxlength')) {
     //   this.errorMessage['long_name'].set('Supera la cantidad de caracteres permitidos');
     // } else {
-    //   this.errorMessage['long_name'].set('Error sin definir en Nombre y Apellido');
+    //   this.errorMessage['long_name'].set('Error sin definir en field.name y Apellido');
     // }
 
     // if (this.playerForm.get('age')?.hasError('required')) {
@@ -495,7 +648,7 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     //   this.errorMessage['shooting'].set('Error sin definir en Disparo');
     // }
     
-  }
+  
 //  slider_label(value:number): string {
 
 //     return `${value}`;
@@ -525,7 +678,7 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     // return `${jugadorBodyType[value].view}`;
 
   // }
-  // get nombre() {
+  // get field.name() {
   //   return this.playerForm.get('longName');
   // };
 
