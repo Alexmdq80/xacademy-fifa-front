@@ -43,6 +43,8 @@ export class JugadorFieldService {
                  esDefendSkill: field.group.find(c => c === 'defensa')? true:false,
                  esGoalKeepingSkill: field.group.find(c => c === 'arco')? true:false,
                  esMentalitySkill: field.group.find(c => c === 'habilidad_actitud')? true:false,
+                 esJuego: field.group.find(c => c === 'juego')? true:false,
+                 esGeneral: field.group.find(c => c === 'general')? true:false,
                 }))
             ), 
             shareReplay(1)

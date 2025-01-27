@@ -1,5 +1,5 @@
 <form class="form-contenedor" [formGroup]="playerForm[0]"
-    *ngFor="let campo of campos[0]; let i = index">
+    *ngFor="let campo of campos[0];">
 
     <mat-form-field *ngIf="campo.esCadena" class="form-campo"
         appearance="fill">
@@ -9,7 +9,8 @@
         <input class="form-input" matInput id={{campo.name}}
             formControlName="{{campo.name}}"
             placeholder="{{ campo.sugerencia }}"
-            (input)="onInput($event)" />
+            (input)="onInput($event)"
+            (blur)="updateErrorMessage()" />
 
         @if (playerForm[0].get(campo.name)?.invalid) {
         <mat-error>{{errorMessage[campo.name]()}}</mat-error>
@@ -25,6 +26,7 @@
         <input matInput type="number" id={{campo.name}}
             formControlName="{{campo.name}}"
             (input)="onInput($event)"
+            (blur)="updateErrorMessage()"
             placeholder="{{ campo.sugerencia }}" />
         @if (playerForm[0].get(campo.name)?.invalid) {
         <mat-error>{{errorMessage[campo.name]()}}</mat-error>
@@ -38,9 +40,12 @@
             namesByCampo('viewName', campo.name) }}
         </mat-label>
         <mat-select class="form-select" id={{campo.name}}
-            formControlName="{{campo.name}}">
-            <mat-option value="Male">Masculino</mat-option>
-            <mat-option value="Female">Femenino</mat-option>
+            formControlName="{{campo.name}}"
+            (blur)="updateErrorMessage()">
+            <mat-option
+                *ngFor="let opcion of opciones[campo.name];"
+                value="opcion.codigo">{{ opcion.view }}
+            </mat-option>
         </mat-select>
         @if (playerForm[0].get(campo.name)?.invalid) {
         <mat-error>{{errorMessage[campo.name]()}}</mat-error>
@@ -51,7 +56,7 @@
 </form>
 
 <form class="form-contenedor" [formGroup]="playerForm[0]"
-    *ngFor="let campo of campos[1]; let i = index">
+    *ngFor="let campo of campos[1];">
 
     <mat-form-field *ngIf="campo.esCadena" class="form-campo"
         appearance="fill">
@@ -61,6 +66,7 @@
         <input class="form-input" matInput id={{campo.name}}
             formControlName="{{campo.name}}"
             placeholder="{{ campo.sugerencia }}"
+            (blur)="updateErrorMessage()"
             (input)="onInput($event)" />
 
         @if (playerForm[0].get(campo.name)?.invalid) {
@@ -76,6 +82,7 @@
             namesByCampo('viewName', campo.name) }}</mat-label>
         <input matInput type="number" id={{campo.name}}
             formControlName="{{campo.name}}"
+            (blur)="updateErrorMessage()"
             (input)="onInput($event)"
             placeholder="{{ campo.sugerencia }}" />
         @if (playerForm[0].get(campo.name)?.invalid) {
@@ -90,9 +97,12 @@
             namesByCampo('viewName', campo.name) }}
         </mat-label>
         <mat-select class="form-select" id={{campo.name}}
-            formControlName="{{campo.name}}">
-            <mat-option value="Male">Masculino</mat-option>
-            <mat-option value="Female">Femenino</mat-option>
+            formControlName="{{campo.name}}"
+            (blur)="updateErrorMessage()">
+            <mat-option
+                *ngFor="let opcion of opciones[campo.name];"
+                value="opcion.codigo">{{ opcion.view }}
+            </mat-option>
         </mat-select>
         @if (playerForm[0].get(campo.name)?.invalid) {
         <mat-error>{{errorMessage[campo.name]()}}</mat-error>
@@ -108,5 +118,47 @@
         </mat-label>
         <input matSliderThumb>
     </mat-slider>
+
+    <mat-form-field *ngIf="campo.esMoneda" class="form-campo-numero"
+        appearance="fill"
+        floatLabel="always">
+        <mat-label for="campo.name"> {{ namesByCampo('viewName', campo.name)
+            }}</mat-label>
+        <input class="form-campo-euro" matInput type="number" id={{campo.name}}
+            formControlName="{{campo.name}}"
+            (blur)="updateErrorMessage()"
+            placeholder="{{ campo.sugerencia }}" />
+        <span matTextPrefix>€&nbsp;</span>
+        <span matTextSuffix>.00</span>
+        @if (playerForm[0].get(campo.name)?.invalid) {
+        <mat-error>{{errorMessage[campo.name]()}}</mat-error>
+        }
+        <mat-hint align="end">{{campo.minVal}}-{{campo.maxVal}}</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="campo.esMultiple" class="form-campo-multiselect"
+        appearance="fill">
+        <mat-label class="form-etiqueta" for="campo.name"> {{
+            namesByCampo('viewName', campo.name)
+            }}
+        </mat-label>
+        <mat-select class="form-select" id={{campo.name}}
+            formControlName="{{campo.name}}"
+            multiple
+            (blur)="updateErrorMessage()">
+            <mat-option
+                *ngFor="let opcion of opciones[campo.name];"
+                value="opcion.codigo">{{ opcion.view }}
+            </mat-option>
+            <!-- <mat-option *ngFor="let position of jugadorPositions"
+                value="{{ position.codigo }}">
+                {{ position.view }}
+            </mat-option> -->
+        </mat-select>
+        @if (playerForm[0].get(campo.name)?.invalid) {
+        <mat-error>{{errorMessage[campo.name]()}}</mat-error>
+        }
+        <mat-hint align="end">Menú Desplegable ^</mat-hint>
+    </mat-form-field>
 
 </form>

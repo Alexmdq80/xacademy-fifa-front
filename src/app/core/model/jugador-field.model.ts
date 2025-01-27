@@ -25,4 +25,6 @@ export interface JugadorField {
     esDefendSkill: boolean,
     esGoalKeepingSkill: boolean,
     esMentalitySkill: boolean
+    esJuego: boolean,
+    esGeneral: boolean
 }
