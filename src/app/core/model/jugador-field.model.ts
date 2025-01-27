@@ -3,11 +3,26 @@ export interface JugadorField {
     type: string,
     viewName: string,
     required: boolean,
+    contenido: [],
+    sugerencia: string,
     group: [],
-    esSkill: boolean
-    esNombre: boolean,
     minVal: number,
     maxVal: number,
     minLen: number,
-    maxLen: number
+    maxLen: number,
+    esNumero_pequenio: boolean,
+    esNumero_mediano: boolean,
+    esNombre: boolean,
+    esCadena: boolean,
+    esUnico: boolean,
+    esMultiple: boolean,
+    esMoneda: boolean,
+    esRango_categorias: boolean,
+    esSkill: boolean,
+    esGlobalSkill: boolean,
+    esSpecifSkill: boolean,
+    esAttackSkill: boolean
+    esDefendSkill: boolean,
+    esGoalKeepingSkill: boolean,
+    esMentalitySkill: boolean
 }

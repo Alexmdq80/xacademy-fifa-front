@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormGroup, Validators, ValidationErrors  } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators,AbstractControl, ValidationErrors  } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import { firstValueFrom, map, merge} from 'rxjs';
+import { merge} from 'rxjs';
 import { JugadorDatosService } from '../../../../core/jugador-datos.service';
 import { MatSliderModule } from '@angular/material/slider';
 import { JugadorFieldService } from '../../../../core/jugadorField.service';
@@ -42,8 +42,8 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
   jugadorBodyType: any;
   subscriptionField = new Subscription();
   fields: JugadorField[] = [];
-  campos: any[][] = [ [{}] ];
-  formulario: any[] = [ {} ];
+
+  formulario: any = {};
   protected readonly value: Valores = { };
   // protected readonly value: Valores = { long_name: signal(''),
   //                              nationality_name: signal(''),
@@ -98,7 +98,7 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
   //                 movement_balance: signal(''),
   //                 power_shot_power: signal(''),
   //                 power_jumping: signal(''),
-  //                 power_stamina: signpushal(''),
+  //                 power_stamina: signal(''),
   //                 power_strength: signal(''),
   //                 power_long_shots: signal(''),
   //                 mentality_aggression: signal(''),
@@ -141,10 +141,7 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     // }
   
   
-  playerForm: FormGroup[] = [];
-  // playerFormAnterior; 
-  // controlNameChanged:string = '';
-
+  playerForm: FormGroup;
   constructor(private fb: FormBuilder,
               private jugadorDatosServicio: JugadorDatosService,
               private jugadorFieldService: JugadorFieldService
@@ -161,21 +158,14 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
         }
       }    
     ));
-    let i = 0;
-    let n = 0;
-    this.campos.push();
-    this.campos[1] = [{}];
-    
-    // this.campos.push();
-    
     for (const field of this.fields) {
       // *** ARMAR MENSAJES DE ERROR / VALIDADORES / Y SINGALS PARA INPUTS**
-      // console.log(field.name);
-      
+
       this.errorMessage[field.name] = signal('');     
-      if (field.type === 'string') {
+
+      // if (field.type === 'string') {
         this.value[field.name] = signal('');         
-      }
+      // }
       // *****************
       let validadores: ValidationErrors[] = [];
       
@@ -195,27 +185,16 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
         validadores.push(Validators.min(field.minVal));
         validadores.push(Validators.max(field.maxVal));
       } 
+      // Validators.minLength(field.minLen), Validators.maxLength(field.maxLen);
+      // console.log(validadores);
 
-      if (field.group.find(g => g === 'personal')){
-        this.formulario[0][field.name] = ['', validadores];
-        this.campos[0][i] = field;
-        i += 1;
-      } 
-      if (field.group.find(g => g === 'general')){
-        this.formulario[0][field.name] = ['', validadores]
-        this.campos[1][n] = field;
-        n += 1;
-      } 
+      this.formulario[field.name] = ['', validadores];
       // console.log(this.formulario);
+
       
     }  
-    // console.log(this.formulario[0]);
-    console.log(this.campos[0]);
-    
-    console.log(this.campos[1]);
-    this.playerForm[0] = this.fb.group(this.formulario[0]);
-    // this.playerForm[1] = this.fb.group(this.formulario[1]);
 
+    this.playerForm = this.fb.group(this.formulario);
     // this.playerForm = this.fb.group({
     //   long_name: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(255),Validators.pattern(/^[a-zA-ZçÇà-ÿ'`'\s]+$/)]],
     //   age: ['', [Validators.required, Validators.min(16), Validators.max(65)]],
@@ -296,32 +275,12 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
    
       // *****
 
-    // this.playerFormAnterior = this.playerForm[0].value; 
-    // this.controlNameChanged = '';
-
-    // merge(this.playerForm[0].statusChanges, this.playerForm[0].valueChanges)
-    // .pipe(
-    //   map(valorActual => {
-    //     for (const controlName in valorActual) {
-    //       console.log(valorActual);
-    //       // console.log(this.playerFormAnterior);
-    //       if (valorActual[controlName] !== this.playerFormAnterior[controlName] ) {
-    //            // console.log(`El control '${controlName}' ha cambiado a:`, valorActual[controlName]);
-    //           this.controlNameChanged = controlName;
-    //           console.log(controlName);
-    //           console.log(this.playerForm[0].value['age'])
-    //           break;
-    //       }
-    //     }
-    //   }
-    //   )
-    // )
+      
+    // merge(this.playerForm.statusChanges, this.playerForm.valueChanges)
     // .pipe(takeUntilDestroyed())
-    // .subscribe(() => this.updateErrorMessage( this.controlNameChanged ));
+    // .subscribe(() => this.updateErrorMessage(''));
 
-    merge(this.playerForm[0].statusChanges, this.playerForm[0].valueChanges)
-    .pipe(takeUntilDestroyed())
-    .subscribe(() => this.updateErrorMessage());
+
   };
 
   ngOnInit() {
@@ -344,13 +303,6 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
 
 
   }
-  // protected onBlur(event: Event) {
-  //   // const target = event.target as HTMLInputElement;
-
-  //   this.playerFormAnterior = this.playerForm[0].value; 
-  //   // this.updateErrorMessage(target.id);
-    
-  // }
 
   protected onInput(event: Event) {
     const target = event.target as HTMLInputElement;
@@ -359,51 +311,48 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     // console.log(this.fields);
     for (const field of this.fields) {
       if (target.id === field.name) {
-        if (field.type === 'integer' && target.value) {
+        if (field.type === 'integer') {
           if (Number(target.value) < field.minVal) {
-            // this.value[target.id].set(String(field.minVal));
-            // target.value = String(field.minVal);
-            this.playerForm[0].patchValue( { [target.id]: field.minVal });
+            this.value[target.id].set(String(field.minVal));
+            target.value = String(field.minVal);
           } else if (Number(target.value) > field.maxVal) {
-            // this.value[target.id].set(String(field.maxVal));
-            // target.value = String(field.maxVal);
-            this.playerForm[0].patchValue( { [target.id]: field.maxVal });
+            this.value[target.id].set(String(field.maxVal));
+            target.value = String(field.maxVal);
           }
-        } else if (target.value) {
+        } else {
           this.value[target.id].set(target.value);
-          this.playerForm[0].value[target.id] = target.value;
         } 
+        this.updateErrorMessage(field.name);
         break;
       }
     }  
-
-    // this.playerFormAnterior = this.playerForm[0].value;
-    // this.updateErrorMessage(target.id);
   }
 
-  // protected onBlur(event: Event) {
-  //   const target = event.target as HTMLInputElement;
-
-  //   // event.target as HTMLInputElement).value
-  //   // console.log(this.fields);
-  //   for (const field of this.fields) {
-  //     if (target.id === field.name) {
-  //       if (field.type === 'integer') {
-  //         if (Number(target.value) < field.minVal) {
-  //           // this.value[target.id].set(String(field.minVal));
-  //           target.value = String(field.minVal);
-  //         } else if (Number(target.value) > field.maxVal) {
-  //           // this.value[target.id].set(String(field.maxVal));
-  //           target.value = String(field.maxVal);
-  //         }
-  //       } else {
-  //         this.value[target.id].set(target.value);
-  //       } 
-  //       break;
-  //     }
-  //   }  
-  //   this.updateErrorMessage(target.id);
-  // }
+  protected onBlur(event: Event) {
+    const target = event.target as HTMLInputElement;
+  
+    // event.target as HTMLInputElement).value
+    // console.log(this.fields);
+    for (const field of this.fields) {
+      if (target.id === field.name) {
+        if (field.type === 'integer') {
+          if (target.value) {
+            if (Number(target.value) < field.minVal) {
+              // this.value[target.id].set(String(field.minVal));
+              target.value = String(field.minVal);
+            } else if (Number(target.value) > field.maxVal) {
+              // this.value[target.id].set(String(field.maxVal));
+              target.value = String(field.maxVal);
+            }
+          }  
+        } 
+        // else {
+        //    this.value[target.id].set(target.value);
+        // } 
+        break;
+      }
+    } 
+  }
 
   // async getFields() {
   //   try {
@@ -464,7 +413,7 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
 
     const id = this.trackByCampo(nombre);
 
-    if (campo === 'esNombre') {
+    if (campo === 'esfield.name') {
       valor = this.fields[id].esNombre;   
     } else if (campo === 'esSkill') {
       valor = this.fields[id].esSkill;   
@@ -494,51 +443,31 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
   }
  
   
-  updateErrorMessage() {
-    
-    for (let i = 0; i < this.campos.length; i++) {
-      console.log(this.campos[i]);
-      for (let campo of this.campos[i] ) {
-        let nombre = campo.name;
-        if (this.playerForm[0].get(nombre)) { 
-          if (this.playerForm[0].get(nombre)?.hasError('required')) {
-            this.errorMessage[nombre].set('Debe ingresar ' + this.namesByCampo('viewName', nombre));
-          } else if (this.playerForm[0].get(nombre)?.hasError('minlength')) { 
-            this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener al menos ' + this.valorByCampo('minLen', nombre) + ' caracteres');
-          } else if (this.playerForm[0].get(nombre)?.hasError('maxlength')) {
-            this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener menos de ' + this.valorByCampo('maxLen', nombre) + ' caracteres');
-          } else if (this.playerForm[0].get(nombre)?.hasError('min')) { 
-            this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener un mínimo de ' + this.valorByCampo('minVal', nombre));
-          } else if (this.playerForm[0].get(nombre)?.hasError('max')) {
-            this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener un máximo de ' + this.valorByCampo('maxVal', nombre));
-          } else if (this.playerForm[0].get(nombre)?.hasError('pattern')) {
-            this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' no es válido');
-          } else {
-            this.errorMessage[nombre].set('Error sin definir en ' + this.namesByCampo('viewName', nombre));
-          }
-        }
-      }
+  updateErrorMessage(nombre: string) {
+      
+    // console.log('error en ' + field.name);
+    // for (let field of this.fields) {  
+  // console.log(nombre);
+
+  if (this.playerForm.get(nombre)) { 
+    if (this.playerForm.get(nombre)?.hasError('required')) {
+      this.errorMessage[nombre].set('Debe ingresar ' + this.namesByCampo('viewName', nombre));
+    } else if (this.playerForm.get(nombre)?.hasError('minlength')) { 
+      this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener al menos ' + this.valorByCampo('minLen', nombre) + ' caracteres');
+    } else if (this.playerForm.get(nombre)?.hasError('maxlength')) {
+      this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener menos de ' + this.valorByCampo('maxLen', nombre) + ' caracteres');
+    } else if (this.playerForm.get(nombre)?.hasError('min')) { 
+      this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener un mínimo de ' + this.valorByCampo('minVal', nombre));
+    } else if (this.playerForm.get(nombre)?.hasError('max')) {
+      this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener un máximo de ' + this.valorByCampo('maxVal', nombre));
+    } else if (this.playerForm.get(nombre)?.hasError('pattern')) {
+      this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' no es válido');
+    } else {
+      this.errorMessage[nombre].set('Error sin definir en ' + this.namesByCampo('viewName', nombre));
     }
   }
-  // evaluarError(nombre: string) {
-  //   if (this.playerForm[0].get(nombre)) { 
-  //     if (this.playerForm[0].get(nombre)?.hasError('required')) {
-  //       this.errorMessage[nombre].set('Debe ingresar ' + this.namesByCampo('viewName', nombre));
-  //     } else if (this.playerForm[0].get(nombre)?.hasError('minlength')) { 
-  //       this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener al menos ' + this.valorByCampo('minLen', nombre) + ' caracteres');
-  //     } else if (this.playerForm[0].get(nombre)?.hasError('maxlength')) {
-  //       this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener menos de ' + this.valorByCampo('maxLen', nombre) + ' caracteres');
-  //     } else if (this.playerForm[0].get(nombre)?.hasError('min')) { 
-  //       this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener un mínimo de ' + this.valorByCampo('minVal', nombre));
-  //     } else if (this.playerForm[0].get(nombre)?.hasError('max')) {
-  //       this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener un máximo de ' + this.valorByCampo('maxVal', nombre));
-  //     } else if (this.playerForm[0].get(nombre)?.hasError('pattern')) {
-  //       this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' no es válido');
-  //     } else {
-  //       this.errorMessage[nombre].set('Error sin definir en ' + this.namesByCampo('viewName', nombre));
-  //     }
-  //   }
-  // }
+    // }
+  }
   
 
     // for (const field of this.fields) {

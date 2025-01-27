@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { JugadorField } from './model/jugador-field.model';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { shareReplay } from 'rxjs';
 
@@ -19,12 +19,37 @@ export class JugadorFieldService {
     // console.log(this.getFields$);
     if (this.getFields$ === undefined) {
         // console.log('Trae atributos haciendo petición al servidor');
-        this.getFields$ = this.httpClient.get<JugadorField[]>(this.apiUrl).pipe(shareReplay(1));
-    // } else {
-    //   console.log('Trae atributos SIN HACER petición al servidor');
-
-    }
-    return this.getFields$;
+        // this.getFields$ = this.httpClient.get<JugadorField[]>(this.apiUrl).pipe(shareReplay(1));
+   
+        this.getFields$ = this.httpClient.get<JugadorField[]>(this.apiUrl)
+          .pipe(
+            map(
+             fields => 
+                fields.map(field => ({ 
+                 ...field, 
+                 esCadena: field.contenido.find(c => c === 'cadena')? true:false, 
+                 esNombre: field.contenido.find(c => c === 'nombre')? true:false, 
+                 esNumero_pequenio: field.contenido.find(c => c === 'número_pequeño')? true:false, 
+                 esNumero_mediano: field.contenido.find(c => c === 'número_mediano')? true:false, 
+                 esMoneda: field.contenido.find(c => c === 'moneda')? true:false, 
+                 esUnico: field.contenido.find(c => c === 'único')? true:false,
+                 esMultiple: field.contenido.find(c => c === 'múltiple')? true:false,
+                 esRango_categorias: field.contenido.find(c => c === 'rango_categorías')? true:false,
+                 esUrl: field.contenido.find(c => c === 'url')? true:false,
+                 esSkill: field.group.find(c => c === 'habilidad')? true:false,
+                 esGlobalSkill: field.group.find(c => c === 'habilidad_global')? true:false,
+                 esSpecifSkill: field.group.find(c => c === 'habilidad_específica')? true:false,
+                 esAttackSkill: field.group.find(c => c === 'ataque')? true:false,
+                 esDefendSkill: field.group.find(c => c === 'defensa')? true:false,
+                 esGoalKeepingSkill: field.group.find(c => c === 'arco')? true:false,
+                 esMentalitySkill: field.group.find(c => c === 'habilidad_actitud')? true:false,
+                }))
+            ), 
+            shareReplay(1)
+          );
+        }
+   
+        return this.getFields$;
   }
 
 }
