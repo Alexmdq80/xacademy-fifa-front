@@ -29,12 +29,13 @@ export class JugadorFieldService {
                  ...field, 
                  esCadena: field.contenido.find(c => c === 'cadena')? true:false, 
                  esNombre: field.contenido.find(c => c === 'nombre')? true:false, 
-                 esNumero_pequenio: field.contenido.find(c => c === 'número_pequeño')? true:false, 
-                 esNumero_mediano: field.contenido.find(c => c === 'número_mediano')? true:false, 
+                 esAlfanumerico: field.contenido.find(c => c === 'alfanumérico')? true:false, 
+                 esNumeroPequenio: field.contenido.find(c => c === 'número_pequeño')? true:false, 
+                 esNumeroMediano: field.contenido.find(c => c === 'número_mediano')? true:false, 
                  esMoneda: field.contenido.find(c => c === 'moneda')? true:false, 
                  esUnico: field.contenido.find(c => c === 'único')? true:false,
                  esMultiple: field.contenido.find(c => c === 'múltiple')? true:false,
-                 esRango_categorias: field.contenido.find(c => c === 'rango_categorías')? true:false,
+                 esRangoCategorias: field.contenido.find(c => c === 'rango_categorías')? true:false,
                  esUrl: field.contenido.find(c => c === 'url')? true:false,
                  esSkill: field.group.find(c => c === 'habilidad')? true:false,
                  esGlobalSkill: field.group.find(c => c === 'habilidad_global')? true:false,
@@ -45,6 +46,7 @@ export class JugadorFieldService {
                  esMentalitySkill: field.group.find(c => c === 'habilidad_actitud')? true:false,
                  esJuego: field.group.find(c => c === 'juego')? true:false,
                  esGeneral: field.group.find(c => c === 'general')? true:false,
+                 esPersonal: field.group.find(c => c === 'personal')? true:false
                 }))
             ), 
             shareReplay(1)

@@ -10,14 +10,15 @@ export interface JugadorField {
     maxVal: number,
     minLen: number,
     maxLen: number,
-    esNumero_pequenio: boolean,
-    esNumero_mediano: boolean,
+    esNumeroPequenio: boolean,
+    esNumeroMediano: boolean,
     esNombre: boolean,
+    esAlfanumerico: boolean,
     esCadena: boolean,
     esUnico: boolean,
     esMultiple: boolean,
     esMoneda: boolean,
-    esRango_categorias: boolean,
+    esRangoCategorias: boolean,
     esSkill: boolean,
     esGlobalSkill: boolean,
     esSpecifSkill: boolean,
@@ -26,5 +27,6 @@ export interface JugadorField {
     esGoalKeepingSkill: boolean,
     esMentalitySkill: boolean
     esJuego: boolean,
-    esGeneral: boolean
+    esGeneral: boolean,
+    esPersonal: boolean
 }

@@ -82,43 +82,6 @@ export class JugadorDatosService {
         codigo: "High",
         view: "Alto"
       }
-      // {
-      //   codigo: "High/High",
-      //   view: "Alto/Alto"
-      // },
-      // {
-      //   codigo: "High/Medium",
-      //   view: "Alto/Medio"
-      // },
-      // {
-      //   codigo: "High/Low",
-      //   view: "Alto/Bajo"
-      // },
-      // {
-      //   codigo: "Medium/Medium",
-      //   view: "Medio/Medio"
-      // },
-      // {
-      //   codigo: "Low/High",
-      //   view: "Bajo/Alto"
-      // },
-      // {
-      //   codigo: "Medium/High",
-      //   view: "Medio/Alto"
-      // },
-      // {
-      //   codigo: "Medium/Low",
-      //   view: "Medio/Bajo"
-      // },
-      // {
-      //   codigo: "Low/Medium",
-      //   view: "Bajo/Medio"
-      // },
-      // {
-      //   codigo: "Low/Low",
-      //   view: "Bajo/Bajo"
-      // },
-
     ] 
     return JugadorWorkRate;
   }
@@ -286,5 +249,38 @@ export class JugadorDatosService {
     return jugadorPreferredFoot;
   }
 
-
+  getEtiquetaGrupo() {
+    const jugadorEtiquetaGrupo: JugadorDatos[] = [
+      {
+        codigo: 'personal',
+        view: 'Datos Personales' 
+      },
+      {
+        codigo: 'general',
+        view: 'Información del Jugador' 
+      },
+      {
+        codigo: 'habilidad_global',
+        view: 'Habilidades Globales' 
+      },
+      {
+        codigo: 'habilidad_actitud',
+        view: 'Actitud' 
+      },
+      {
+        codigo: 'arco',
+        view: 'Habilidades de Arquero' 
+      },
+      {
+        codigo: 'defensa',
+        view: 'Habilidades de Defensa' 
+      },
+      {
+        codigo: 'ataque',
+        view: 'Habilidades de Ataque' 
+      },
+    ];
+    return jugadorEtiquetaGrupo;
+  }
+  
 }
