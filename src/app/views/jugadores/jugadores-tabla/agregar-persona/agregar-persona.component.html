@@ -55,7 +55,7 @@
                     (blur)="updateErrorMessage()">
                     <mat-option
                         *ngFor="let opcion of opciones[campo.name];"
-                        value="opcion.codigo">{{ opcion.view }}
+                        value="{{ opcion.codigo }}">{{ opcion.view }}
                     </mat-option>
                 </mat-select>
                 @if (playerForm[i].get(campo.name)?.invalid) {
@@ -70,7 +70,7 @@
                 <mat-label class="form-etiqueta" for="campo.name">
                     {{ namesByCampo('viewName', campo.name) }}
                 </mat-label>
-                <input matSliderThumb>
+                <input matSliderThumb formControlName="{{campo.name}}">
             </mat-slider>
 
             <mat-form-field *ngIf="campo.esMoneda" class="form-campo-numero"
@@ -107,7 +107,7 @@
                     (blur)="updateErrorMessage()">
                     <mat-option
                         *ngFor="let opcion of opciones[campo.name];"
-                        value="opcion.codigo">{{ opcion.view }}
+                        value="{{ opcion.codigo }}">{{ opcion.view }}
                     </mat-option>
 
                 </mat-select>
@@ -124,15 +124,20 @@
                     </mat-label>
                     <input type="range" value="{{+campo.minVal}}"
                         matSliderStartThumb
-                        #slider1>
+                        formControlName="{{campo.name +  '1'}}">
                     <input type="range" value="{{+campo.maxVal}}"
                         matSliderEndThumb
-                        #slider2>
+                        formControlName="{{campo.name +  '2'}}">
                 </mat-slider>
                 <div>
                     <label>
-                        {{ getValueFromSlider(campo, slider1.value) }}/{{
-                        getValueFromSlider(campo, slider2.value) }}
+
+                        {{ getValueFromSlider(campo,
+                        this.playerForm[i].get(campo.name + '1')?.value) }}/{{
+                        getValueFromSlider(campo,
+                        this.playerForm[i].get(campo.name + '2')?.value) }}
+                        <!-- {{ getValueFromSlider(campo, slider1.value) }}/{{
+                        getValueFromSlider(campo, slider2.value) }} -->
                     </label>
                 </div>
             </div>
@@ -150,10 +155,12 @@
             <button mat-button matStepperPrevious>Previo</button>
             <button mat-button (click)="stepper.reset()">Reiniciar</button>
             <button type="submit" mat-button
-                [disabled]="!playerForm[0].valid || !playerForm[1].valid ||
-                            !playerForm[2].valid || !playerForm[3].valid || 
-                            !playerForm[4].valid || !playerForm[5].valid ||
-                            !playerForm[6].valid">Guardar</button>
+                (click)="CrearJugador()">Guardar</button>
         </div>
     </mat-step>
 </mat-stepper>
+
+<!-- [disabled]="!playerForm[0].valid || !playerForm[1].valid ||
+!playerForm[2].valid || !playerForm[3].valid || 
+!playerForm[4].valid || !playerForm[5].valid ||
+!playerForm[6].valid" -->

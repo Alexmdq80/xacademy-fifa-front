@@ -14,6 +14,8 @@ import { Subscription, merge } from 'rxjs';
 import { JugadorDatos } from '../../../../core/model/jugador-datos.model';
 import {MatStepperModule} from '@angular/material/stepper';
 import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
+import { JugadoresService } from '../../../../core/jugadores.service';
+import { Jugador } from '../../../../core/model/jugador.model';  
 
 interface SignalsValues {
   [key: string]: WritableSignal<string>; 
@@ -42,7 +44,7 @@ interface Opciones {
     MatButtonModule,
     MatSelectModule,
     MatSliderModule,
-    MatStepperModule
+    MatStepperModule    
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './agregar-persona.component.html',
@@ -70,6 +72,7 @@ export class AgregarPersonaComponent implements OnDestroy {
   constructor(private fb: FormBuilder,
               private jugadorDatosServicio: JugadorDatosService,
               private jugadorFieldServicio: JugadorFieldService,
+              private jugadoresServicio: JugadoresService
              ) 
     {
 
@@ -112,6 +115,9 @@ export class AgregarPersonaComponent implements OnDestroy {
       // *****************
       let validadores: ValidationErrors[] = [];
       
+      if (field.esUrl) {
+        validadores.push(Validators.pattern('https?://.+'));
+      }
       if (field.required && !field.esNumeroPequenio && !field.esRangoCategorias) {
          validadores.push(Validators.required);
       }
@@ -125,69 +131,62 @@ export class AgregarPersonaComponent implements OnDestroy {
         validadores.push(Validators.minLength(field.minLen));
         validadores.push(Validators.maxLength(field.maxLen));
       } 
-      if ((field.minVal != -1 || field.maxVal != -1) && !field.esRangoCategorias) {
+      // if ((field.minVal != -1 || field.maxVal != -1) && !field.esRangoCategorias) {
+      if (field.minVal != -1 || field.maxVal != -1) {
         validadores.push(Validators.min(field.minVal));
         validadores.push(Validators.max(field.maxVal));
       } 
       if (field.esPersonal){
         let z = 0;
-        this.formulario[z][field.name] = ['', validadores];
+        this.formulario[z][field.name] = [field.sugerencia, validadores];
         this.campos[z][n[z]] = field;
         n[z] += 1;
       } 
       if (field.esGeneral) {
         let z = 1;
-        this.formulario[z][field.name] = ['', validadores]
+        this.formulario[z][field.name] = [field.sugerencia, validadores]
         this.campos[z][n[z]] = field;
         n[z] += 1;
       }
       if (field.esGlobalSkill ){
         let z = 2;
-        this.formulario[z][field.name] = ['', validadores]
+        if (field.esRangoCategorias) {
+           this.formulario[z][field.name + '1'] = [field.minVal, validadores];
+           this.formulario[z][field.name + '2'] = [field.maxVal, validadores];
+         } else {
+          this.formulario[z][field.name] = [field.sugerencia, validadores];
+        }
         this.campos[z][n[z]] = field;
         n[z] += 1;
       }
       if (field.esMentalitySkill){
         let z = 3;
-        this.formulario[z][field.name] = ['', validadores]
+        this.formulario[z][field.name] = [field.sugerencia, validadores]
         this.campos[z][n[z]] = field;
         n[z] += 1;
       }
       if (field.esGoalKeepingSkill){
         let z = 4;
-        this.formulario[z][field.name] = ['', validadores]
+        this.formulario[z][field.name] = [field.sugerencia, validadores]
         this.campos[z][n[z]] = field;
         n[z] += 1;
       }     
       if (field.esDefendSkill){
         let z = 5;
-        this.formulario[z][field.name] = ['', validadores]
+        this.formulario[z][field.name] = [field.sugerencia, validadores]
         this.campos[z][n[z]] = field;
         n[z] += 1;
       }   
       if (field.esAttackSkill ){
         let z = 6;
-        this.formulario[z][field.name] = ['', validadores]
+        this.formulario[z][field.name] = [field.sugerencia, validadores]
         this.campos[z][n[z]] = field;
         n[z] += 1;
       }
-    // 'personal': 'Datos Personales',
-    // 'general': 'Información del Jugador',
-    // 'habilidad_global': 'Habilidades Globales',
-    // 'habilidad_actitud': 'Actitud', 
-    // 'arco': 'Habilidades de Arquero',       
-    // 'defensa': 'Habilidades de Defensa',
-    // 'ataque': 'Habilidades de Ataque'
-
-      // if (field.esSkill){
-      //   this.formulario[0][field.name] = ['', validadores]
-      //   this.campos[2][z] = field;
-      //   z += 1;
-      // } 
-      // console.log(this.formulario);
-      
+  
+         
     }  
-    console.log(this.formulario);
+    // console.log(this.formulario[2]);
     // console.log(this.campos);    
     // console.log(this.campos[1]);
     // console.log(this.campos[2]);
@@ -199,7 +198,7 @@ export class AgregarPersonaComponent implements OnDestroy {
     this.playerForm[4] = this.fb.group(this.formulario[4]);  
     this.playerForm[5] = this.fb.group(this.formulario[5]);
     this.playerForm[6] = this.fb.group(this.formulario[6]);
-      
+
     
     // *****
 
@@ -272,6 +271,102 @@ export class AgregarPersonaComponent implements OnDestroy {
     this.opciones['gender'] = this.jugadorGender;
     this.opciones['preferred_foot'] = this.jugadorPreferredFoot;
   };
+
+
+  CrearJugador() {
+    let newPlayer: Jugador = {   
+      "id": 0,
+      "fifa_version": '', 
+	    "fifa_update": "",
+      "player_face_url": "",
+    	"long_name": "",	
+      "player_positions": "",
+      "club_name": "",	
+      "nationality_name": "",
+      "overall": 0,
+      "potential": 0,
+      "value_eur": 0,
+      "wage_eur": 0,
+      "age": 0,
+      "gender": "",
+      "height_cm": 0,
+      "weight_kg": 0,
+      "preferred_foot": "",
+      "weak_foot": 0,
+      "skill_moves": 0,
+      "international_reputation": 0,
+      "work_rate": "",
+      "body_type": "",
+      "pace": 0,
+      "shooting": 0,
+      "passing": 0,
+      "dribbling": 0,
+      "defending": 0,
+      "physic": 0,
+      "attacking_crossing": 0,
+      "attacking_finishing": 0,
+      "attacking_heading_accuracy": 0,
+      "attacking_short_passing": 0,
+      "attacking_volleys": 0,
+      "skill_dribbling": 0,
+      "skill_curve": 0,
+      "skill_fk_accuracy": 0,
+      "skill_long_passing": 0,
+      "skill_ball_control": 0,
+      "movement_acceleration": 0,
+      "movement_sprint_speed": 0,
+      "movement_agility": 0,
+      "movement_reactions": 0,
+      "movement_balance": 0,
+      "power_shot_power": 0,
+      "power_jumping": 0,
+      "power_stamina": 0,
+      "power_strength": 0,
+      "power_long_shots": 0,
+      "mentality_aggression": 0,
+      "mentality_interceptions": 0,
+      "mentality_positioning": 0,
+      "mentality_vision": 0,
+      "mentality_penalties": 0,
+      "mentality_composure": 0,
+      "defending_marking": 0,
+      "defending_standing_tackle": 0,
+      "defending_sliding_tackle": 0,
+      "goalkeeping_diving": 0,
+      "goalkeeping_handling": 0,
+      "goalkeeping_kicking": 0,
+      "goalkeeping_positioning": 0,
+      "goalkeeping_reflexes": 0,
+      "goalkeeping_speed": 0,
+      "player_traits": ""
+    };
+ 
+    for (let i = 0; i < this.campos.length; i++) {
+      for (let campo of this.campos[i] ) {
+        if (campo.esMultiple){
+          newPlayer[campo.name] =  this.playerForm[i].get(campo.name)?.value.toString();       
+        } else if (campo.esRangoCategorias) {
+          let cadena1;
+          let cadena2;
+          cadena1 = this.getValueFromSlider(campo, this.playerForm[i].get(campo.name + '1')?.value);
+          cadena2 = this.getValueFromSlider(campo, this.playerForm[i].get(campo.name + '2')?.value);
+          newPlayer[campo.name] = cadena1 + '/' + cadena2;     
+          
+   
+        } else if (campo.esNumeroMediano || campo.esNumeroPequenio) {
+          newPlayer[campo.name] =  Number(this.playerForm[i].get(campo.name)?.value);       
+        } else {
+          newPlayer[campo.name] =  this.playerForm[i].get(campo.name)?.value ;       
+        }
+      }
+    } 
+
+    console.log(newPlayer);
+
+    this.jugadoresServicio.postDataFiltrada(newPlayer as Jugador).subscribe(res => {
+      console.log(res);
+    });
+  }
 
   getValueFromSlider(campo: JugadorField, sliderValue: string): string {
     const index = Number(sliderValue);
@@ -425,15 +520,13 @@ export class AgregarPersonaComponent implements OnDestroy {
         }
       }
     }
-    // for (let i = 0; i < this.campos.length; i++) {
-      for (let campo of this.campos[2] ) {
-        let nombre = campo.name;  
-        if (this.playerForm[2].get(nombre)?.hasError) {
-          console.log(nombre);
-          console.log(this.playerForm[2].get(nombre)?.errors);
-        }
-      }
-    // }
+      // for (let campo of this.campos[2] ) {
+      //   let nombre = campo.name;  
+      //   if (this.playerForm[2].get(nombre)?.hasError) {
+      //     console.log(nombre);
+      //     console.log(this.playerForm[2].get(nombre)?.errors);
+      //   }
+      // }
   } 
  
   

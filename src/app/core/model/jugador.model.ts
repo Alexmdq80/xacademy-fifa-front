@@ -1,4 +1,5 @@
 export interface Jugador {
+    [key: string]: any;
     id: number,
     fifa_version: string,
 	fifa_update: string,

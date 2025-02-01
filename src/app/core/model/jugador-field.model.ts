@@ -14,6 +14,7 @@ export interface JugadorField {
     esNumeroMediano: boolean,
     esNombre: boolean,
     esAlfanumerico: boolean,
+    esUrl: boolean,
     esCadena: boolean,
     esUnico: boolean,
     esMultiple: boolean,

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-// import { Jugador } from './model/jugador.model';
+import { Jugador } from './model/jugador.model';
 
 
 @Injectable({
@@ -24,6 +24,12 @@ export class JugadoresService {
     console.log(strFiltro);
     return this.httpClient.get<any>(this.apiUrl + '?' + strFiltro + '&page=' + page + '&limit=' + limit);
 
+  }
+
+  postDataFiltrada(newPlayer: Jugador): Observable<{ message: string }> {
+    console.log(newPlayer);
+    return this.httpClient.post<{ message: string }>(this.apiUrl, {"newPlayer": newPlayer});
+    
   }
 
 
