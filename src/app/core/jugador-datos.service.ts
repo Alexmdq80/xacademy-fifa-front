@@ -27,43 +27,7 @@ export class JugadorDatosService {
       {
         codigo: "Stocky",
         view: "Robusto"
-      },
-      // {
-      //   codigo: "Lean (170-)",
-      //   view: "Delgado (170-)"
-      // },
-      // {
-      //   codigo: "Normal (170-)",
-      //   view: "Normal (170-)"
-      // },
-      // {
-      //   codigo: "Stocky (170-)",
-      //   view: "Robusto (170-)"
-      // },
-      // {
-      //   codigo: "Lean (170-185)",
-      //   view: "Delgado (170-185)"
-      // },
-      // {
-      //   codigo: "Normal (170-185)",
-      //   view: "Normal (170-185)"
-      // },
-      // {
-      //   codigo: "Stocky (170-185)",
-      //   view: "Robusto (170-185)"
-      // },
-      // {
-      //   codigo: "Lean (185+)",
-      //   view: "Delgado (185+)"
-      // },
-      // {
-      //   codigo: "Normal (185+)",
-      //   view: "Normal (185+)"
-      // },
-      // {
-      //   codigo: "Stocky (185+)",
-      //   view: "Robusto (185+)"
-      // },
+      }   
     ] 
     return JugadorBodyType;
   }

@@ -155,12 +155,11 @@
             <button mat-button matStepperPrevious>Previo</button>
             <button mat-button (click)="stepper.reset()">Reiniciar</button>
             <button type="submit" mat-button
+                [disabled]="!playerForm[0].valid || !playerForm[1].valid ||
+                            !playerForm[2].valid || !playerForm[3].valid || 
+                            !playerForm[4].valid || !playerForm[5].valid ||
+                            !playerForm[6].valid"
                 (click)="CrearJugador()">Guardar</button>
         </div>
     </mat-step>
 </mat-stepper>
-
-<!-- [disabled]="!playerForm[0].valid || !playerForm[1].valid ||
-!playerForm[2].valid || !playerForm[3].valid || 
-!playerForm[4].valid || !playerForm[5].valid ||
-!playerForm[6].valid" -->

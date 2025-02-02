@@ -1,5 +1,5 @@
 // import { Component, OnDestroy, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Component, OnDestroy, OnInit, Input, numberAttribute } from '@angular/core';
+import { Component, OnDestroy, OnInit  } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { JugadoresService } from '../../../core/jugadores.service';
 import { Jugador } from '../../../core/model/jugador.model';
@@ -30,7 +30,7 @@ Chart.register(...registerables);
 })
 // export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
 export class JugadoresTablaComponent implements OnInit, OnDestroy {
-  
+
   constructor(private jugadoresService : JugadoresService, 
               private jugadorFieldService: JugadorFieldService,
               private jugadoresFiltroService: JugadoresFiltroService,
@@ -153,9 +153,7 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
     ));
   }
 
-  hacerGetDatos(pagina:number, limit:number, strFiltros$: string){
-
-    
+  hacerGetDatos(pagina:number, limit:number, strFiltros$: string){    
     this.subscriptionJugadoresFiltro.add(this.jugadoresFiltroService.filtro$.subscribe({
       next: res => {
         console.log("Se reciben filtros.");

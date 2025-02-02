@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, signal, WritableSignal, Input, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators, ValidationErrors  } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -10,7 +10,7 @@ import { JugadorDatosService } from '../../../../core/jugador-datos.service';
 import { MatSliderModule } from '@angular/material/slider';
 import { JugadorFieldService } from '../../../../core/jugadorField.service';
 import { JugadorField } from '../../../../core/model/jugador-field.model';
-import { Subscription, merge } from 'rxjs';
+import { EMPTY, Subscription, merge } from 'rxjs';
 import { JugadorDatos } from '../../../../core/model/jugador-datos.model';
 import {MatStepperModule} from '@angular/material/stepper';
 import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
@@ -51,14 +51,17 @@ interface Opciones {
   styleUrl: './agregar-persona.component.scss'
 })
 
-export class AgregarPersonaComponent implements OnDestroy {
-  jugadorPositions: JugadorDatos[];
-  jugadorWorkRate: JugadorDatos[];
-  jugadorBodyType: JugadorDatos[];
-  jugadorPlayerTraits: JugadorDatos[];
-  jugadorGender: JugadorDatos[];
-  jugadorPreferredFoot: JugadorDatos[];
-  jugadorEtiquetaGrupo: JugadorDatos[];
+export class AgregarPersonaComponent implements OnInit, OnDestroy {
+  
+  @Input() add_update: string = '';
+  
+  jugadorPositions: JugadorDatos[] = [];
+  jugadorWorkRate: JugadorDatos[] = [];
+  jugadorBodyType: JugadorDatos[] = [];
+  jugadorPlayerTraits: JugadorDatos[] = [];
+  jugadorGender: JugadorDatos[] = [];
+  jugadorPreferredFoot: JugadorDatos[] = [];
+  jugadorEtiquetaGrupo: JugadorDatos[] = [];
 
   subscriptionField = new Subscription();
   fields: JugadorField[] = [];
@@ -68,13 +71,16 @@ export class AgregarPersonaComponent implements OnDestroy {
   errorMessage: SignalsValues = { };
   playerForm: FormGroup[] = [];
   opciones: Opciones = {};
-
+  subscription = new Subscription();
+  
   constructor(private fb: FormBuilder,
               private jugadorDatosServicio: JugadorDatosService,
               private jugadorFieldServicio: JugadorFieldService,
               private jugadoresServicio: JugadoresService
              ) 
     {
+  
+    // console.log(this.add_update);
 
     this.subscriptionField.add(this.jugadorFieldServicio.getFields().subscribe({
         next: res => {
@@ -86,8 +92,197 @@ export class AgregarPersonaComponent implements OnDestroy {
         }
       }    
     ));
+    // let n = [0,0,0,0,0,0,0];
+ 
+    // this.campos.push();
+    // this.campos[1] = [];
+    // this.campos[2] = [];    
+    // this.campos[3] = [];  
+    // this.campos[4] = [];
+    // this.campos[5] = [];    
+    // this.campos[6] = [];  
+    // this.formulario.push();  
+    // this.formulario[1] = [];
+    // this.formulario[2] = [];
+    // this.formulario[3] = [];
+    // this.formulario[4] = [];
+    // this.formulario[5] = [];
+    // this.formulario[6] = [];
+    
+    // for (const field of this.fields) {
+    //   // *** ARMAR MENSAJES DE ERROR / VALIDADORES / Y SINGALS PARA INPUTS**
+    //   // console.log(field.name);
+      
+    //   this.errorMessage[field.name] = signal('');     
+    //   // if (field.type === 'string') {
+    //   if (field.esCadena) {
+    //     this.value[field.name] = signal('');         
+    //   }
+    //   // *****************
+    //   let validadores: ValidationErrors[] = [];
+      
+    //   if (field.esUrl) {
+    //     validadores.push(Validators.pattern('https?://.+'));
+    //   }
+    //   if (field.required && !field.esNumeroPequenio && !field.esRangoCategorias) {
+    //      validadores.push(Validators.required);
+    //   }
+    //   if (field.esNombre) {
+    //     validadores.push(Validators.pattern(/^[a-zA-ZçÇà-ÿ'`'\s]+$/));
+    //   }
+    //   if (field.esAlfanumerico) {
+    //     validadores.push(Validators.pattern(/^[0-9a-zA-ZçÇà-ÿ'`'\s]+$/));
+    //   }
+    //   if (field.minLen != -1 || field.maxLen != -1) {
+    //     validadores.push(Validators.minLength(field.minLen));
+    //     validadores.push(Validators.maxLength(field.maxLen));
+    //   } 
+    //   // if ((field.minVal != -1 || field.maxVal != -1) && !field.esRangoCategorias) {
+    //   if (field.minVal != -1 || field.maxVal != -1) {
+    //     validadores.push(Validators.min(field.minVal));
+    //     validadores.push(Validators.max(field.maxVal));
+    //   } 
+    //   if (field.esPersonal){
+    //     let z = 0;
+    //     this.formulario[z][field.name] = [field.sugerencia, validadores];
+    //     this.campos[z][n[z]] = field;
+    //     n[z] += 1;
+    //   } 
+    //   if (field.esGeneral) {
+    //     let z = 1;
+    //     this.formulario[z][field.name] = [field.sugerencia, validadores]
+    //     this.campos[z][n[z]] = field;
+    //     n[z] += 1;
+    //   }
+    //   if (field.esGlobalSkill ){
+    //     let z = 2;
+    //     if (field.esRangoCategorias) {
+    //        this.formulario[z][field.name + '1'] = [field.minVal, validadores];
+    //        this.formulario[z][field.name + '2'] = [field.maxVal, validadores];
+    //      } else {
+    //       this.formulario[z][field.name] = [field.sugerencia, validadores];
+    //     }
+    //     this.campos[z][n[z]] = field;
+    //     n[z] += 1;
+    //   }
+    //   if (field.esMentalitySkill){
+    //     let z = 3;
+    //     this.formulario[z][field.name] = [field.sugerencia, validadores]
+    //     this.campos[z][n[z]] = field;
+    //     n[z] += 1;
+    //   }
+    //   if (field.esGoalKeepingSkill){
+    //     let z = 4;
+    //     this.formulario[z][field.name] = [field.sugerencia, validadores]
+    //     this.campos[z][n[z]] = field;
+    //     n[z] += 1;
+    //   }     
+    //   if (field.esDefendSkill){
+    //     let z = 5;
+    //     this.formulario[z][field.name] = [field.sugerencia, validadores]
+    //     this.campos[z][n[z]] = field;
+    //     n[z] += 1;
+    //   }   
+    //   if (field.esAttackSkill ){
+    //     let z = 6;
+    //     this.formulario[z][field.name] = [field.sugerencia, validadores]
+    //     this.campos[z][n[z]] = field;
+    //     n[z] += 1;
+    //   }
+  
+         
+    // }  
+    // console.log(this.formulario[2]);
+    // console.log(this.campos);    
+    // console.log(this.campos[1]);
+    // console.log(this.campos[2]);
+
+    // this.playerForm[0] = this.fb.group(this.formulario[0]);
+    // this.playerForm[1] = this.fb.group(this.formulario[1]);
+    // this.playerForm[2] = this.fb.group(this.formulario[2]);
+    // this.playerForm[3] = this.fb.group(this.formulario[3]);    
+    // this.playerForm[4] = this.fb.group(this.formulario[4]);  
+    // this.playerForm[5] = this.fb.group(this.formulario[5]);
+    // this.playerForm[6] = this.fb.group(this.formulario[6]);
+
+    
+    // *****
+
+    // this.playerFormAnterior = this.playerForm[0].value; 
+    // this.controlNameChanged = '';
+
+    // merge(this.playerForm[0].statusChanges, this.playerForm[0].valueChanges)
+    // .pipe(
+    //   map(valorActual => {
+    //     for (const controlName in valorActual) {
+    //       console.log(valorActual);
+    //       // console.log(this.playerFormAnterior);
+    //       if (valorActual[controlName] !== this.playerFormAnterior[controlName] ) {
+    //            // console.log(`El control '${controlName}' ha cambiado a:`, valorActual[controlName]);
+    //           this.controlNameChanged = controlName;
+    //           console.log(controlName);
+    //           console.log(this.playerForm[0].value['age'])
+    //           break;
+    //       }
+    //     }
+    //   }
+    //   )
+    // )
+    // .pipe(takeUntilDestroyed())
+    // .subscribe(() => this.updateErrorMessage( this.controlNameChanged ));
+
+  
+
+    // merge(this.playerForm[0].statusChanges, this.playerForm[0].valueChanges)
+    // .pipe(takeUntilDestroyed())
+    // .subscribe(() => this.updateErrorMessage());
+
+    // merge(this.playerForm[1].statusChanges, this.playerForm[1].valueChanges)
+    // .pipe(takeUntilDestroyed())
+    // .subscribe(() => this.updateErrorMessage());
+
+    // merge(this.playerForm[2].statusChanges, this.playerForm[2].valueChanges)
+    // .pipe(takeUntilDestroyed())
+    // .subscribe(() => this.updateErrorMessage());
+
+    // merge(this.playerForm[3].statusChanges, this.playerForm[3].valueChanges)
+    // .pipe(takeUntilDestroyed())
+    // .subscribe(() => this.updateErrorMessage());
+
+    // merge(this.playerForm[4].statusChanges, this.playerForm[4].valueChanges)
+    // .pipe(takeUntilDestroyed())
+    // .subscribe(() => this.updateErrorMessage());
+
+    // merge(this.playerForm[5].statusChanges, this.playerForm[5].valueChanges)
+    // .pipe(takeUntilDestroyed())
+    // .subscribe(() => this.updateErrorMessage());
+
+    // merge(this.playerForm[6].statusChanges, this.playerForm[6].valueChanges)
+    // .pipe(takeUntilDestroyed())
+    // .subscribe(() => this.updateErrorMessage());
+
+
+    this.jugadorPositions = this.jugadorDatosServicio.getJugadorPositions();
+    this.jugadorWorkRate = this.jugadorDatosServicio.getJugadorWorkRate();
+    this.jugadorBodyType = this.jugadorDatosServicio.getJugadorBodyType();
+    this.jugadorPlayerTraits = this.jugadorDatosServicio.getJugadorPlayerTraits();
+    this.jugadorGender = this.jugadorDatosServicio.getJugadorGender();
+    this.jugadorPreferredFoot = this.jugadorDatosServicio.getJugadorPreferredFoot();
+    this.jugadorEtiquetaGrupo = this.jugadorDatosServicio.getEtiquetaGrupo();
+
+    this.opciones['player_positions'] = this.jugadorPositions;
+    this.opciones['work_rate'] = this.jugadorWorkRate;
+    this.opciones['body_type'] = this.jugadorBodyType;
+    this.opciones['player_traits'] = this.jugadorPlayerTraits;     
+    this.opciones['gender'] = this.jugadorGender;
+    this.opciones['preferred_foot'] = this.jugadorPreferredFoot;
+  };
+
+  ngOnInit(): void {
     let n = [0,0,0,0,0,0,0];
  
+    console.log(this.add_update);
+
     this.campos.push();
     this.campos[1] = [];
     this.campos[2] = [];    
@@ -102,7 +297,7 @@ export class AgregarPersonaComponent implements OnDestroy {
     this.formulario[4] = [];
     this.formulario[5] = [];
     this.formulario[6] = [];
-    
+
     for (const field of this.fields) {
       // *** ARMAR MENSAJES DE ERROR / VALIDADORES / Y SINGALS PARA INPUTS**
       // console.log(field.name);
@@ -183,14 +378,11 @@ export class AgregarPersonaComponent implements OnDestroy {
         this.campos[z][n[z]] = field;
         n[z] += 1;
       }
-  
-         
-    }  
-    // console.log(this.formulario[2]);
-    // console.log(this.campos);    
-    // console.log(this.campos[1]);
-    // console.log(this.campos[2]);
-
+      if (field.name === 'height_cm'){     
+        this.armaBody_Type(Number(field.sugerencia));
+      }
+    } 
+    
     this.playerForm[0] = this.fb.group(this.formulario[0]);
     this.playerForm[1] = this.fb.group(this.formulario[1]);
     this.playerForm[2] = this.fb.group(this.formulario[2]);
@@ -199,79 +391,28 @@ export class AgregarPersonaComponent implements OnDestroy {
     this.playerForm[5] = this.fb.group(this.formulario[5]);
     this.playerForm[6] = this.fb.group(this.formulario[6]);
 
-    
-    // *****
+    this.subscription.add(merge(this.playerForm[0].statusChanges, this.playerForm[0].valueChanges)
+    .subscribe(() => this.updateErrorMessage()));
 
-    // this.playerFormAnterior = this.playerForm[0].value; 
-    // this.controlNameChanged = '';
+    this.subscription.add(merge(this.playerForm[1].statusChanges, this.playerForm[1].valueChanges)
+    .subscribe(() => this.updateErrorMessage()));
 
-    // merge(this.playerForm[0].statusChanges, this.playerForm[0].valueChanges)
-    // .pipe(
-    //   map(valorActual => {
-    //     for (const controlName in valorActual) {
-    //       console.log(valorActual);
-    //       // console.log(this.playerFormAnterior);
-    //       if (valorActual[controlName] !== this.playerFormAnterior[controlName] ) {
-    //            // console.log(`El control '${controlName}' ha cambiado a:`, valorActual[controlName]);
-    //           this.controlNameChanged = controlName;
-    //           console.log(controlName);
-    //           console.log(this.playerForm[0].value['age'])
-    //           break;
-    //       }
-    //     }
-    //   }
-    //   )
-    // )
-    // .pipe(takeUntilDestroyed())
-    // .subscribe(() => this.updateErrorMessage( this.controlNameChanged ));
+    this.subscription.add(merge(this.playerForm[2].statusChanges, this.playerForm[2].valueChanges)
+    .subscribe(() => this.updateErrorMessage()));
 
-  
+    this.subscription.add(merge(this.playerForm[3].statusChanges, this.playerForm[3].valueChanges)
+    .subscribe(() => this.updateErrorMessage()));
 
-    merge(this.playerForm[0].statusChanges, this.playerForm[0].valueChanges)
-    .pipe(takeUntilDestroyed())
-    .subscribe(() => this.updateErrorMessage());
+    this.subscription.add(merge(this.playerForm[4].statusChanges, this.playerForm[4].valueChanges)
+    .subscribe(() => this.updateErrorMessage()));
 
-    merge(this.playerForm[1].statusChanges, this.playerForm[1].valueChanges)
-    .pipe(takeUntilDestroyed())
-    .subscribe(() => this.updateErrorMessage());
+    this.subscription.add(merge(this.playerForm[5].statusChanges, this.playerForm[5].valueChanges)
+    .subscribe(() => this.updateErrorMessage()));
 
-    merge(this.playerForm[2].statusChanges, this.playerForm[2].valueChanges)
-    .pipe(takeUntilDestroyed())
-    .subscribe(() => this.updateErrorMessage());
+    this.subscription.add(merge(this.playerForm[6].statusChanges, this.playerForm[6].valueChanges)
+    .subscribe(() => this.updateErrorMessage()));
 
-    merge(this.playerForm[3].statusChanges, this.playerForm[3].valueChanges)
-    .pipe(takeUntilDestroyed())
-    .subscribe(() => this.updateErrorMessage());
-
-    merge(this.playerForm[4].statusChanges, this.playerForm[4].valueChanges)
-    .pipe(takeUntilDestroyed())
-    .subscribe(() => this.updateErrorMessage());
-
-    merge(this.playerForm[5].statusChanges, this.playerForm[5].valueChanges)
-    .pipe(takeUntilDestroyed())
-    .subscribe(() => this.updateErrorMessage());
-
-    merge(this.playerForm[6].statusChanges, this.playerForm[6].valueChanges)
-    .pipe(takeUntilDestroyed())
-    .subscribe(() => this.updateErrorMessage());
-
-
-    this.jugadorPositions = this.jugadorDatosServicio.getJugadorPositions();
-    this.jugadorWorkRate = this.jugadorDatosServicio.getJugadorWorkRate();
-    this.jugadorBodyType = this.jugadorDatosServicio.getJugadorBodyType();
-    this.jugadorPlayerTraits = this.jugadorDatosServicio.getJugadorPlayerTraits();
-    this.jugadorGender = this.jugadorDatosServicio.getJugadorGender();
-    this.jugadorPreferredFoot = this.jugadorDatosServicio.getJugadorPreferredFoot();
-    this.jugadorEtiquetaGrupo = this.jugadorDatosServicio.getEtiquetaGrupo();
-
-    this.opciones['player_positions'] = this.jugadorPositions;
-    this.opciones['work_rate'] = this.jugadorWorkRate;
-    this.opciones['body_type'] = this.jugadorBodyType;
-    this.opciones['player_traits'] = this.jugadorPlayerTraits;     
-    this.opciones['gender'] = this.jugadorGender;
-    this.opciones['preferred_foot'] = this.jugadorPreferredFoot;
-  };
-
+  }
 
   CrearJugador() {
     let newPlayer: Jugador = {   
@@ -356,7 +497,14 @@ export class AgregarPersonaComponent implements OnDestroy {
         } else if (campo.esNumeroMediano || campo.esNumeroPequenio) {
           newPlayer[campo.name] =  Number(this.playerForm[i].get(campo.name)?.value);       
         } else {
-          newPlayer[campo.name] =  this.playerForm[i].get(campo.name)?.value ;       
+          // if (campo.name ==="body_type") {
+          //   let bt: string = '';
+          //   bt = this.armarBody_Type();
+          //   newPlayer[campo.name] = bt;
+          // } else {
+            newPlayer[campo.name] =  this.playerForm[i].get(campo.name)?.value;       
+        
+          
         }
       }
     } 
@@ -366,7 +514,42 @@ export class AgregarPersonaComponent implements OnDestroy {
     this.jugadoresServicio.postDataFiltrada(newPlayer as Jugador).subscribe(res => {
       console.log(res);
     });
-  }
+  };
+
+  // armarBody_Type(): string  {
+  //   let body: string = ''; 
+  //   let height: number = 0;
+  //   let height_rango: string = '';
+  //   let bt: string = '';
+    
+  //   for (let i = 0; i < this.campos.length; i++) {
+  //     for (let campo of this.campos[i] ) {
+  //       if (campo.name ==="body_type") {
+  //         body = this.playerForm[i].get(campo.name)?.value;
+  //         break; 
+  //       };
+  //       if (campo.name ==="height_cm") {
+  //         height = this.playerForm[i].get(campo.name)?.value; 
+  //         break;
+  //       }
+  //     } 
+  //     if (body != '' && height != 0){
+  //       break;
+  //     }
+  //   }
+  //   if (height < 170) {
+  //     height_rango = '(170-)';
+  //   } else if (height >= 170 && height <= 185) {
+  //     height_rango = '(170-185)';
+  //   } if (height > 185) {
+  //     height_rango = '(185+)';
+  //   } 
+  //   bt = body + ' ' + height_rango;
+  //   // console.log(bt);
+    
+  //   return bt;
+  // }
+
 
   getValueFromSlider(campo: JugadorField, sliderValue: string): string {
     const index = Number(sliderValue);
@@ -408,10 +591,40 @@ export class AgregarPersonaComponent implements OnDestroy {
       }
     }  
 
+    if (target.id === 'height_cm'){     
+      this.armaBody_Type(Number(target.value));
+    }
+
     // this.playerFormAnterior = this.playerForm[0].value;
     // this.updateErrorMessage(target.id);
   }
 
+
+  armaBody_Type (height: number) {
+    let height_rango: string = '';
+    if (height < 170) {
+      height_rango = '(170-)';
+    } else if (height >= 170 && height <= 185) {
+      height_rango = '(170-185)';
+    } else if (height > 185) {
+      height_rango = '(185+)';
+    } 
+
+    this.opciones['body_type'] = [];
+    for (let i = 0; i < 4; i++){
+      let btc: string; 
+      let btv: string; 
+      
+      btc = this.jugadorBodyType[i].codigo + ' ' + height_rango;     
+      btv = this.jugadorBodyType[i].view + ' ' + height_rango;     
+
+      this.opciones['body_type'].push();
+      this.opciones['body_type'][i] = {
+        "codigo": btc,
+        "view": btv
+      };       
+    }
+  }
   // protected onBlur(event: Event) {
   //   const target = event.target as HTMLInputElement;
 

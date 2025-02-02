@@ -33,6 +33,8 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
               private jugadoresFiltros: JugadoresFiltroService
   ){}
 
+
+  boton_add_update: string = 'add';
   lista: boolean = true;
 
   fields: JugadorField[] = [];
@@ -59,6 +61,7 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
 
   // }
   agregarPersona() {
+    this.boton_add_update = 'add';
     this.lista = !this.lista;
   }
 
