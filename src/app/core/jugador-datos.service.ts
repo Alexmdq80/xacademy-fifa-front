@@ -53,16 +53,16 @@ export class JugadorDatosService {
   getJugadorPositions() {
     const jugadorPositions: JugadorDatos[] = [
       {
+        codigo: 'ST',
+        view: 'Striker'
+      },
+      {
         codigo: 'RW',
         view: 'Extremo Derecho' 
       },
       {
         codigo: 'CF',
         view: 'Delantero Centro' 
-      },
-      {
-        codigo: 'LW',
-        view: 'Extremo Izquierdo' 
       },
       {
         codigo: 'CAM',
@@ -206,7 +206,7 @@ export class JugadorDatosService {
         view: 'Izquierdo' 
       },
       {
-        codigo: 'Right ',
+        codigo: 'Right',
         view: 'Derecho' 
       }  
     ];
@@ -228,7 +228,19 @@ export class JugadorDatosService {
         view: 'Habilidades Globales' 
       },
       {
-        codigo: 'habilidad_actitud',
+        codigo: 'skill',
+        view: 'Habilidades Técnicas' 
+      },
+      {
+        codigo: 'movement',
+        view: 'Movilidad' 
+      },
+      {
+        codigo: 'power',
+        view: 'Fuerza y Potencia' 
+      },
+      {
+        codigo: 'habilidad_mental',
         view: 'Actitud' 
       },
       {

@@ -34,7 +34,6 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
   ){}
 
 
-  boton_add_update: string = 'add';
   lista: boolean = true;
 
   fields: JugadorField[] = [];
@@ -53,6 +52,7 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
 
   @ViewChild(JugadoresTablaComponent) JugadorTabla?: JugadoresTablaComponent;
  
+  jugadorId: number = 0;
   // n_filtro = 1;
 
   // recibirValor($event: any) {
@@ -60,8 +60,13 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
   //   this.valorNumeroRecibido = $event;
 
   // }
+  recibirJugadorId(datos: string) { 
+    this.jugadorId = Number(datos);
+    this.lista = !this.lista;
+  }
+
   agregarPersona() {
-    this.boton_add_update = 'add';
+    this.jugadorId = 0;
     this.lista = !this.lista;
   }
 

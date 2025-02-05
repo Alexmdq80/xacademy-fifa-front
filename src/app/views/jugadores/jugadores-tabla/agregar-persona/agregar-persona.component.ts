@@ -5,15 +5,14 @@ import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import { JugadorDatosService } from '../../../../core/jugador-datos.service';
 import { MatSliderModule } from '@angular/material/slider';
 import { JugadorFieldService } from '../../../../core/jugadorField.service';
 import { JugadorField } from '../../../../core/model/jugador-field.model';
-import { EMPTY, Subscription, merge } from 'rxjs';
+import { Subscription, merge } from 'rxjs';
 import { JugadorDatos } from '../../../../core/model/jugador-datos.model';
-import {MatStepperModule} from '@angular/material/stepper';
-import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
+import { MatStepperModule } from '@angular/material/stepper';
+import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { JugadoresService } from '../../../../core/jugadores.service';
 import { Jugador } from '../../../../core/model/jugador.model';  
 
@@ -24,10 +23,6 @@ interface SignalsValues {
 interface Opciones {
   [key: string]: JugadorDatos[];
 }
-
-// interface Etiquetas {
-//   [key: string]: string; 
-// }
 
 @Component({
   selector: 'app-agregar-persona',
@@ -53,7 +48,7 @@ interface Opciones {
 
 export class AgregarPersonaComponent implements OnInit, OnDestroy {
   
-  @Input() add_update: string = '';
+  @Input() jugadorId_INPUT: number = 0;
   
   jugadorPositions: JugadorDatos[] = [];
   jugadorWorkRate: JugadorDatos[] = [];
@@ -65,18 +60,88 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
 
   subscriptionField = new Subscription();
   fields: JugadorField[] = [];
+
   campos: JugadorField[][] = [ [] ];
   formulario: any[] = [{}];
+  playerForm: FormGroup[] = [];
+  
   protected readonly value: SignalsValues = { };
   errorMessage: SignalsValues = { };
-  playerForm: FormGroup[] = [];
+
   opciones: Opciones = {};
   subscription = new Subscription();
-  
+  jugador: Jugador = {   
+    "id": 0,
+    "fifa_version": '', 
+    "fifa_update": "",
+    "player_face_url": "",
+    "long_name": "",	
+    "player_positions": "",
+    "club_name": "",	
+    "nationality_name": "",
+    "overall": 0,
+    "potential": 0,
+    "value_eur": 0,
+    "wage_eur": 0,
+    "age": 0,
+    "gender": "",
+    "height_cm": 0,
+    "weight_kg": 0,
+    "preferred_foot": "",
+    "weak_foot": 0,
+    "skill_moves": 0,
+    "international_reputation": 0,
+    "work_rate": "",
+    "body_type": "",
+    "pace": 0,
+    "shooting": 0,
+    "passing": 0,
+    "dribbling": 0,
+    "defending": 0,
+    "physic": 0,
+    "attacking_crossing": 0,
+    "attacking_finishing": 0,
+    "attacking_heading_accuracy": 0,
+    "attacking_short_passing": 0,
+    "attacking_volleys": 0,
+    "skill_dribbling": 0,
+    "skill_curve": 0,
+    "skill_fk_accuracy": 0,
+    "skill_long_passing": 0,
+    "skill_ball_control": 0,
+    "movement_acceleration": 0,
+    "movement_sprint_speed": 0,
+    "movement_agility": 0,
+    "movement_reactions": 0,
+    "movement_balance": 0,
+    "power_shot_power": 0,
+    "power_jumping": 0,
+    "power_stamina": 0,
+    "power_strength": 0,
+    "power_long_shots": 0,
+    "mentality_aggression": 0,
+    "mentality_interceptions": 0,
+    "mentality_positioning": 0,
+    "mentality_vision": 0,
+    "mentality_penalties": 0,
+    "mentality_composure": 0,
+    "defending_marking": 0,
+    "defending_standing_tackle": 0,
+    "defending_sliding_tackle": 0,
+    "goalkeeping_diving": 0,
+    "goalkeeping_handling": 0,
+    "goalkeeping_kicking": 0,
+    "goalkeeping_positioning": 0,
+    "goalkeeping_reflexes": 0,
+    "goalkeeping_speed": 0,
+    "player_traits": ""
+  };;
+
   constructor(private fb: FormBuilder,
               private jugadorDatosServicio: JugadorDatosService,
               private jugadorFieldServicio: JugadorFieldService,
-              private jugadoresServicio: JugadoresService
+              private jugadoresServicio: JugadoresService,
+              private jugadoresService : JugadoresService,
              ) 
     {
   
@@ -92,6 +157,8 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
         }
       }    
     ));
+
+
     // let n = [0,0,0,0,0,0,0];
  
     // this.campos.push();
@@ -278,10 +345,44 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     this.opciones['preferred_foot'] = this.jugadorPreferredFoot;
   };
 
+  // ngOnChanges(): void {
+    // console.log(this.jugadorId_INPUT);
+    // if (this.jugadorId_INPUT != 0) {
+    //   this.subscription.add(this.jugadoresService.getDataxID(this.jugadorId_INPUT).subscribe(data => {
+    //     console.log(data[0]);
+    //     this.jugador = data[0];
+    //    }));
+    // }
+
+  // }
+
   ngOnInit(): void {
-    let n = [0,0,0,0,0,0,0];
- 
-    console.log(this.add_update);
+    let n = [0,0,0,0,0,0,0,0,0,0];
+   
+
+    if (this.jugadorId_INPUT != 0) {
+      let datos: any;
+      datos = this.jugadoresService.getDataxIdSync(this.jugadorId_INPUT);
+      this.jugador = datos;
+    }
+
+
+    for (const field of this.fields) {
+      let cadena = '';
+      if (this.jugadorId_INPUT != 0) {
+        cadena = this.jugador[field.name];
+      } else {
+        cadena = field.sugerencia;
+      }
+      this.jugador[field.name] = cadena;
+
+    }
+          
+    console.log('jugador');
+    console.log(this.jugador);
+   
+    // console.log('Jugador- Agregar Persona');   
+    // console.log(this.jugador);
 
     this.campos.push();
     this.campos[1] = [];
@@ -290,6 +391,10 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     this.campos[4] = [];
     this.campos[5] = [];    
     this.campos[6] = [];  
+    this.campos[7] = [];  
+    this.campos[8] = [];  
+    this.campos[9] = [];  
+
     this.formulario.push();  
     this.formulario[1] = [];
     this.formulario[2] = [];
@@ -297,11 +402,16 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     this.formulario[4] = [];
     this.formulario[5] = [];
     this.formulario[6] = [];
+    this.formulario[7] = [];
+    this.formulario[8] = [];
+    this.formulario[9] = [];
 
     for (const field of this.fields) {
       // *** ARMAR MENSAJES DE ERROR / VALIDADORES / Y SINGALS PARA INPUTS**
       // console.log(field.name);
-      
+
+      let valor: any;
+
       this.errorMessage[field.name] = signal('');     
       // if (field.type === 'string') {
       if (field.esCadena) {
@@ -331,15 +441,31 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
         validadores.push(Validators.min(field.minVal));
         validadores.push(Validators.max(field.maxVal));
       } 
+
+      if (field.esUnico && field.required) {
+        
+      }
+
+      let cadena = '';
+      let arreglo: string[] = [];
+      if (field.esMultiple) {
+        cadena = this.jugador[field.name];
+        arreglo = cadena.split(", ");
+        valor = arreglo;
+      } else {
+        cadena = this.jugador[field.name];
+        valor = cadena;
+      } 
+
       if (field.esPersonal){
         let z = 0;
-        this.formulario[z][field.name] = [field.sugerencia, validadores];
+        this.formulario[z][field.name] = [valor, validadores];
         this.campos[z][n[z]] = field;
         n[z] += 1;
       } 
       if (field.esGeneral) {
         let z = 1;
-        this.formulario[z][field.name] = [field.sugerencia, validadores]
+        this.formulario[z][field.name] = [valor, validadores]
         this.campos[z][n[z]] = field;
         n[z] += 1;
       }
@@ -349,37 +475,55 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
            this.formulario[z][field.name + '1'] = [field.minVal, validadores];
            this.formulario[z][field.name + '2'] = [field.maxVal, validadores];
          } else {
-          this.formulario[z][field.name] = [field.sugerencia, validadores];
+          this.formulario[z][field.name] = [valor, validadores];
         }
         this.campos[z][n[z]] = field;
         n[z] += 1;
       }
-      if (field.esMentalitySkill){
+      if (field.esSkill) {
         let z = 3;
-        this.formulario[z][field.name] = [field.sugerencia, validadores]
+        this.formulario[z][field.name] = [valor, validadores]
+        this.campos[z][n[z]] = field;
+        n[z] += 1;
+      }
+      if (field.esMovement) {
+        let z = 4;
+        this.formulario[z][field.name] = [valor, validadores]
+        this.campos[z][n[z]] = field;
+        n[z] += 1;
+      }
+      if (field.esPower) {
+        let z = 5;
+        this.formulario[z][field.name] = [valor, validadores]
+        this.campos[z][n[z]] = field;
+        n[z] += 1;
+      }
+      if (field.esMentalitySkill){
+        let z = 6;
+        this.formulario[z][field.name] = [valor, validadores]
         this.campos[z][n[z]] = field;
         n[z] += 1;
       }
       if (field.esGoalKeepingSkill){
-        let z = 4;
-        this.formulario[z][field.name] = [field.sugerencia, validadores]
+        let z = 7;
+        this.formulario[z][field.name] = [valor, validadores]
         this.campos[z][n[z]] = field;
         n[z] += 1;
       }     
       if (field.esDefendSkill){
-        let z = 5;
-        this.formulario[z][field.name] = [field.sugerencia, validadores]
+        let z = 8;
+        this.formulario[z][field.name] = [valor, validadores]
         this.campos[z][n[z]] = field;
         n[z] += 1;
       }   
       if (field.esAttackSkill ){
-        let z = 6;
-        this.formulario[z][field.name] = [field.sugerencia, validadores]
+        let z = 9;
+        this.formulario[z][field.name] = [valor, validadores]
         this.campos[z][n[z]] = field;
         n[z] += 1;
       }
-      if (field.name === 'height_cm'){     
-        this.armaBody_Type(Number(field.sugerencia));
+      if (field.name === 'height_cm') {     
+        this.armaBody_Type(Number(valor));
       }
     } 
     
@@ -390,6 +534,9 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     this.playerForm[4] = this.fb.group(this.formulario[4]);  
     this.playerForm[5] = this.fb.group(this.formulario[5]);
     this.playerForm[6] = this.fb.group(this.formulario[6]);
+    this.playerForm[7] = this.fb.group(this.formulario[7]);
+    this.playerForm[8] = this.fb.group(this.formulario[8]);
+    this.playerForm[9] = this.fb.group(this.formulario[9]);
 
     this.subscription.add(merge(this.playerForm[0].statusChanges, this.playerForm[0].valueChanges)
     .subscribe(() => this.updateErrorMessage()));
@@ -410,6 +557,15 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     .subscribe(() => this.updateErrorMessage()));
 
     this.subscription.add(merge(this.playerForm[6].statusChanges, this.playerForm[6].valueChanges)
+    .subscribe(() => this.updateErrorMessage()));
+
+    this.subscription.add(merge(this.playerForm[7].statusChanges, this.playerForm[7].valueChanges)
+    .subscribe(() => this.updateErrorMessage()));
+
+    this.subscription.add(merge(this.playerForm[8].statusChanges, this.playerForm[8].valueChanges)
+    .subscribe(() => this.updateErrorMessage()));
+
+    this.subscription.add(merge(this.playerForm[9].statusChanges, this.playerForm[9].valueChanges)
     .subscribe(() => this.updateErrorMessage()));
 
   }
@@ -482,7 +638,10 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
       "player_traits": ""
     };
  
-    for (let i = 0; i < this.campos.length; i++) {
+    // for (let i = 0; i < this.campos.length; i++) {
+    let i = -1;
+    for (let c in this.campos) {
+      i += 1;
       for (let campo of this.campos[i] ) {
         if (campo.esMultiple){
           newPlayer[campo.name] =  this.playerForm[i].get(campo.name)?.value.toString();       
@@ -631,6 +790,7 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptionField.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   // async nameValidator(control: AbstractControl) {
@@ -710,29 +870,32 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
   
   updateErrorMessage() {
     
-    for (let i = 0; i < this.campos.length; i++) {
-      // console.log(this.campos[i]);
-      for (let campo of this.campos[i] ) {
-        let nombre = campo.name;
-        if (this.playerForm[i].get(nombre)) { 
-          if (this.playerForm[i].get(nombre)?.hasError('required')) {
-            this.errorMessage[nombre].set('Debe ingresar ' + this.namesByCampo('viewName', nombre));
-          } else if (this.playerForm[i].get(nombre)?.hasError('minlength')) { 
-            this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener al menos ' + this.valorByCampo('minLen', nombre) + ' caracteres');
-          } else if (this.playerForm[i].get(nombre)?.hasError('maxlength')) {
-            this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener menos de ' + this.valorByCampo('maxLen', nombre) + ' caracteres');
-          } else if (this.playerForm[i].get(nombre)?.hasError('min')) { 
-            this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener un mínimo de ' + this.valorByCampo('minVal', nombre));
-          } else if (this.playerForm[i].get(nombre)?.hasError('max')) {
-            this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener un máximo de ' + this.valorByCampo('maxVal', nombre));
-          } else if (this.playerForm[i].get(nombre)?.hasError('pattern')) {
-            this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' no es válido');
-          } else {
-            this.errorMessage[nombre].set('Error sin definir en ' + this.namesByCampo('viewName', nombre));
-          }
-        }
-      }
-    }
+    // for (let i = 0; i < this.campos.length; i++) {
+    // let i = -1;
+    // for (let c in this.campos) {
+    // // console.log(this.campos[i]);
+    //   i += 1;
+    //   for (let campo of this.campos[i] ) {
+    //     let nombre = campo.name;
+    //     if (this.playerForm[i].get(nombre)) { 
+    //       if (this.playerForm[i].get(nombre)?.hasError('required')) {
+    //         this.errorMessage[nombre].set('Debe ingresar ' + this.namesByCampo('viewName', nombre));
+    //       } else if (this.playerForm[i].get(nombre)?.hasError('minlength')) { 
+    //         this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener al menos ' + this.valorByCampo('minLen', nombre) + ' caracteres');
+    //       } else if (this.playerForm[i].get(nombre)?.hasError('maxlength')) {
+    //         this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener menos de ' + this.valorByCampo('maxLen', nombre) + ' caracteres');
+    //       } else if (this.playerForm[i].get(nombre)?.hasError('min')) { 
+    //         this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener un mínimo de ' + this.valorByCampo('minVal', nombre));
+    //       } else if (this.playerForm[i].get(nombre)?.hasError('max')) {
+    //         this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener un máximo de ' + this.valorByCampo('maxVal', nombre));
+    //       } else if (this.playerForm[i].get(nombre)?.hasError('pattern')) {
+    //         this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' no es válido');
+    //       } else {
+    //         this.errorMessage[nombre].set('Error sin definir en ' + this.namesByCampo('viewName', nombre));
+    //       }
+    //     }
+    //   }
+    // }
       // for (let campo of this.campos[2] ) {
       //   let nombre = campo.name;  
       //   if (this.playerForm[2].get(nombre)?.hasError) {

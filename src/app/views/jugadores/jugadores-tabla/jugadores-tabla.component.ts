@@ -1,5 +1,5 @@
 // import { Component, OnDestroy, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Component, OnDestroy, OnInit  } from '@angular/core';
+import { Component, OnDestroy, OnInit, EventEmitter, Output  } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { JugadoresService } from '../../../core/jugadores.service';
 import { Jugador } from '../../../core/model/jugador.model';
@@ -30,6 +30,7 @@ Chart.register(...registerables);
 })
 // export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
 export class JugadoresTablaComponent implements OnInit, OnDestroy {
+  @Output() jugadorId_EE = new EventEmitter<string>();
 
   constructor(private jugadoresService : JugadoresService, 
               private jugadorFieldService: JugadorFieldService,
@@ -42,6 +43,7 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
 
   jugadores: Jugador[] = []; 
   jugador?: Jugador;
+
 
   n_pagina_old: number = 1;
   n_pagina: number = 1;
@@ -71,27 +73,32 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
   }
 
   seleccionarFila(player: string[]){
-    const config = new MatDialogConfig();
-    config.enterAnimationDuration = 500;
-    config.maxHeight = '100%';
-    config.maxWidth = '100%';
-    config.width = '70%';
-    config.height = '100%';
-    config.id = 'graficoHabilidades';
-    config.hasBackdrop = true;
-    config.disableClose = false;
-    config.panelClass = "grafico"
- 
-    config.data = { player: player,
-                    fields: this.fields
-                  };
 
-    const dialogRef = this.dialog.open(JugadoresModalComponent, config); 
+    this.jugadorId_EE.emit(player[0]);
+
+  // *********MODAL CON RADARCHART
+    // const config = new MatDialogConfig();
+    // config.enterAnimationDuration = 500;
+    // config.maxHeight = '100%';
+    // config.maxWidth = '100%';
+    // config.width = '70%';
+    // config.height = '100%';
+    // config.id = 'graficoHabilidades';
+    // config.hasBackdrop = true;
+    // config.disableClose = false;
+    // config.panelClass = "grafico"
+ 
+    // config.data = { player: player,
+    //                 fields: this.fields
+    //               };
+
+    // const dialogRef = this.dialog.open(JugadoresModalComponent, config); 
     
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('El diálogo se cerró con:', result);
-    });
+    // dialogRef.afterClosed().subscribe(result => {
+    //   console.log('El diálogo se cerró con:', result);
+    // });
+  // **************MODAL CON RADARCHART
   }
 
   cambiarPagina(movimiento:number){

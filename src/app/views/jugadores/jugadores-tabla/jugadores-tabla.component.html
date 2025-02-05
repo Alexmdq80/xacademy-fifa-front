@@ -43,8 +43,9 @@
         </thead>
         <tbody>
             <tr [class.resaltado]="isHovered" (mouseenter)="onMouseEnter()"
-                (mouseleave)="onMouseLeave()" (click)="seleccionarFila(player)"
-                *ngFor="let player of jugadoresMatrizFields; let i = index">
+                (mouseleave)="onMouseLeave()"
+                *ngFor="let player of jugadoresMatrizFields; let i = index"
+                (click)="seleccionarFila(player)">
 
                 <td *ngFor="let field of fields; let z = index">
                     <p *ngIf="field.name==='player_face_url'">

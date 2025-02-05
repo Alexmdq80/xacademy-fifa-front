@@ -2,6 +2,7 @@
     <button outline-button (click)="newFiltro()" type="button">Agregar
         Filtro</button>
 </section> -->
+
 <div>
     <button (click)="agregarPersona()">
         <i class="material-icons-outlined">person_add</i>
@@ -18,11 +19,18 @@
         Filtro </button>
 
 </div>
-<div *ngIf="lista">
+
+<!-- <div *ngIf="lista">
     <app-jugadores-tabla></app-jugadores-tabla>
+</div> -->
+
+<div *ngIf="lista">
+    <app-jugadores-tabla
+        (jugadorId_EE)="recibirJugadorId($event)"></app-jugadores-tabla>
 </div>
+
 <div *ngIf="!lista">
     <app-agregar-persona
-        [add_update]="this.boton_add_update">
+        [jugadorId_INPUT]="jugadorId">
     </app-agregar-persona>
 </div>

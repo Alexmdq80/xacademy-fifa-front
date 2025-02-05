@@ -10,7 +10,6 @@ import { Jugador } from './model/jugador.model';
 export class JugadoresService {
 
   apiUrl = 'http://localhost:8080/player';
-
   // jugadores? : Jugador[];
 
   constructor(private httpClient: HttpClient) { }
@@ -25,12 +24,42 @@ export class JugadoresService {
     return this.httpClient.get<any>(this.apiUrl + '?' + strFiltro + '&page=' + page + '&limit=' + limit);
 
   }
+  getDataxID(id: number): Observable<Jugador[]> {
+    // return this.httpClient.get<any>(this.apiUrl + '?filtros[1]=id&valores_min[1]=1&valores_max[1]=100&limit=100');
+    // console.log(strFiltro);
+    return this.httpClient.get<Jugador[]>(this.apiUrl + '/' + id);
+
+  }
 
   postDataFiltrada(newPlayer: Jugador): Observable<{ message: string }> {
     console.log(newPlayer);
     return this.httpClient.post<{ message: string }>(this.apiUrl, {"newPlayer": newPlayer});
     
   }
+  
+  getDataxIdSync(id: number) {
+    let data: any;
 
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', this.apiUrl + '/' + id, false); // El tercer argumento 'false' indica que la petición es síncrona
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        data = JSON.parse(xhr.responseText);
+        console.log('Respuesta recibida:', data[0]);
+        return data;
+      } else {
+        console.error('Error en la petición:', xhr.status);
+        return '';
+      }
+    };
+    xhr.onerror = () => {
+      console.error('Error en la petición');
+      return '';
+    };
+    xhr.send();
 
+    return data[0];
+  
+  }
+  
 }
