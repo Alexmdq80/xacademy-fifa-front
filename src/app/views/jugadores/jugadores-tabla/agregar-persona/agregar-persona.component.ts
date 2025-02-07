@@ -15,13 +15,41 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { JugadoresService } from '../../../../core/jugadores.service';
 import { Jugador } from '../../../../core/model/jugador.model';  
-
+import { JugadorEtiquetas } from '../../../../core/model/jugador-etiquetas.model';
 interface SignalsValues {
   [key: string]: WritableSignal<string>; 
 }
 
 interface Opciones {
   [key: string]: JugadorDatos[];
+}
+
+interface Campo {
+  [key: string]: JugadorField;
+};
+
+interface Campos {
+  [key: string]: Campo;
+}
+
+interface CampoKeys {
+  [key: string]: string[];
+}
+
+interface Formulario {
+  [key: string]: any[];
+}
+
+interface Formularios {
+  [key: string]: Formulario;
+}
+
+// interface PlayerForm {
+//   [key: string]: FormGroup;
+// }
+
+interface PlayerForms {
+  [key: string]: FormGroup;
 }
 
 @Component({
@@ -56,14 +84,18 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
   jugadorPlayerTraits: JugadorDatos[] = [];
   jugadorGender: JugadorDatos[] = [];
   jugadorPreferredFoot: JugadorDatos[] = [];
-  jugadorEtiquetaGrupo: JugadorDatos[] = [];
+  jugadorEtiquetaGrupo: JugadorEtiquetas[] = [];
 
   subscriptionField = new Subscription();
   fields: JugadorField[] = [];
 
-  campos: JugadorField[][] = [ [] ];
-  formulario: any[] = [{}];
-  playerForm: FormGroup[] = [];
+  // campos: JugadorField[][] = [ [] ];
+  // formulario: any[] = [{}];
+  campoKeys: CampoKeys = {};
+  campos: Campos = {};
+  formularios: Formularios = {};
+  playerForms: PlayerForms = {};
+  // playerForm: FormGroup[] = [];
   
   protected readonly value: SignalsValues = { };
   errorMessage: SignalsValues = { };
@@ -135,7 +167,7 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     "goalkeeping_reflexes": 0,
     "goalkeeping_speed": 0,
     "player_traits": ""
-  };;
+  };
 
   constructor(private fb: FormBuilder,
               private jugadorDatosServicio: JugadorDatosService,
@@ -145,8 +177,6 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
              ) 
     {
   
-    // console.log(this.add_update);
-
     this.subscriptionField.add(this.jugadorFieldServicio.getFields().subscribe({
         next: res => {
           console.log("Se reciben datos de los atributos.");
@@ -157,177 +187,6 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
         }
       }    
     ));
-
-
-    // let n = [0,0,0,0,0,0,0];
- 
-    // this.campos.push();
-    // this.campos[1] = [];
-    // this.campos[2] = [];    
-    // this.campos[3] = [];  
-    // this.campos[4] = [];
-    // this.campos[5] = [];    
-    // this.campos[6] = [];  
-    // this.formulario.push();  
-    // this.formulario[1] = [];
-    // this.formulario[2] = [];
-    // this.formulario[3] = [];
-    // this.formulario[4] = [];
-    // this.formulario[5] = [];
-    // this.formulario[6] = [];
-    
-    // for (const field of this.fields) {
-    //   // *** ARMAR MENSAJES DE ERROR / VALIDADORES / Y SINGALS PARA INPUTS**
-    //   // console.log(field.name);
-      
-    //   this.errorMessage[field.name] = signal('');     
-    //   // if (field.type === 'string') {
-    //   if (field.esCadena) {
-    //     this.value[field.name] = signal('');         
-    //   }
-    //   // *****************
-    //   let validadores: ValidationErrors[] = [];
-      
-    //   if (field.esUrl) {
-    //     validadores.push(Validators.pattern('https?://.+'));
-    //   }
-    //   if (field.required && !field.esNumeroPequenio && !field.esRangoCategorias) {
-    //      validadores.push(Validators.required);
-    //   }
-    //   if (field.esNombre) {
-    //     validadores.push(Validators.pattern(/^[a-zA-ZçÇà-ÿ'`'\s]+$/));
-    //   }
-    //   if (field.esAlfanumerico) {
-    //     validadores.push(Validators.pattern(/^[0-9a-zA-ZçÇà-ÿ'`'\s]+$/));
-    //   }
-    //   if (field.minLen != -1 || field.maxLen != -1) {
-    //     validadores.push(Validators.minLength(field.minLen));
-    //     validadores.push(Validators.maxLength(field.maxLen));
-    //   } 
-    //   // if ((field.minVal != -1 || field.maxVal != -1) && !field.esRangoCategorias) {
-    //   if (field.minVal != -1 || field.maxVal != -1) {
-    //     validadores.push(Validators.min(field.minVal));
-    //     validadores.push(Validators.max(field.maxVal));
-    //   } 
-    //   if (field.esPersonal){
-    //     let z = 0;
-    //     this.formulario[z][field.name] = [field.sugerencia, validadores];
-    //     this.campos[z][n[z]] = field;
-    //     n[z] += 1;
-    //   } 
-    //   if (field.esGeneral) {
-    //     let z = 1;
-    //     this.formulario[z][field.name] = [field.sugerencia, validadores]
-    //     this.campos[z][n[z]] = field;
-    //     n[z] += 1;
-    //   }
-    //   if (field.esGlobalSkill ){
-    //     let z = 2;
-    //     if (field.esRangoCategorias) {
-    //        this.formulario[z][field.name + '1'] = [field.minVal, validadores];
-    //        this.formulario[z][field.name + '2'] = [field.maxVal, validadores];
-    //      } else {
-    //       this.formulario[z][field.name] = [field.sugerencia, validadores];
-    //     }
-    //     this.campos[z][n[z]] = field;
-    //     n[z] += 1;
-    //   }
-    //   if (field.esMentalitySkill){
-    //     let z = 3;
-    //     this.formulario[z][field.name] = [field.sugerencia, validadores]
-    //     this.campos[z][n[z]] = field;
-    //     n[z] += 1;
-    //   }
-    //   if (field.esGoalKeepingSkill){
-    //     let z = 4;
-    //     this.formulario[z][field.name] = [field.sugerencia, validadores]
-    //     this.campos[z][n[z]] = field;
-    //     n[z] += 1;
-    //   }     
-    //   if (field.esDefendSkill){
-    //     let z = 5;
-    //     this.formulario[z][field.name] = [field.sugerencia, validadores]
-    //     this.campos[z][n[z]] = field;
-    //     n[z] += 1;
-    //   }   
-    //   if (field.esAttackSkill ){
-    //     let z = 6;
-    //     this.formulario[z][field.name] = [field.sugerencia, validadores]
-    //     this.campos[z][n[z]] = field;
-    //     n[z] += 1;
-    //   }
-  
-         
-    // }  
-    // console.log(this.formulario[2]);
-    // console.log(this.campos);    
-    // console.log(this.campos[1]);
-    // console.log(this.campos[2]);
-
-    // this.playerForm[0] = this.fb.group(this.formulario[0]);
-    // this.playerForm[1] = this.fb.group(this.formulario[1]);
-    // this.playerForm[2] = this.fb.group(this.formulario[2]);
-    // this.playerForm[3] = this.fb.group(this.formulario[3]);    
-    // this.playerForm[4] = this.fb.group(this.formulario[4]);  
-    // this.playerForm[5] = this.fb.group(this.formulario[5]);
-    // this.playerForm[6] = this.fb.group(this.formulario[6]);
-
-    
-    // *****
-
-    // this.playerFormAnterior = this.playerForm[0].value; 
-    // this.controlNameChanged = '';
-
-    // merge(this.playerForm[0].statusChanges, this.playerForm[0].valueChanges)
-    // .pipe(
-    //   map(valorActual => {
-    //     for (const controlName in valorActual) {
-    //       console.log(valorActual);
-    //       // console.log(this.playerFormAnterior);
-    //       if (valorActual[controlName] !== this.playerFormAnterior[controlName] ) {
-    //            // console.log(`El control '${controlName}' ha cambiado a:`, valorActual[controlName]);
-    //           this.controlNameChanged = controlName;
-    //           console.log(controlName);
-    //           console.log(this.playerForm[0].value['age'])
-    //           break;
-    //       }
-    //     }
-    //   }
-    //   )
-    // )
-    // .pipe(takeUntilDestroyed())
-    // .subscribe(() => this.updateErrorMessage( this.controlNameChanged ));
-
-  
-
-    // merge(this.playerForm[0].statusChanges, this.playerForm[0].valueChanges)
-    // .pipe(takeUntilDestroyed())
-    // .subscribe(() => this.updateErrorMessage());
-
-    // merge(this.playerForm[1].statusChanges, this.playerForm[1].valueChanges)
-    // .pipe(takeUntilDestroyed())
-    // .subscribe(() => this.updateErrorMessage());
-
-    // merge(this.playerForm[2].statusChanges, this.playerForm[2].valueChanges)
-    // .pipe(takeUntilDestroyed())
-    // .subscribe(() => this.updateErrorMessage());
-
-    // merge(this.playerForm[3].statusChanges, this.playerForm[3].valueChanges)
-    // .pipe(takeUntilDestroyed())
-    // .subscribe(() => this.updateErrorMessage());
-
-    // merge(this.playerForm[4].statusChanges, this.playerForm[4].valueChanges)
-    // .pipe(takeUntilDestroyed())
-    // .subscribe(() => this.updateErrorMessage());
-
-    // merge(this.playerForm[5].statusChanges, this.playerForm[5].valueChanges)
-    // .pipe(takeUntilDestroyed())
-    // .subscribe(() => this.updateErrorMessage());
-
-    // merge(this.playerForm[6].statusChanges, this.playerForm[6].valueChanges)
-    // .pipe(takeUntilDestroyed())
-    // .subscribe(() => this.updateErrorMessage());
-
 
     this.jugadorPositions = this.jugadorDatosServicio.getJugadorPositions();
     this.jugadorWorkRate = this.jugadorDatosServicio.getJugadorWorkRate();
@@ -343,22 +202,20 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     this.opciones['player_traits'] = this.jugadorPlayerTraits;     
     this.opciones['gender'] = this.jugadorGender;
     this.opciones['preferred_foot'] = this.jugadorPreferredFoot;
+
+    for (const field of this.fields) {
+      if (field.esUnico && !field.required) {
+        this.opciones[field.name].unshift({
+          'codigo': null,
+          'view': 'Seleccione una Opción'
+        });
+      }
+    }
+    console.log(this.opciones);
   };
 
-  // ngOnChanges(): void {
-    // console.log(this.jugadorId_INPUT);
-    // if (this.jugadorId_INPUT != 0) {
-    //   this.subscription.add(this.jugadoresService.getDataxID(this.jugadorId_INPUT).subscribe(data => {
-    //     console.log(data[0]);
-    //     this.jugador = data[0];
-    //    }));
-    // }
-
-  // }
 
   ngOnInit(): void {
-    let n = [0,0,0,0,0,0,0,0,0,0];
-   
 
     if (this.jugadorId_INPUT != 0) {
       let datos: any;
@@ -375,43 +232,13 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
         cadena = field.sugerencia;
       }
       this.jugador[field.name] = cadena;
-
     }
           
-    console.log('jugador');
-    console.log(this.jugador);
-   
-    // console.log('Jugador- Agregar Persona');   
-    // console.log(this.jugador);
-
-    this.campos.push();
-    this.campos[1] = [];
-    this.campos[2] = [];    
-    this.campos[3] = [];  
-    this.campos[4] = [];
-    this.campos[5] = [];    
-    this.campos[6] = [];  
-    this.campos[7] = [];  
-    this.campos[8] = [];  
-    this.campos[9] = [];  
-
-    this.formulario.push();  
-    this.formulario[1] = [];
-    this.formulario[2] = [];
-    this.formulario[3] = [];
-    this.formulario[4] = [];
-    this.formulario[5] = [];
-    this.formulario[6] = [];
-    this.formulario[7] = [];
-    this.formulario[8] = [];
-    this.formulario[9] = [];
-
     for (const field of this.fields) {
       // *** ARMAR MENSAJES DE ERROR / VALIDADORES / Y SINGALS PARA INPUTS**
       // console.log(field.name);
 
       let valor: any;
-
       this.errorMessage[field.name] = signal('');     
       // if (field.type === 'string') {
       if (field.esCadena) {
@@ -423,8 +250,9 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
       if (field.esUrl) {
         validadores.push(Validators.pattern('https?://.+'));
       }
-      if (field.required && !field.esNumeroPequenio && !field.esRangoCategorias) {
-         validadores.push(Validators.required);
+      // if (field.required && !field.esNumeroPequenio && !field.esRangoCategorias) {
+      if (field.required) {
+          validadores.push(Validators.required);
       }
       if (field.esNombre) {
         validadores.push(Validators.pattern(/^[a-zA-ZçÇà-ÿ'`'\s]+$/));
@@ -445,7 +273,9 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
       if (field.esUnico && field.required) {
         
       }
-
+// Cargo el valor desde el objeto Jugador, que ya tiene
+// los valores sugeridos, en caso de ser un jugador nuevo,
+// o los valores cargados desde la BD en caso de ser una actualización.
       let cadena = '';
       let arreglo: string[] = [];
       if (field.esMultiple) {
@@ -453,121 +283,47 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
         arreglo = cadena.split(", ");
         valor = arreglo;
       } else {
+        // acá habría que poner para los rangos??
         cadena = this.jugador[field.name];
-        valor = cadena;
-      } 
-
-      if (field.esPersonal){
-        let z = 0;
-        this.formulario[z][field.name] = [valor, validadores];
-        this.campos[z][n[z]] = field;
-        n[z] += 1;
-      } 
-      if (field.esGeneral) {
-        let z = 1;
-        this.formulario[z][field.name] = [valor, validadores]
-        this.campos[z][n[z]] = field;
-        n[z] += 1;
-      }
-      if (field.esGlobalSkill ){
-        let z = 2;
-        if (field.esRangoCategorias) {
-           this.formulario[z][field.name + '1'] = [field.minVal, validadores];
-           this.formulario[z][field.name + '2'] = [field.maxVal, validadores];
-         } else {
-          this.formulario[z][field.name] = [valor, validadores];
+        if (field.esKey) {
+          valor = {
+              value: [cadena],
+              disabled: true
+          }
+          
+          // console.log(valor);
+        } else {
+          valor = cadena;
         }
-        this.campos[z][n[z]] = field;
-        n[z] += 1;
+      }  
+      
+      if (!this.campos[field.group[0]]) {
+        this.campos[field.group[0]] = {};
       }
-      if (field.esSkill) {
-        let z = 3;
-        this.formulario[z][field.name] = [valor, validadores]
-        this.campos[z][n[z]] = field;
-        n[z] += 1;
+      this.campos[field.group[0]][field.name] = field;
+
+      if (!this.formularios[field.group[0]]) {
+        this.formularios[field.group[0]] = {};
       }
-      if (field.esMovement) {
-        let z = 4;
-        this.formulario[z][field.name] = [valor, validadores]
-        this.campos[z][n[z]] = field;
-        n[z] += 1;
-      }
-      if (field.esPower) {
-        let z = 5;
-        this.formulario[z][field.name] = [valor, validadores]
-        this.campos[z][n[z]] = field;
-        n[z] += 1;
-      }
-      if (field.esMentalitySkill){
-        let z = 6;
-        this.formulario[z][field.name] = [valor, validadores]
-        this.campos[z][n[z]] = field;
-        n[z] += 1;
-      }
-      if (field.esGoalKeepingSkill){
-        let z = 7;
-        this.formulario[z][field.name] = [valor, validadores]
-        this.campos[z][n[z]] = field;
-        n[z] += 1;
-      }     
-      if (field.esDefendSkill){
-        let z = 8;
-        this.formulario[z][field.name] = [valor, validadores]
-        this.campos[z][n[z]] = field;
-        n[z] += 1;
-      }   
-      if (field.esAttackSkill ){
-        let z = 9;
-        this.formulario[z][field.name] = [valor, validadores]
-        this.campos[z][n[z]] = field;
-        n[z] += 1;
-      }
+
+      this.formularios[field.group[0]][field.name] = [valor, validadores];
+
+      if (field.esRangoCategorias) {
+        this.formularios[field.group[0]][field.name + '1'] = [field.minVal, validadores];
+        this.formularios[field.group[0]][field.name + '2'] = [field.maxVal, validadores];
+      } 
+    
       if (field.name === 'height_cm') {     
         this.armaBody_Type(Number(valor));
       }
     } 
+    for (let grupo of this.jugadorEtiquetaGrupo) {
+      this.playerForms[grupo.codigo] = this.fb.group(this.formularios[grupo.codigo]);
+      this.campoKeys[grupo.codigo] = Object.keys(this.campos[grupo.codigo]);
+      this.subscription.add(merge(this.playerForms[grupo.codigo].statusChanges, this.playerForms[grupo.codigo].valueChanges)
+      .subscribe(() => this.updateErrorMessage()));
+    }
     
-    this.playerForm[0] = this.fb.group(this.formulario[0]);
-    this.playerForm[1] = this.fb.group(this.formulario[1]);
-    this.playerForm[2] = this.fb.group(this.formulario[2]);
-    this.playerForm[3] = this.fb.group(this.formulario[3]);    
-    this.playerForm[4] = this.fb.group(this.formulario[4]);  
-    this.playerForm[5] = this.fb.group(this.formulario[5]);
-    this.playerForm[6] = this.fb.group(this.formulario[6]);
-    this.playerForm[7] = this.fb.group(this.formulario[7]);
-    this.playerForm[8] = this.fb.group(this.formulario[8]);
-    this.playerForm[9] = this.fb.group(this.formulario[9]);
-
-    this.subscription.add(merge(this.playerForm[0].statusChanges, this.playerForm[0].valueChanges)
-    .subscribe(() => this.updateErrorMessage()));
-
-    this.subscription.add(merge(this.playerForm[1].statusChanges, this.playerForm[1].valueChanges)
-    .subscribe(() => this.updateErrorMessage()));
-
-    this.subscription.add(merge(this.playerForm[2].statusChanges, this.playerForm[2].valueChanges)
-    .subscribe(() => this.updateErrorMessage()));
-
-    this.subscription.add(merge(this.playerForm[3].statusChanges, this.playerForm[3].valueChanges)
-    .subscribe(() => this.updateErrorMessage()));
-
-    this.subscription.add(merge(this.playerForm[4].statusChanges, this.playerForm[4].valueChanges)
-    .subscribe(() => this.updateErrorMessage()));
-
-    this.subscription.add(merge(this.playerForm[5].statusChanges, this.playerForm[5].valueChanges)
-    .subscribe(() => this.updateErrorMessage()));
-
-    this.subscription.add(merge(this.playerForm[6].statusChanges, this.playerForm[6].valueChanges)
-    .subscribe(() => this.updateErrorMessage()));
-
-    this.subscription.add(merge(this.playerForm[7].statusChanges, this.playerForm[7].valueChanges)
-    .subscribe(() => this.updateErrorMessage()));
-
-    this.subscription.add(merge(this.playerForm[8].statusChanges, this.playerForm[8].valueChanges)
-    .subscribe(() => this.updateErrorMessage()));
-
-    this.subscription.add(merge(this.playerForm[9].statusChanges, this.playerForm[9].valueChanges)
-    .subscribe(() => this.updateErrorMessage()));
-
   }
 
   CrearJugador() {
@@ -640,30 +396,32 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
  
     // for (let i = 0; i < this.campos.length; i++) {
     let i = -1;
-    for (let c in this.campos) {
+    // for (let c in this.campos) {
+    for (let grupo of Object.keys(this.campos)) {
       i += 1;
-      for (let campo of this.campos[i] ) {
-        if (campo.esMultiple){
-          newPlayer[campo.name] =  this.playerForm[i].get(campo.name)?.value.toString();       
-        } else if (campo.esRangoCategorias) {
+      for (let campo of Object.keys(grupo)) {
+        if (this.campos[grupo][campo].esMultiple){
+          // newPlayer[campo.name] =  this.playerForm[i].get(campo.name)?.value.toString();       
+          newPlayer[this.campos[grupo][campo].name] =  this.playerForms[grupo].get(this.campos[grupo][campo].name)?.value.toString();       
+
+        // } else if (campo.esRangoCategorias) {
+        } else if (this.campos[grupo][campo].esRangoCategorias) {
           let cadena1;
           let cadena2;
-          cadena1 = this.getValueFromSlider(campo, this.playerForm[i].get(campo.name + '1')?.value);
-          cadena2 = this.getValueFromSlider(campo, this.playerForm[i].get(campo.name + '2')?.value);
-          newPlayer[campo.name] = cadena1 + '/' + cadena2;     
+          // cadena1 = this.getValueFromSlider(campo, this.playerForm[i].get(campo.name + '1')?.value);
+          // cadena2 = this.getValueFromSlider(campo, this.playerForm[i].get(campo.name + '2')?.value);
+          // newPlayer[campo.name] = cadena1 + '/' + cadena2;     
+          cadena1 = this.getValueFromSlider(this.campos[grupo][campo], this.playerForms[grupo].get(this.campos[grupo][campo].name + '1')?.value);
+          cadena2 = this.getValueFromSlider(this.campos[grupo][campo], this.playerForms[grupo].get(this.campos[grupo][campo].name + '2')?.value);
+          newPlayer[this.campos[grupo][campo].name] = cadena1 + '/' + cadena2;     
           
    
-        } else if (campo.esNumeroMediano || campo.esNumeroPequenio) {
-          newPlayer[campo.name] =  Number(this.playerForm[i].get(campo.name)?.value);       
+        // } else if (campo.esNumeroMediano || campo.esNumeroPequenio) {
+        } else if (this.campos[grupo][campo].esNumeroMediano || this.campos[grupo][campo].esNumeroPequenio) {
+          newPlayer[this.campos[grupo][campo].name] =  Number(this.playerForms[grupo].get(this.campos[grupo][campo].name)?.value);       
         } else {
-          // if (campo.name ==="body_type") {
-          //   let bt: string = '';
-          //   bt = this.armarBody_Type();
-          //   newPlayer[campo.name] = bt;
-          // } else {
-            newPlayer[campo.name] =  this.playerForm[i].get(campo.name)?.value;       
-        
-          
+            // newPlayer[campo.name] =  this.playerForm[i].get(campo.name)?.value;       
+            newPlayer[this.campos[grupo][campo].name] =  this.playerForms[grupo].get(this.campos[grupo][campo].name)?.value;       
         }
       }
     } 
@@ -718,12 +476,14 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     return this.opciones[campo.name][index].view;
   }
   
-  protected onInput(event: Event, i: number) {
+  // protected onInput(event: Event, i: number) {
+  protected onInput(event: Event) {
     const target = event.target as HTMLInputElement;
 
     // event.target as HTMLInputElement).value
     // console.log(this.fields);
     for (const field of this.fields) {
+      const grupo = field.group[0];
       if (target.id === field.name) {
         // if (field.type === 'integer' && target.value) {
         if (target.value &&  
@@ -735,16 +495,20 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
             if (field.minVal === 0 || 
                 (field.minVal > 0 && (String(target.value).length) > 
                 (String(field.minVal).length - 1) )) {
-              this.playerForm[i].patchValue( { [target.id]: field.minVal });
+              // this.playerForm[i].patchValue( { [target.id]: field.minVal });
+              this.playerForms[grupo].patchValue( { [target.id]: field.minVal });
             }
           } else if (Number(target.value) > field.maxVal ) {
             // this.value[target.id].set(String(field.maxVal));
             // target.value = String(field.maxVal);
-            this.playerForm[i].patchValue( { [target.id]: field.maxVal });
-         }
+            // this.playerForm[i].patchValue( { [target.id]: field.maxVal });
+            this.playerForms[grupo].patchValue( { [target.id]: field.maxVal });
+          }
         } else if (target.value) {
           this.value[target.id].set(target.value);
-          this.playerForm[i].value[target.id] = target.value;
+          // this.playerForm[i].value[target.id] = target.value;
+          // this.playerForms[grupo].value[target.id]= target.value;
+          this.playerForms[grupo].patchValue( { [target.id]: target.value });
         } 
         break;
       }
@@ -761,27 +525,67 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
 
   armaBody_Type (height: number) {
     let height_rango: string = '';
-    if (height < 170) {
-      height_rango = '(170-)';
-    } else if (height >= 170 && height <= 185) {
-      height_rango = '(170-185)';
-    } else if (height > 185) {
-      height_rango = '(185+)';
-    } 
+    let g: string = '';
+    const n = this.opciones['body_type'].length;
+    
+    if (this.playerForms) {
+      let valor: any;
+      let valor_array: string[] = [];
+      for (let field of this.fields) {
+        if (field.name === 'body_type') {
+          g = field.group[0];
+          if (this.playerForms[g]) {
+            if (this.playerForms[g].contains(field.name)) { 
+             const control = this.playerForms[g].get('body_type');
+             if (control) {
+               valor = control.value;
+             }
+             valor_array = valor.split(' (');
+ 
+            }
+          } else {   
+    
+          };
+          break;
+        }
+      }  
+      console.log(valor_array[0]);
 
-    this.opciones['body_type'] = [];
-    for (let i = 0; i < 4; i++){
-      let btc: string; 
-      let btv: string; 
-      
-      btc = this.jugadorBodyType[i].codigo + ' ' + height_rango;     
-      btv = this.jugadorBodyType[i].view + ' ' + height_rango;     
+      if (height < 170) {
+        height_rango = '(170-)';
+      } else if (height >= 170 && height <= 185) {
+        height_rango = '(170-185)';
+      } else if (height > 185) {
+        height_rango = '(185+)';
+      } 
+      this.opciones['body_type'] = [];
+      for (let i = 0; i < n; i++){
+        let btc: string | null; 
+        let btv: string; 
 
-      this.opciones['body_type'].push();
-      this.opciones['body_type'][i] = {
-        "codigo": btc,
-        "view": btv
-      };       
+        if (this.jugadorBodyType[i].codigo === null) {
+          btc = this.jugadorBodyType[i].codigo;     
+          btv = this.jugadorBodyType[i].view;     
+        } else {
+          btc = this.jugadorBodyType[i].codigo + ' ' + height_rango;     
+          btv = this.jugadorBodyType[i].view + ' ' + height_rango;     
+        }
+
+        this.opciones['body_type'].push();
+        this.opciones['body_type'][i] = {
+          "codigo": btc,
+          "view": btv
+        };      
+        if (valor_array[0] != '') {
+          if (g != '') {
+            const x = valor_array[0] + ' ' + height_rango;
+            console.log(x);
+            if (this.playerForms[g]) {
+              this.playerForms[g].patchValue({'body_type': x } );
+            }
+          }
+        }
+      }
     }
   }
   // protected onBlur(event: Event) {
@@ -869,33 +673,28 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
  
   
   updateErrorMessage() {
-    
-    // for (let i = 0; i < this.campos.length; i++) {
-    // let i = -1;
-    // for (let c in this.campos) {
-    // // console.log(this.campos[i]);
-    //   i += 1;
-    //   for (let campo of this.campos[i] ) {
-    //     let nombre = campo.name;
-    //     if (this.playerForm[i].get(nombre)) { 
-    //       if (this.playerForm[i].get(nombre)?.hasError('required')) {
-    //         this.errorMessage[nombre].set('Debe ingresar ' + this.namesByCampo('viewName', nombre));
-    //       } else if (this.playerForm[i].get(nombre)?.hasError('minlength')) { 
-    //         this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener al menos ' + this.valorByCampo('minLen', nombre) + ' caracteres');
-    //       } else if (this.playerForm[i].get(nombre)?.hasError('maxlength')) {
-    //         this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener menos de ' + this.valorByCampo('maxLen', nombre) + ' caracteres');
-    //       } else if (this.playerForm[i].get(nombre)?.hasError('min')) { 
-    //         this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener un mínimo de ' + this.valorByCampo('minVal', nombre));
-    //       } else if (this.playerForm[i].get(nombre)?.hasError('max')) {
-    //         this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener un máximo de ' + this.valorByCampo('maxVal', nombre));
-    //       } else if (this.playerForm[i].get(nombre)?.hasError('pattern')) {
-    //         this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' no es válido');
-    //       } else {
-    //         this.errorMessage[nombre].set('Error sin definir en ' + this.namesByCampo('viewName', nombre));
-    //       }
-    //     }
-    //   }
-    // }
+
+    for (let grupo of this.jugadorEtiquetaGrupo) {
+     for (let nombre in this.campos[grupo.codigo]) {
+        if (this.playerForms[grupo.codigo].get(nombre)) { 
+          if (this.playerForms[grupo.codigo].get(nombre)?.hasError('required')) {
+            this.errorMessage[nombre].set('Debe ingresar ' + this.namesByCampo('viewName', nombre));
+          } else if (this.playerForms[grupo.codigo].get(nombre)?.hasError('minlength')) { 
+            this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener al menos ' + this.valorByCampo('minLen', nombre) + ' caracteres');
+          } else if (this.playerForms[grupo.codigo].get(nombre)?.hasError('maxlength')) {
+            this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener menos de ' + this.valorByCampo('maxLen', nombre) + ' caracteres');
+          } else if (this.playerForms[grupo.codigo].get(nombre)?.hasError('min')) { 
+            this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener un mínimo de ' + this.valorByCampo('minVal', nombre));
+          } else if (this.playerForms[grupo.codigo].get(nombre)?.hasError('max')) {
+            this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener un máximo de ' + this.valorByCampo('maxVal', nombre));
+          } else if (this.playerForms[grupo.codigo].get(nombre)?.hasError('pattern')) {
+            this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' no es válido');
+          } else {
+            this.errorMessage[nombre].set('Error sin definir en ' + this.namesByCampo('viewName', nombre));
+          }
+        }
+      }
+    }
       // for (let campo of this.campos[2] ) {
       //   let nombre = campo.name;  
       //   if (this.playerForm[2].get(nombre)?.hasError) {

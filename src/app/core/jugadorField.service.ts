@@ -37,6 +37,7 @@ export class JugadorFieldService {
                  esMultiple: field.contenido.find(c => c === 'múltiple')? true:false,
                  esRangoCategorias: field.contenido.find(c => c === 'rango_categorías')? true:false,
                  esUrl: field.contenido.find(c => c === 'url')? true:false,
+                 esKey: field.group.find(c => c === 'key')? true:false, 
                  esGlobalSkill: field.group.find(c => c === 'habilidad_global')? true:false,
                  esSpecifSkill: field.group.find(c => c === 'habilidad_específica')? true:false,
                  esSkill: field.group.find(c => c === 'skill')? true:false,

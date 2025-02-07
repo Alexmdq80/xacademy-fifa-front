@@ -3,139 +3,179 @@
 <!-- ********************* -->
 
 <mat-stepper orientation="vertical" linear="false" #stepper>
-    <mat-step *ngFor="let object_campo of campos; let i = index"
-        [stepControl]="playerForm[i]"
+    <!-- <mat-step *ngFor="let object_campo of campos; let i = index" -->
+    <!-- [stepControl]="playerForm[i]" -->
+    <mat-step
+        *ngFor="let grupo of jugadorEtiquetaGrupo; let i = index"
+        [stepControl]="playerForms[grupo.codigo]"
         errorMessage="Revise el formulario. Contiene errores o faltan datos.">
         <ng-template matStepLabel> {{ jugadorEtiquetaGrupo[i].view }}
         </ng-template>
-        <form class="form-contenedor" [formGroup]="playerForm[i]"
-            *ngFor="let campo of campos[i];">
-            <mat-form-field *ngIf="campo.esCadena" class="form-campo"
+        <!-- <form class="form-contenedor" [formGroup]="playerForm[i]" -->
+        <!-- *ngFor="let campo in campos[grupo.codigo];"> -->
+        <form class="form-contenedor" [formGroup]="playerForms[grupo.codigo]"
+            *ngFor="let campo of campoKeys[grupo.codigo];">
+            <mat-form-field *ngIf="campos[grupo.codigo][campo].esCadena"
+                class="form-campo"
                 appearance="fill">
-                <mat-label class="form-etiqueta" for="campo.name">
-                    {{ namesByCampo('viewName', campo.name) }}
+                <mat-label class="form-etiqueta"
+                    for="campos[grupo.codigo][campo].name">
+                    {{ namesByCampo('viewName',
+                    campos[grupo.codigo][campo].name) }}
                 </mat-label>
-                <input class="form-input" matInput id={{campo.name}}
-                    formControlName="{{campo.name}}"
-                    placeholder="{{ campo.sugerencia }}"
+                <input class="form-input" matInput
+                    id={{campos[grupo.codigo][campo].name}}
+                    formControlName="{{campos[grupo.codigo][campo].name}}"
+                    placeholder="{{ campos[grupo.codigo][campo].sugerencia }}"
                     (blur)="updateErrorMessage()"
-                    (input)="onInput($event, i)" />
+                    (input)="onInput($event)" />
 
-                @if (playerForm[i].get(campo.name)?.invalid) {
-                <mat-error>{{errorMessage[campo.name]()}}</mat-error>
+                @if
+                (playerForms[grupo.codigo].get(campos[grupo.codigo][campo].name)?.invalid)
+                {
+                <mat-error>{{errorMessage[campos[grupo.codigo][campo].name]()}}</mat-error>
                 }
                 <mat-hint
-                    align="end">{{value[campo.name]().length}}/255</mat-hint>
+                    align="end">{{value[campos[grupo.codigo][campo].name]().length}}/255</mat-hint>
 
             </mat-form-field>
 
-            <mat-form-field *ngIf="campo.esNumeroMediano"
+            <mat-form-field *ngIf="campos[grupo.codigo][campo].esNumeroMediano"
                 class="form-campo-numero" appearance="fill">
-                <mat-label class="form-etiqueta" for="campo.name"> {{
-                    namesByCampo('viewName', campo.name) }}</mat-label>
-                <input matInput type="number" id={{campo.name}}
-                    formControlName="{{campo.name}}"
+                <mat-label class="form-etiqueta"
+                    for="campos[grupo.codigo][campo].name"> {{
+                    namesByCampo('viewName', campos[grupo.codigo][campo].name)
+                    }}</mat-label>
+                <input matInput type="number"
+                    id={{campos[grupo.codigo][campo].name}}
+                    formControlName="{{campos[grupo.codigo][campo].name}}"
                     (blur)="updateErrorMessage()"
-                    (input)="onInput($event, i)"
-                    placeholder="{{ campo.sugerencia }}" />
-                @if (playerForm[i].get(campo.name)?.invalid) {
-                <mat-error>{{errorMessage[campo.name]()}}</mat-error>
+                    (input)="onInput($event)"
+                    placeholder="{{ campos[grupo.codigo][campo].sugerencia }}" />
+                @if
+                (playerForms[grupo.codigo].get(campos[grupo.codigo][campo].name)?.invalid)
+                {
+                <mat-error>{{errorMessage[campos[grupo.codigo][campo].name]()}}</mat-error>
                 }
-                <mat-hint
-                    align="end">{{campo.minVal}}-{{campo.maxVal}}</mat-hint>
+                <mat-hint *ngIf="!campos[grupo.codigo][campo].esKey"
+                    align="end">{{campos[grupo.codigo][campo].minVal}}-{{campos[grupo.codigo][campo].maxVal}}</mat-hint>
             </mat-form-field>
 
-            <mat-form-field *ngIf="campo.esUnico" class="form-campo-select"
+            <mat-form-field *ngIf="campos[grupo.codigo][campo].esUnico"
+                class="form-campo-select"
                 appearance="fill">
-                <mat-label class="form-etiqueta" for="campo.name"> {{
-                    namesByCampo('viewName', campo.name) }}
+                <mat-label class="form-etiqueta"
+                    for="campos[grupo.codigo][campo].name"> {{
+                    namesByCampo('viewName', campos[grupo.codigo][campo].name)
+                    }}
                 </mat-label>
-                <mat-select class="form-select" id={{campo.name}}
-                    formControlName="{{campo.name}}"
+                <mat-select class="form-select"
+                    id={{campos[grupo.codigo][campo].name}}
+                    formControlName="{{campos[grupo.codigo][campo].name}}"
                     (blur)="updateErrorMessage()">
                     <mat-option
-                        *ngFor="let opcion of opciones[campo.name];"
+                        *ngFor="let opcion of opciones[campos[grupo.codigo][campo].name];"
                         value="{{ opcion.codigo }}">{{ opcion.view }}
                     </mat-option>
                 </mat-select>
-                @if (playerForm[i].get(campo.name)?.invalid) {
-                <mat-error>{{errorMessage[campo.name]()}}</mat-error>
+                @if
+                (playerForms[grupo.codigo].get(campos[grupo.codigo][campo].name)?.invalid)
+                {
+                <mat-error>{{errorMessage[campos[grupo.codigo][campo].name]()}}</mat-error>
                 }
                 <mat-hint align="end">Menú Desplegable ^</mat-hint>
             </mat-form-field>
 
-            <mat-slider *ngIf="campo.esNumeroPequenio" min={{campo.minVal}}
-                max={{campo.maxVal}} showTickMarks
+            <mat-slider *ngIf="campos[grupo.codigo][campo].esNumeroPequenio"
+                min={{campos[grupo.codigo][campo].minVal}}
+                max={{campos[grupo.codigo][campo].maxVal}} showTickMarks
                 discrete>
-                <mat-label class="form-etiqueta" for="campo.name">
-                    {{ namesByCampo('viewName', campo.name) }}
+                <mat-label class="form-etiqueta"
+                    for="campos[grupo.codigo][campo].name">
+                    {{ namesByCampo('viewName',
+                    campos[grupo.codigo][campo].name) }}
                 </mat-label>
-                <input matSliderThumb formControlName="{{campo.name}}">
+                <input matSliderThumb
+                    formControlName="{{campos[grupo.codigo][campo].name}}">
             </mat-slider>
 
-            <mat-form-field *ngIf="campo.esMoneda" class="form-campo-numero"
+            <mat-form-field *ngIf="campos[grupo.codigo][campo].esMoneda"
+                class="form-campo-numero"
                 appearance="fill"
                 floatLabel="always">
-                <mat-label for="campo.name"> {{ namesByCampo('viewName',
-                    campo.name)
+                <mat-label for="campos[grupo.codigo][campo].name"> {{
+                    namesByCampo('viewName',
+                    campos[grupo.codigo][campo].name)
                     }}</mat-label>
                 <input class="form-campo-euro" matInput type="number"
-                    id={{campo.name}}
-                    formControlName="{{campo.name}}"
+                    id={{campos[grupo.codigo][campo].name}}
+                    formControlName="{{campos[grupo.codigo][campo].name}}"
                     (blur)="updateErrorMessage()"
-                    (input)="onInput($event, i)"
-                    placeholder="{{ campo.sugerencia }}" />
+                    (input)="onInput($event)"
+                    placeholder="{{ campos[grupo.codigo][campo].sugerencia }}" />
                 <span matTextPrefix>€&nbsp;</span>
                 <span matTextSuffix>.00</span>
-                @if (playerForm[i].get(campo.name)?.invalid) {
-                <mat-error>{{errorMessage[campo.name]()}}</mat-error>
+                @if
+                (playerForms[grupo.codigo].get(campos[grupo.codigo][campo].name)?.invalid)
+                {
+                <mat-error>{{errorMessage[campos[grupo.codigo][campo].name]()}}</mat-error>
                 }
                 <mat-hint
-                    align="end">{{campo.minVal}}-{{campo.maxVal}}</mat-hint>
+                    align="end">{{campos[grupo.codigo][campo].minVal}}-{{campos[grupo.codigo][campo].maxVal}}</mat-hint>
             </mat-form-field>
 
-            <mat-form-field *ngIf="campo.esMultiple"
+            <mat-form-field *ngIf="campos[grupo.codigo][campo].esMultiple"
                 class="form-campo-multiselect"
                 appearance="fill">
-                <mat-label class="form-etiqueta" for="campo.name"> {{
-                    namesByCampo('viewName', campo.name)
+                <mat-label class="form-etiqueta"
+                    for="campos[grupo.codigo][campo].name"> {{
+                    namesByCampo('viewName', campos[grupo.codigo][campo].name)
                     }}
                 </mat-label>
-                <mat-select class="form-select" id={{campo.name}}
-                    formControlName="{{campo.name}}"
+                <mat-select class="form-select"
+                    id={{campos[grupo.codigo][campo].name}}
+                    formControlName="{{campos[grupo.codigo][campo].name}}"
                     multiple
                     (blur)="updateErrorMessage()">
                     <mat-option
-                        *ngFor="let opcion of opciones[campo.name];"
+                        *ngFor="let opcion of opciones[campos[grupo.codigo][campo].name];"
                         value="{{ opcion.codigo }}">{{ opcion.view }}
                     </mat-option>
 
                 </mat-select>
-                @if (playerForm[i].get(campo.name)?.invalid) {
-                <mat-error>{{errorMessage[campo.name]()}}</mat-error>
+                @if
+                (playerForms[grupo.codigo].get(campos[grupo.codigo][campo].name)?.invalid)
+                {
+                <mat-error>{{errorMessage[campos[grupo.codigo][campo].name]()}}</mat-error>
                 }
                 <mat-hint align="end">Menú Desplegable ^</mat-hint>
             </mat-form-field>
-            <div *ngIf="campo.esRangoCategorias">
-                <mat-slider [min]="campo.minVal"
-                    [max]="campo.maxVal" showTickMarks>
-                    <mat-label class="form-etiqueta" for="campo.name">
-                        {{ namesByCampo('viewName', campo.name) }}
+            <div *ngIf="campos[grupo.codigo][campo].esRangoCategorias">
+                <mat-slider [min]="campos[grupo.codigo][campo].minVal"
+                    [max]="campos[grupo.codigo][campo].maxVal" showTickMarks>
+                    <mat-label class="form-etiqueta"
+                        for="campos[grupo.codigo][campo].name">
+                        {{ namesByCampo('viewName',
+                        campos[grupo.codigo][campo].name) }}
                     </mat-label>
-                    <input type="range" value="{{+campo.minVal}}"
+                    <input type="range"
+                        value="{{+campos[grupo.codigo][campo].minVal}}"
                         matSliderStartThumb
-                        formControlName="{{campo.name +  '1'}}">
-                    <input type="range" value="{{+campo.maxVal}}"
+                        formControlName="{{campos[grupo.codigo][campo].name +  '1'}}">
+                    <input type="range"
+                        value="{{+campos[grupo.codigo][campo].maxVal}}"
                         matSliderEndThumb
-                        formControlName="{{campo.name +  '2'}}">
+                        formControlName="{{campos[grupo.codigo][campo].name +  '2'}}">
                 </mat-slider>
                 <div>
                     <label>
 
-                        {{ getValueFromSlider(campo,
-                        this.playerForm[i].get(campo.name + '1')?.value) }}/{{
-                        getValueFromSlider(campo,
-                        this.playerForm[i].get(campo.name + '2')?.value) }}
+                        {{ getValueFromSlider(campos[grupo.codigo][campo],
+                        this.playerForms[grupo.codigo].get(campos[grupo.codigo][campo].name
+                        + '1')?.value) }}/{{
+                        getValueFromSlider(campos[grupo.codigo][campo],
+                        this.playerForms[grupo.codigo].get(campos[grupo.codigo][campo].name
+                        + '2')?.value) }}
                         <!-- {{ getValueFromSlider(campo, slider1.value) }}/{{
                         getValueFromSlider(campo, slider2.value) }} -->
                     </label>
@@ -155,11 +195,17 @@
             <button mat-button matStepperPrevious>Previo</button>
             <button mat-button (click)="stepper.reset()">Reiniciar</button>
             <button type="submit" mat-button
-                [disabled]="!playerForm[0].valid || !playerForm[1].valid ||
-                            !playerForm[2].valid || !playerForm[3].valid || 
-                            !playerForm[4].valid || !playerForm[5].valid ||
-                            !playerForm[6].valid"
+                [disabled]="!playerForms['personal'].valid || !playerForms['general'].valid ||
+                !playerForms['habilidad_global'].valid || !playerForms['ataque'].valid || 
+                !playerForms['defensa'].valid || !playerForms['movement'].valid ||
+                !playerForms['arco'].valid || !playerForms['skill'].valid ||
+                !playerForms['power'].valid || !playerForms['habilidad_mental'].valid"
                 (click)="CrearJugador()">Guardar</button>
         </div>
     </mat-step>
 </mat-stepper>
+
+<!-- [disabled]="!playerForm[0].valid || !playerForm[1].valid ||
+!playerForm[2].valid || !playerForm[3].valid || 
+!playerForm[4].valid || !playerForm[5].valid ||
+!playerForm[6].valid" -->

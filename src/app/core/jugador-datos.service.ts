@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { JugadorDatos } from './model/jugador-datos.model';
+import { JugadorEtiquetas } from './model/jugador-etiquetas.model';
 
 
 @Injectable({
@@ -214,7 +215,7 @@ export class JugadorDatosService {
   }
 
   getEtiquetaGrupo() {
-    const jugadorEtiquetaGrupo: JugadorDatos[] = [
+    const jugadorEtiquetaGrupo: JugadorEtiquetas[] = [
       {
         codigo: 'personal',
         view: 'Datos Personales' 

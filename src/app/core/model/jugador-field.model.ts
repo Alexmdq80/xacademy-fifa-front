@@ -1,4 +1,5 @@
 export interface JugadorField {
+    [key: string]: string | boolean | string[] | number;
     name: string,
     type: string,
     viewName: string,
@@ -10,6 +11,7 @@ export interface JugadorField {
     maxVal: number,
     minLen: number,
     maxLen: number,
+    esKey: boolean,
     esNumeroPequenio: boolean,
     esNumeroMediano: boolean,
     esNombre: boolean,
