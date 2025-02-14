@@ -31,9 +31,15 @@ export class JugadoresService {
 
   }
 
-  postDataFiltrada(newPlayer: Jugador): Observable<{ message: string }> {
+  postCrearJugador(newPlayer: Jugador): Observable<{ message: string }> {
     console.log(newPlayer);
     return this.httpClient.post<{ message: string }>(this.apiUrl, {"newPlayer": newPlayer});
+    
+  }
+
+  putActualizarJugador(playerToUpdate: Jugador): Observable<{ message: string }> {
+    console.log(playerToUpdate);
+    return this.httpClient.put<{ message: string }>(this.apiUrl + '/' + playerToUpdate.id, {"playerToUpdate": playerToUpdate});
     
   }
   

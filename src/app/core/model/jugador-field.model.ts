@@ -5,7 +5,6 @@ export interface JugadorField {
     viewName: string,
     required: boolean,
     contenido: string[],
-    sugerencia: string,
     group: string[],
     minVal: number,
     maxVal: number,

@@ -66,6 +66,10 @@ export class JugadorDatosService {
         view: 'Delantero Centro' 
       },
       {
+        codigo: 'LW',
+        view: 'Extremo Izquierdo' 
+      },
+      {
         codigo: 'CAM',
         view: 'Mediocentro Ofensivo' 
       },
@@ -82,16 +86,8 @@ export class JugadorDatosService {
         view: 'Mediocampista Izquierdo' 
       },
       {
-        codigo: 'RW',
-        view: 'Extremo Derecho' 
-      },
-      {
         codigo: 'CDM',
         view: 'Mediocentro Defensivo' 
-      },
-      {
-        codigo: 'LW',
-        view: 'Extremo Izquierdo' 
       },
       {
         codigo: 'RB',

@@ -44,10 +44,6 @@ interface Formularios {
   [key: string]: Formulario;
 }
 
-// interface PlayerForm {
-//   [key: string]: FormGroup;
-// }
-
 interface PlayerForms {
   [key: string]: FormGroup;
 }
@@ -75,9 +71,8 @@ interface PlayerForms {
 })
 
 export class AgregarPersonaComponent implements OnInit, OnDestroy {
-  
   @Input() jugadorId_INPUT: number = 0;
-  
+
   jugadorPositions: JugadorDatos[] = [];
   jugadorWorkRate: JugadorDatos[] = [];
   jugadorBodyType: JugadorDatos[] = [];
@@ -109,64 +104,64 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     "player_face_url": "",
     "long_name": "",	
     "player_positions": "",
-    "club_name": "",	
-    "nationality_name": "",
+    "club_name": null,	
+    "nationality_name": null,
     "overall": 0,
     "potential": 0,
-    "value_eur": 0,
-    "wage_eur": 0,
+    "value_eur": null,
+    "wage_eur": null,
     "age": 0,
-    "gender": "",
-    "height_cm": 0,
-    "weight_kg": 0,
-    "preferred_foot": "",
-    "weak_foot": 0,
-    "skill_moves": 0,
-    "international_reputation": 0,
-    "work_rate": "",
-    "body_type": "",
-    "pace": 0,
-    "shooting": 0,
-    "passing": 0,
-    "dribbling": 0,
-    "defending": 0,
-    "physic": 0,
-    "attacking_crossing": 0,
-    "attacking_finishing": 0,
-    "attacking_heading_accuracy": 0,
-    "attacking_short_passing": 0,
-    "attacking_volleys": 0,
-    "skill_dribbling": 0,
-    "skill_curve": 0,
-    "skill_fk_accuracy": 0,
-    "skill_long_passing": 0,
-    "skill_ball_control": 0,
-    "movement_acceleration": 0,
-    "movement_sprint_speed": 0,
-    "movement_agility": 0,
-    "movement_reactions": 0,
-    "movement_balance": 0,
-    "power_shot_power": 0,
-    "power_jumping": 0,
-    "power_stamina": 0,
-    "power_strength": 0,
-    "power_long_shots": 0,
-    "mentality_aggression": 0,
-    "mentality_interceptions": 0,
-    "mentality_positioning": 0,
-    "mentality_vision": 0,
-    "mentality_penalties": 0,
-    "mentality_composure": 0,
-    "defending_marking": 0,
-    "defending_standing_tackle": 0,
-    "defending_sliding_tackle": 0,
-    "goalkeeping_diving": 0,
-    "goalkeeping_handling": 0,
-    "goalkeeping_kicking": 0,
-    "goalkeeping_positioning": 0,
-    "goalkeeping_reflexes": 0,
-    "goalkeeping_speed": 0,
-    "player_traits": ""
+    "gender": null,
+    "height_cm": null,
+    "weight_kg": null,
+    "preferred_foot": null,
+    "weak_foot": null,
+    "skill_moves": null,
+    "international_reputation": null,
+    "work_rate": null,
+    "body_type": null,
+    "pace": null,
+    "shooting": null,
+    "passing": null,
+    "dribbling": null,
+    "defending": null,
+    "physic": null,
+    "attacking_crossing": null,
+    "attacking_finishing": null,
+    "attacking_heading_accuracy": null,
+    "attacking_short_passing": null,
+    "attacking_volleys": null,
+    "skill_dribbling": null,
+    "skill_curve": null,
+    "skill_fk_accuracy": null,
+    "skill_long_passing": null,
+    "skill_ball_control": null,
+    "movement_acceleration": null,
+    "movement_sprint_speed": null,
+    "movement_agility": null,
+    "movement_reactions": null,
+    "movement_balance": null,
+    "power_shot_power": null,
+    "power_jumping": null,
+    "power_stamina": null,
+    "power_strength": null,
+    "power_long_shots": null,
+    "mentality_aggression": null,
+    "mentality_interceptions": null,
+    "mentality_positioning": null,
+    "mentality_vision": null,
+    "mentality_penalties": null,
+    "mentality_composure": null,
+    "defending_marking": null,
+    "defending_standing_tackle": null,
+    "defending_sliding_tackle": null,
+    "goalkeeping_diving": null,
+    "goalkeeping_handling": null,
+    "goalkeeping_kicking": null,
+    "goalkeeping_positioning": null,
+    "goalkeeping_reflexes": null,
+    "goalkeeping_speed": null,
+    "player_traits": null
   };
 
   constructor(private fb: FormBuilder,
@@ -176,7 +171,6 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
               private jugadoresService : JugadoresService,
              ) 
     {
-  
     this.subscriptionField.add(this.jugadorFieldServicio.getFields().subscribe({
         next: res => {
           console.log("Se reciben datos de los atributos.");
@@ -202,7 +196,9 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     this.opciones['player_traits'] = this.jugadorPlayerTraits;     
     this.opciones['gender'] = this.jugadorGender;
     this.opciones['preferred_foot'] = this.jugadorPreferredFoot;
-
+  
+    // AGREGA UNA OPCIÓN NULA PARA AQUELLOS ITEMS QUE PUEDEN SER NULOS, O SEA
+    // QUE NO SON REQUERIDOS.
     for (const field of this.fields) {
       if (field.esUnico && !field.required) {
         this.opciones[field.name].unshift({
@@ -211,7 +207,8 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
         });
       }
     }
-    console.log(this.opciones);
+    // console.log(this.opciones);
+    // *******************
   };
 
 
@@ -224,33 +221,41 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     }
 
 
-    for (const field of this.fields) {
-      let cadena = '';
-      if (this.jugadorId_INPUT != 0) {
-        cadena = this.jugador[field.name];
-      } else {
-        cadena = field.sugerencia;
-      }
-      this.jugador[field.name] = cadena;
-    }
+    // for (const field of this.fields) {
+    //   let cadena: any;
+    //   if (this.jugadorId_INPUT != 0) {
+    //     cadena = this.jugador[field.name] ;
+    //   } else {
+    //     cadena = null;
+    //   }
+    //   this.jugador[field.name] = cadena;
+    // }
           
     for (const field of this.fields) {
       // *** ARMAR MENSAJES DE ERROR / VALIDADORES / Y SINGALS PARA INPUTS**
       // console.log(field.name);
+      let cadena: any;
+      if (this.jugadorId_INPUT != 0) {
+        cadena = this.jugador[field.name] ;
+      } else {
+        cadena = null;
+      }
+      this.jugador[field.name] = cadena;
 
       let valor: any;
       this.errorMessage[field.name] = signal('');     
       // if (field.type === 'string') {
       if (field.esCadena) {
+      // este signal es para que muestre luego la cantidad de caracteres
+      // mientras está llenando el campo 
         this.value[field.name] = signal('');         
       }
-      // *****************
+      // Armo el arreglo de validadores....
       let validadores: ValidationErrors[] = [];
       
       if (field.esUrl) {
         validadores.push(Validators.pattern('https?://.+'));
       }
-      // if (field.required && !field.esNumeroPequenio && !field.esRangoCategorias) {
       if (field.required) {
           validadores.push(Validators.required);
       }
@@ -264,353 +269,385 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
         validadores.push(Validators.minLength(field.minLen));
         validadores.push(Validators.maxLength(field.maxLen));
       } 
-      // if ((field.minVal != -1 || field.maxVal != -1) && !field.esRangoCategorias) {
       if (field.minVal != -1 || field.maxVal != -1) {
         validadores.push(Validators.min(field.minVal));
         validadores.push(Validators.max(field.maxVal));
       } 
 
-      if (field.esUnico && field.required) {
-        
-      }
 // Cargo el valor desde el objeto Jugador, que ya tiene
 // los valores sugeridos, en caso de ser un jugador nuevo,
 // o los valores cargados desde la BD en caso de ser una actualización.
-      let cadena = '';
+      let aux: any;
       let arreglo: string[] = [];
+      let valor_rango: number[] = [];
       if (field.esMultiple) {
-        cadena = this.jugador[field.name];
-        arreglo = cadena.split(", ");
-        valor = arreglo;
+        if (this.jugador[field.name]) {
+          // si es múltiple, tengo que separar la cadena y armar un Array 
+          aux = this.jugador[field.name];
+          arreglo = aux.split(", ");
+          valor = arreglo;
+        }
+      } else if (field.esRangoCategorias) { 
+          valor = null;
+          valor_rango[0] = field.minVal;
+          valor_rango[1] = field.maxVal;
+          if (this.jugador[field.name]) {
+            // si es un rango, se supone que debe estar guardado
+            // "valor" "/" "valor"
+            // así armo un arreglo con los dos valores del rango
+            aux = this.jugador[field.name];
+            if (aux.includes("/")) {
+              arreglo = aux.split("/");
+              valor = arreglo;
+              valor_rango[0] = this.opciones[field.name].findIndex(o => o.codigo === valor[0]);
+              valor_rango[1] = this.opciones[field.name].findIndex(o => o.codigo === valor[1]);
+            }
+            // console.log(valor_rango);
+          }
       } else {
-        // acá habría que poner para los rangos??
-        cadena = this.jugador[field.name];
+        aux = this.jugador[field.name];
+        // SI ES UN CLAVE, COMO EL CASO DEL ID, NO PERMITO 
+        // INGRESARLA NI MODIFICARLA, POR ESO DESHABILITO EL CONTROL.
+        // PARA ELLO, DEBO PASAR UN OBJETO AL FORMBUILDER EN VEZ DE UN VALOR
         if (field.esKey) {
           valor = {
-              value: [cadena],
+              value: [aux],
               disabled: true
           }
-          
-          // console.log(valor);
         } else {
-          valor = cadena;
+          valor = aux;
         }
       }  
-      
+      // en group[0] se encuentra el grupo principal al cual pertenece el campo
       if (!this.campos[field.group[0]]) {
         this.campos[field.group[0]] = {};
       }
       this.campos[field.group[0]][field.name] = field;
 
       if (!this.formularios[field.group[0]]) {
+      //  si no existe el formulario para esa etiqueta, entonces creo el objeto vacío
         this.formularios[field.group[0]] = {};
       }
 
       this.formularios[field.group[0]][field.name] = [valor, validadores];
 
       if (field.esRangoCategorias) {
-        this.formularios[field.group[0]][field.name + '1'] = [field.minVal, validadores];
-        this.formularios[field.group[0]][field.name + '2'] = [field.maxVal, validadores];
-      } 
-    
-      if (field.name === 'height_cm') {     
-        this.armaBody_Type(Number(valor));
+        // si es un rango de categorías, como Work_Rate Low/High por ejemplo,
+        // necesito dos controles.
+        this.formularios[field.group[0]][field.name + '1'] = [valor_rango[0], validadores];
+        this.formularios[field.group[0]][field.name + '2'] = [valor_rango[1], validadores];
       }
+      if (!field.required && (field.esRangoCategorias || field.esNumeroPequenio)) {
+        // si no un campo requerido, y es un tipo de slider
+        // entonces debo crear un checkbox para poder habilitar o deshabilitar
+        if (valor === null) {
+          valor = false
+        } else {
+          valor = true
+        }
+        // console.log(valor);
+        this.formularios[field.group[0]][field.name + '_chk'] = [valor];
+ 
+      }
+      
     } 
     for (let grupo of this.jugadorEtiquetaGrupo) {
       this.playerForms[grupo.codigo] = this.fb.group(this.formularios[grupo.codigo]);
       this.campoKeys[grupo.codigo] = Object.keys(this.campos[grupo.codigo]);
       this.subscription.add(merge(this.playerForms[grupo.codigo].statusChanges, this.playerForms[grupo.codigo].valueChanges)
       .subscribe(() => this.updateErrorMessage()));
+        
+      for (let nombre in this.campos[grupo.codigo]) {
+        if (!this.campos[grupo.codigo][nombre].required && (this.campos[grupo.codigo][nombre].esRangoCategorias || this.campos[grupo.codigo][nombre].esNumeroPequenio)) {
+          // si no un campo requerido, y es un tipo de slider
+          // entonces debo hacer suscribir para que al cambiar el valor se
+          // realice una acción
+          this.subscription.add(this.playerForms[grupo.codigo].get(nombre + '_chk')?.valueChanges.subscribe(checked => {
+            if (this.campos[grupo.codigo][nombre].esRangoCategorias){
+              if (checked) {
+                this.playerForms[grupo.codigo].get(nombre + '1')?.enable();
+                this.playerForms[grupo.codigo].get(nombre + '2')?.enable();
+              } else {
+                this.playerForms[grupo.codigo].get(nombre + '1')?.disable();
+                this.playerForms[grupo.codigo].get(nombre + '2')?.disable();
+              }
+            } else {
+              if (checked) {
+                this.playerForms[grupo.codigo].get(nombre)?.enable();
+              } else {
+                this.playerForms[grupo.codigo].get(nombre)?.disable();
+              }
+            }
+          }));
+        }            
+      }
     }
-    
+
+    // tengo que setear el valor inicial de los checkbox
+    for (let grupo of this.jugadorEtiquetaGrupo) {
+      for (let nombre in this.campos[grupo.codigo]) {
+        if (!this.campos[grupo.codigo][nombre].required && (this.campos[grupo.codigo][nombre].esRangoCategorias || this.campos[grupo.codigo][nombre].esNumeroPequenio)) {
+          if (this.campos[grupo.codigo][nombre].esRangoCategorias){
+            if (this.jugador[nombre] != null) {
+              this.playerForms[grupo.codigo].get(nombre + '1')?.enable();
+              this.playerForms[grupo.codigo].get(nombre + '2')?.enable();
+            } else {
+              this.playerForms[grupo.codigo].get(nombre + '1')?.disable();
+              this.playerForms[grupo.codigo].get(nombre + '2')?.disable();
+            }
+          } else {
+            if (this.jugador[nombre] === null) {
+              this.playerForms[grupo.codigo].get(nombre)?.disable();
+            } else {
+              this.playerForms[grupo.codigo].get(nombre)?.enable();
+            }
+          }
+        }            
+      }
+    }
+
+    this.armaBody_Type();
+
   }
 
-  CrearJugador() {
-    let newPlayer: Jugador = {   
-      "id": 0,
-      "fifa_version": '', 
-	    "fifa_update": "",
-      "player_face_url": "",
-    	"long_name": "",	
-      "player_positions": "",
-      "club_name": "",	
-      "nationality_name": "",
-      "overall": 0,
-      "potential": 0,
-      "value_eur": 0,
-      "wage_eur": 0,
-      "age": 0,
-      "gender": "",
-      "height_cm": 0,
-      "weight_kg": 0,
-      "preferred_foot": "",
-      "weak_foot": 0,
-      "skill_moves": 0,
-      "international_reputation": 0,
-      "work_rate": "",
-      "body_type": "",
-      "pace": 0,
-      "shooting": 0,
-      "passing": 0,
-      "dribbling": 0,
-      "defending": 0,
-      "physic": 0,
-      "attacking_crossing": 0,
-      "attacking_finishing": 0,
-      "attacking_heading_accuracy": 0,
-      "attacking_short_passing": 0,
-      "attacking_volleys": 0,
-      "skill_dribbling": 0,
-      "skill_curve": 0,
-      "skill_fk_accuracy": 0,
-      "skill_long_passing": 0,
-      "skill_ball_control": 0,
-      "movement_acceleration": 0,
-      "movement_sprint_speed": 0,
-      "movement_agility": 0,
-      "movement_reactions": 0,
-      "movement_balance": 0,
-      "power_shot_power": 0,
-      "power_jumping": 0,
-      "power_stamina": 0,
-      "power_strength": 0,
-      "power_long_shots": 0,
-      "mentality_aggression": 0,
-      "mentality_interceptions": 0,
-      "mentality_positioning": 0,
-      "mentality_vision": 0,
-      "mentality_penalties": 0,
-      "mentality_composure": 0,
-      "defending_marking": 0,
-      "defending_standing_tackle": 0,
-      "defending_sliding_tackle": 0,
-      "goalkeeping_diving": 0,
-      "goalkeeping_handling": 0,
-      "goalkeeping_kicking": 0,
-      "goalkeeping_positioning": 0,
-      "goalkeeping_reflexes": 0,
-      "goalkeeping_speed": 0,
-      "player_traits": ""
-    };
- 
-    // for (let i = 0; i < this.campos.length; i++) {
-    let i = -1;
-    // for (let c in this.campos) {
-    for (let grupo of Object.keys(this.campos)) {
-      i += 1;
-      for (let campo of Object.keys(grupo)) {
-        if (this.campos[grupo][campo].esMultiple){
-          // newPlayer[campo.name] =  this.playerForm[i].get(campo.name)?.value.toString();       
-          newPlayer[this.campos[grupo][campo].name] =  this.playerForms[grupo].get(this.campos[grupo][campo].name)?.value.toString();       
 
-        // } else if (campo.esRangoCategorias) {
-        } else if (this.campos[grupo][campo].esRangoCategorias) {
-          let cadena1;
-          let cadena2;
-          // cadena1 = this.getValueFromSlider(campo, this.playerForm[i].get(campo.name + '1')?.value);
-          // cadena2 = this.getValueFromSlider(campo, this.playerForm[i].get(campo.name + '2')?.value);
-          // newPlayer[campo.name] = cadena1 + '/' + cadena2;     
-          cadena1 = this.getValueFromSlider(this.campos[grupo][campo], this.playerForms[grupo].get(this.campos[grupo][campo].name + '1')?.value);
-          cadena2 = this.getValueFromSlider(this.campos[grupo][campo], this.playerForms[grupo].get(this.campos[grupo][campo].name + '2')?.value);
-          newPlayer[this.campos[grupo][campo].name] = cadena1 + '/' + cadena2;     
-          
-   
-        // } else if (campo.esNumeroMediano || campo.esNumeroPequenio) {
-        } else if (this.campos[grupo][campo].esNumeroMediano || this.campos[grupo][campo].esNumeroPequenio) {
-          newPlayer[this.campos[grupo][campo].name] =  Number(this.playerForms[grupo].get(this.campos[grupo][campo].name)?.value);       
+  
+  guardar() {
+     for (let grupo of this.jugadorEtiquetaGrupo) {
+      for (let campo in this.campos[grupo.codigo] ) {
+        let val: any;
+        if (this.campos[grupo.codigo][campo].esMultiple) {
+          if (this.playerForms[grupo.codigo].get(this.campos[grupo.codigo][campo].name)?.value != null) {
+            let aux = this.playerForms[grupo.codigo].get(this.campos[grupo.codigo][campo].name)?.value;       
+            for (let i = 1; i < aux.length; i++) {
+              aux[i] = ' ' + aux[i];
+            }
+            val = aux.toString();
+            val = val.length > this.campos[grupo.codigo][campo].type ? val.slice(0, 255): val;
+            // console.log(val);
+          } else {
+            val  =  null;       
+          }
+      } else if (this.campos[grupo.codigo][campo].esRangoCategorias) {
+          if (!this.campos[grupo.codigo][campo].required) {
+            if (this.playerForms[grupo.codigo].get(this.campos[grupo.codigo][campo].name + '_chk')?.value != true) {
+              val = null;
+            } else {
+              val = 'leer';
+            }
+          } 
+          if (val === 'leer') {
+            let cadena1;
+            let cadena2;
+            cadena1 = this.getValueFromSlider(this.campos[grupo.codigo][campo], this.playerForms[grupo.codigo].get(this.campos[grupo.codigo][campo].name + '1')?.value, true);
+            cadena2 = this.getValueFromSlider(this.campos[grupo.codigo][campo], this.playerForms[grupo.codigo].get(this.campos[grupo.codigo][campo].name + '2')?.value, true);
+            val = cadena1 + '/' + cadena2;
+          }        
+        } else if (this.campos[grupo.codigo][campo].esNumeroPequenio && !this.campos[grupo.codigo][campo].required) {
+          if (this.playerForms[grupo.codigo].get(this.campos[grupo.codigo][campo].name + '_chk')?.value != true) {
+            val = null;
+          } else {
+            val = this.playerForms[grupo.codigo].get(this.campos[grupo.codigo][campo].name)?.value;        
+          }
         } else {
-            // newPlayer[campo.name] =  this.playerForm[i].get(campo.name)?.value;       
-            newPlayer[this.campos[grupo][campo].name] =  this.playerForms[grupo].get(this.campos[grupo][campo].name)?.value;       
+          val = this.playerForms[grupo.codigo].get(this.campos[grupo.codigo][campo].name)?.value;        
         }
+        if (this.campos[grupo.codigo][campo].esKey && this.jugadorId_INPUT === 0) {
+            val = null;
+        }
+        this.jugador[this.campos[grupo.codigo][campo].name] =  val;       
       }
     } 
 
-    console.log(newPlayer);
-
-    this.jugadoresServicio.postDataFiltrada(newPlayer as Jugador).subscribe(res => {
-      console.log(res);
-    });
+    if (this.jugadorId_INPUT === 0){
+      // si no hay id, significa que es un alta... crea jugador
+      this.jugadoresServicio.postCrearJugador(this.jugador as Jugador).subscribe(res => {
+        console.log(res);
+      });
+      console.log("nuevo");
+    } else {
+      // si tiene un id, entonces modifica el jugador
+      this.jugadoresServicio.putActualizarJugador(this.jugador as Jugador).subscribe(res => {
+        console.log(res);
+      });   
+      console.log("actualizado");
+    }
   };
 
-  // armarBody_Type(): string  {
-  //   let body: string = ''; 
-  //   let height: number = 0;
-  //   let height_rango: string = '';
-  //   let bt: string = '';
-    
-  //   for (let i = 0; i < this.campos.length; i++) {
-  //     for (let campo of this.campos[i] ) {
-  //       if (campo.name ==="body_type") {
-  //         body = this.playerForm[i].get(campo.name)?.value;
-  //         break; 
-  //       };
-  //       if (campo.name ==="height_cm") {
-  //         height = this.playerForm[i].get(campo.name)?.value; 
-  //         break;
-  //       }
-  //     } 
-  //     if (body != '' && height != 0){
-  //       break;
-  //     }
-  //   }
-  //   if (height < 170) {
-  //     height_rango = '(170-)';
-  //   } else if (height >= 170 && height <= 185) {
-  //     height_rango = '(170-185)';
-  //   } if (height > 185) {
-  //     height_rango = '(185+)';
-  //   } 
-  //   bt = body + ' ' + height_rango;
-  //   // console.log(bt);
-    
-  //   return bt;
-  // }
-
-
-  getValueFromSlider(campo: JugadorField, sliderValue: string): string {
+  getValueFromSlider(campo: JugadorField, sliderValue: string, codigo: boolean): string | null {
     const index = Number(sliderValue);
     if (isNaN(index) || !this.opciones[campo.name] || !this.opciones[campo.name][index]) {
       return ''; // Devuelve un string vacío en lugar de 'Valor inválido' para que no se muestre nada
     }
-    return this.opciones[campo.name][index].view;
+    let valor: string | null;
+    if (codigo) {
+      valor = this.opciones[campo.name][index].codigo;
+    } else {
+      valor = this.opciones[campo.name][index].view;
+    }
+    return valor;
   }
   
-  // protected onInput(event: Event, i: number) {
   protected onInput(event: Event) {
     const target = event.target as HTMLInputElement;
 
-    // event.target as HTMLInputElement).value
-    // console.log(this.fields);
     for (const field of this.fields) {
       const grupo = field.group[0];
       if (target.id === field.name) {
-        // if (field.type === 'integer' && target.value) {
         if (target.value &&  
             (field.esNumeroMediano || field.esNumeroPequenio || field.esMoneda)
            ) { 
           if (Number(target.value) < field.minVal ) {
-            // this.value[target.id].set(String(field.minVal));
-            // target.value = String(field.minVal);
             if (field.minVal === 0 || 
                 (field.minVal > 0 && (String(target.value).length) > 
                 (String(field.minVal).length - 1) )) {
-              // this.playerForm[i].patchValue( { [target.id]: field.minVal });
               this.playerForms[grupo].patchValue( { [target.id]: field.minVal });
             }
           } else if (Number(target.value) > field.maxVal ) {
-            // this.value[target.id].set(String(field.maxVal));
-            // target.value = String(field.maxVal);
-            // this.playerForm[i].patchValue( { [target.id]: field.maxVal });
             this.playerForms[grupo].patchValue( { [target.id]: field.maxVal });
           }
         } else if (target.value) {
           this.value[target.id].set(target.value);
-          // this.playerForm[i].value[target.id] = target.value;
-          // this.playerForms[grupo].value[target.id]= target.value;
           this.playerForms[grupo].patchValue( { [target.id]: target.value });
         } 
         break;
       }
     }  
-
-    if (target.id === 'height_cm'){     
-      this.armaBody_Type(Number(target.value));
+    if (target.id === "height_cm" || target.id === "body_type"){
+      this.armaBody_Type();
     }
+ }
 
-    // this.playerFormAnterior = this.playerForm[0].value;
-    // this.updateErrorMessage(target.id);
-  }
-
-
-  armaBody_Type (height: number) {
+ 
+  armaBody_Type () {
+    // ACTUALIZA EL CAMPO BODY-TYPES PARA AGREGARLE, EN CASO DE QUE SEA UN VALOR 
+    // VÁLIDO, LA ALTURA (HEIGHT_CM), Y MANTENER LA OPCIÓN (SI ES QUE ESTÁ SELECCIONADA)
+    // DE BODY-TYPE MÁS ALLÁ DEL VALOR DE LA ALTURA (HEIGHT_CM) 
+    let height: string = '';
     let height_rango: string = '';
-    let g: string = '';
+    let grupo: string = '';
+    let minVal: number = 0;
+    let maxVal: number = 0;
     const n = this.opciones['body_type'].length;
     
-    if (this.playerForms) {
-      let valor: any;
-      let valor_array: string[] = [];
-      for (let field of this.fields) {
-        if (field.name === 'body_type') {
-          g = field.group[0];
-          if (this.playerForms[g]) {
-            if (this.playerForms[g].contains(field.name)) { 
-             const control = this.playerForms[g].get('body_type');
-             if (control) {
-               valor = control.value;
-             }
-             valor_array = valor.split(' (');
- 
-            }
-          } else {   
-    
-          };
-          break;
+    if (!this.playerForms) {
+      return 'no está definido el formulario';
+    } 
+
+    let valor: string;
+    let valor_array: string[] = [];
+
+    // BUSCA EL VALOR DEL CAMPO HEIGHT_CM.
+    for (let field of this.fields) {
+      if (field.name === 'height_cm') {
+        if (!this.playerForms[field.group[0]]) {
+          return 'no existe el formulario para el grupo de height_cm';
         }
-      }  
-      console.log(valor_array[0]);
+        if (this.playerForms[field.group[0]].contains(field.name)) { 
+          const control = this.playerForms[field.group[0]].get('height_cm');
+          if (!control) {
+            return 'no existe el control height_cm';
+          }
+          valor = control.value;
+          if (valor){
+            height = valor.toString();
+          } else {
+            height = '';
+          }
+        }
+        minVal = field.minVal;
+        maxVal = field.maxVal;
+        break;
+      }
+    } 
+    for (let field of this.fields) {
+      if (field.name === 'body_type') {
+        grupo = field.group[0];
+        if (!this.playerForms[grupo]) {
+          return 'no existe el formulario para el grupo de body_type';
+        }
+        if (this.playerForms[grupo].contains(field.name)) { 
+          const control = this.playerForms[grupo].get('body_type');
+          if (!control) {
+            return 'no existe el control body_type';
+          }
+          valor = control.value;
+          if (valor){
+            if (valor.includes(' (')){
+              valor_array = valor.split(' ('); 
+            } else {
+              valor_array[0] = valor;
+            }
+          } else {
+            valor_array[0] = '';
+          }
+        }
+        break;
+      }
+    }  
+    if (height === '' || Number(height) < minVal && minVal != -1) {
+      height_rango = '';
+    } else if (Number(height) < 170) {
+      height_rango = '(170-)';
+    } else if (Number(height) >= 170 && Number(height) <= 185) {
+      height_rango = '(170-185)';
+    } else if (Number(height) > maxVal && Number(height) != -1)  {
+      height_rango = '';
+    } else if (Number(height) > 185) {
+      height_rango = '(185+)';
+    }
+    // Arma las opciones *****
+    this.opciones['body_type'] = [];
 
-      if (height < 170) {
-        height_rango = '(170-)';
-      } else if (height >= 170 && height <= 185) {
-        height_rango = '(170-185)';
-      } else if (height > 185) {
-        height_rango = '(185+)';
-      } 
-      this.opciones['body_type'] = [];
-      for (let i = 0; i < n; i++){
-        let btc: string | null; 
-        let btv: string; 
+    for (let i = 0; i < n; i++){
+      let btc: string | null; 
+      let btv: string; 
 
-        if (this.jugadorBodyType[i].codigo === null) {
+      if (this.jugadorBodyType[i].codigo === null) {
+        btc = this.jugadorBodyType[i].codigo;     
+        btv = this.jugadorBodyType[i].view;     
+      } else {
+        if (height_rango === '') {
           btc = this.jugadorBodyType[i].codigo;     
           btv = this.jugadorBodyType[i].view;     
         } else {
           btc = this.jugadorBodyType[i].codigo + ' ' + height_rango;     
           btv = this.jugadorBodyType[i].view + ' ' + height_rango;     
         }
-
-        this.opciones['body_type'].push();
-        this.opciones['body_type'][i] = {
-          "codigo": btc,
-          "view": btv
-        };      
-        if (valor_array[0] != '') {
-          if (g != '') {
-            const x = valor_array[0] + ' ' + height_rango;
-            console.log(x);
-            if (this.playerForms[g]) {
-              this.playerForms[g].patchValue({'body_type': x } );
-            }
+      }
+      this.opciones['body_type'].push();
+      this.opciones['body_type'][i] = {
+        "codigo": btc,
+        "view": btv
+      };      
+    //  *****  
+    //  Selecciona la opción correspondiente con el nuevo valor de height.
+      if (valor_array[0] != '') {
+        if (grupo != '') {
+          let valor_elegido: string = '';
+          if (height_rango === '') {
+            valor_elegido = valor_array[0];
+          } else {
+            valor_elegido = valor_array[0] + ' ' + height_rango;
+          }
+          // console.log('valor elegido');
+          // console.log(valor_elegido);
+          if (this.playerForms[grupo]) {
+            this.playerForms[grupo].patchValue({'body_type': valor_elegido } );
           }
         }
       }
+      // *******************
     }
+    return 'arma_body existoso';
   }
-  // protected onBlur(event: Event) {
-  //   const target = event.target as HTMLInputElement;
-
-
+  
   ngOnDestroy(): void {
     this.subscriptionField.unsubscribe();
     this.subscription.unsubscribe();
   }
-
-  // async nameValidator(control: AbstractControl) {
-  //   const nameRegex = /^[a-zA-ZçÇà-ÿ'`'\s]+$/;
-
-  //   return nameRegex.test(control.value) ? null : { nameInvalid: { value: control.value } };
-  // }
-    
-  onSubmit() {
-
-  }
-
-  
+ 
   trackByCampo(campo: string): number {
-    // const indiceField = this.fields.findIndex(f => f.name === campo);
-    // return this.fields[indiceField].viewName; 
     return this.fields.findIndex(f => f.name === campo);
   }
 
@@ -631,9 +668,7 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     else {
       valor = -1;
     }
-
     return valor;
-
   }
 
 
@@ -670,27 +705,32 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
     return valor;
 
   }
- 
   
   updateErrorMessage() {
 
     for (let grupo of this.jugadorEtiquetaGrupo) {
      for (let nombre in this.campos[grupo.codigo]) {
-        if (this.playerForms[grupo.codigo].get(nombre)) { 
-          if (this.playerForms[grupo.codigo].get(nombre)?.hasError('required')) {
-            this.errorMessage[nombre].set('Debe ingresar ' + this.namesByCampo('viewName', nombre));
-          } else if (this.playerForms[grupo.codigo].get(nombre)?.hasError('minlength')) { 
-            this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener al menos ' + this.valorByCampo('minLen', nombre) + ' caracteres');
-          } else if (this.playerForms[grupo.codigo].get(nombre)?.hasError('maxlength')) {
-            this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener menos de ' + this.valorByCampo('maxLen', nombre) + ' caracteres');
-          } else if (this.playerForms[grupo.codigo].get(nombre)?.hasError('min')) { 
-            this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener un mínimo de ' + this.valorByCampo('minVal', nombre));
-          } else if (this.playerForms[grupo.codigo].get(nombre)?.hasError('max')) {
-            this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener un máximo de ' + this.valorByCampo('maxVal', nombre));
-          } else if (this.playerForms[grupo.codigo].get(nombre)?.hasError('pattern')) {
-            this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' no es válido');
-          } else {
-            this.errorMessage[nombre].set('Error sin definir en ' + this.namesByCampo('viewName', nombre));
+       if (!this.campos[grupo.codigo][nombre].esRangoCategorias) { 
+          // SI ES UN RANGO DE CATEGORÍAS O UN NÚMERO PEQUEÑO, ENTONCES SON SLIDERS, NO ES
+          // NECESARIO QUE PASE POR ACÁ.
+          // ADEMÁS, EN EL CASO DE LOS RANGOS, EL NOMBRE DEL CONTROL TIENE UN SUFIJO
+          // NUMÉRICO 1 Ó 2, Y SINO SE CORRIJE EL NOMBRE, DA ERROR
+          if (this.playerForms[grupo.codigo].get(nombre)) { 
+            if (this.playerForms[grupo.codigo].get(nombre)?.hasError('required')) {
+              this.errorMessage[nombre].set('Debe ingresar ' + this.namesByCampo('viewName', nombre));
+            } else if (this.playerForms[grupo.codigo].get(nombre)?.hasError('minlength')) { 
+              this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener al menos ' + this.valorByCampo('minLen', nombre) + ' caracteres');
+            } else if (this.playerForms[grupo.codigo].get(nombre)?.hasError('maxlength')) {
+              this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener menos de ' + this.valorByCampo('maxLen', nombre) + ' caracteres');
+            } else if (this.playerForms[grupo.codigo].get(nombre)?.hasError('min')) { 
+              this.errorMessage[nombre].set(this.namesByCampo('viewName', nombre) + ' debe tener un mínimo de ' + this.valorByCampo('minVal', nombre));
+            } else if (this.playerForms[grupo.codigo].get(nombre)?.hasError('max')) {
+              this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' debe tener un máximo de ' + this.valorByCampo('maxVal', nombre));
+            } else if (this.playerForms[grupo.codigo].get(nombre)?.hasError('pattern')) {
+              this.errorMessage[nombre].set(this.namesByCampo('viewName',nombre) + ' no es válido');
+            } else {
+              this.errorMessage[nombre].set('Error sin definir en ' + this.namesByCampo('viewName', nombre));
+            }
           }
         }
       }
@@ -704,41 +744,6 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
       // }
   } 
  
-  
-//  slider_label(value:number): string {
-
-//     return `${value}`;
-//   }
-    
-  // formatLabel(value: number): string {
-  //   const jugadorWorkRate = [
-  //     {
-  //       codigo: "Low",
-  //       view: "Bajo"
-  //     },
-  //     {
-  //       codigo: "Medium",
-  //       view: "Medio"
-  //     },
-  //     {
-  //       codigo: "High",
-  //       view: "Alto"
-  //     }
-  //   ];
-   
-  //   return jugadorWorkRate[value].view;
-
-
-  // }
-
-    // return `${jugadorBodyType[value].view}`;
-
-  // }
-  // get field.name() {
-  //   return this.playerForm.get('longName');
-  // };
-
-
 }
 
 

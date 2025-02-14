@@ -18,6 +18,9 @@ $font-family: 'Roboto', sans-serif;
     text-align: center;
   }
 
+  input::placeholder {
+    text-align: center;
+  }
   .form-campo {
     width: 95%;
   }
@@ -62,6 +65,9 @@ $font-family: 'Roboto', sans-serif;
     width: 300px;
   
   }
+
+
+
   // .form-etiqueta {
   //   // display: block;
   //   // margin-bottom: 5px;
