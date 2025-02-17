@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, signal, WritableSignal, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, signal, Input, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators, ValidationErrors  } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -16,25 +16,31 @@ import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { JugadoresService } from '../../../../core/jugadores.service';
 import { Jugador } from '../../../../core/model/jugador.model';  
 import { JugadorEtiquetas } from '../../../../core/model/jugador-etiquetas.model';
-interface SignalsValues {
-  [key: string]: WritableSignal<string>; 
-}
+// import { Campo } from '../../../../core/model/campo.model';
+import { Campos } from '../../../../core/model/campos.model';
+import { Opciones } from '../../../../core/model/opciones.model';
+import { Keys } from '../../../../core/model/keys.model';
+import { SignalValues } from '../../../../core/model/signal-values.model';
 
-interface Opciones {
-  [key: string]: JugadorDatos[];
-}
+// interface SignalsValues {
+//   [key: string]: WritableSignal<string>; 
+// }
 
-interface Campo {
-  [key: string]: JugadorField;
-};
+// interface Opciones {
+//   [key: string]: JugadorDatos[];
+// }
 
-interface Campos {
-  [key: string]: Campo;
-}
+// interface Campo {
+//   [key: string]: JugadorField;
+// };
 
-interface CampoKeys {
-  [key: string]: string[];
-}
+// interface Campos {
+//   [key: string]: Campo;
+// }
+
+// interface CampoKeys {
+//   [key: string]: string[];
+// }
 
 interface Formulario {
   [key: string]: any[];
@@ -86,14 +92,19 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
 
   // campos: JugadorField[][] = [ [] ];
   // formulario: any[] = [{}];
-  campoKeys: CampoKeys = {};
+  // campoKeys: CampoKeys = {};
+  campoKeys: Keys = {};
+
   campos: Campos = {};
   formularios: Formularios = {};
   playerForms: PlayerForms = {};
   // playerForm: FormGroup[] = [];
   
-  protected readonly value: SignalsValues = { };
-  errorMessage: SignalsValues = { };
+  // protected readonly value: SignalsValues = { };
+  // errorMessage: SignalsValues = { };
+  protected readonly value: SignalValues = { };
+  errorMessage: SignalValues = { };
+
 
   opciones: Opciones = {};
   subscription = new Subscription();
@@ -167,8 +178,7 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
   constructor(private fb: FormBuilder,
               private jugadorDatosServicio: JugadorDatosService,
               private jugadorFieldServicio: JugadorFieldService,
-              private jugadoresServicio: JugadoresService,
-              private jugadoresService : JugadoresService,
+              private jugadoresServicio: JugadoresService
              ) 
     {
     this.subscriptionField.add(this.jugadorFieldServicio.getFields().subscribe({
@@ -216,7 +226,7 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
 
     if (this.jugadorId_INPUT != 0) {
       let datos: any;
-      datos = this.jugadoresService.getDataxIdSync(this.jugadorId_INPUT);
+      datos = this.jugadoresServicio.getDataxIdSync(this.jugadorId_INPUT);
       this.jugador = datos;
     }
 

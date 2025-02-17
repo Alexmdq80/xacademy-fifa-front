@@ -14,8 +14,23 @@ import { Chart, registerables } from 'chart.js';
 import { JugadoresModalComponent } from './jugadores-modal/jugadores-modal.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 //  import { Dialog } from '@angular/cdk/dialog';
-
+import { JugadorEtiquetas } from '../../../core/model/jugador-etiquetas.model';
+import { JugadorDatosService } from '../../../core/jugador-datos.service';
+import { filter } from 'rxjs/operators';
 Chart.register(...registerables);
+
+interface Campo {
+  [key: string]: JugadorField;
+};
+
+interface Campos {
+  [key: string]: Campo;
+}
+
+interface CampoKeys {
+  [key: string]: string[];
+}
+
 
 @Component({
     selector: 'app-jugadores-tabla',
@@ -35,11 +50,32 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
   constructor(private jugadoresService : JugadoresService, 
               private jugadorFieldService: JugadorFieldService,
               private jugadoresFiltroService: JugadoresFiltroService,
-              public dialog: MatDialog
-            ){}
+              public dialog: MatDialog,
+              private jugadorDatosServicio: JugadorDatosService
+            ){
+
+              this.subscriptionField.add(this.jugadorFieldService.getFields().subscribe({
+                next: res => {
+                  console.log("Se reciben datos de los atributos.");
+                  this.fields = res;
+                },
+                error: error => {
+                  console.warn("Ha ocurrido un error con código: ", error);
+                }
+              }    
+              ));
+          
+              this.jugadorEtiquetaGrupo = this.jugadorDatosServicio.getEtiquetaGrupo();
+ 
+                     
+            }
 
   // *************
   fields: JugadorField[] = [];
+
+  jugadorEtiquetaGrupo: JugadorEtiquetas[] = [];
+  campoKeys: CampoKeys = {};
+  campos: Campos = {};
 
   jugadores: Jugador[] = []; 
   jugador?: Jugador;
@@ -147,18 +183,18 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
   //   }
   // }
 
-  hacerGetEncabezado() {    
-    this.subscriptionField.add(this.jugadorFieldService.getFields().subscribe({
-      next: res => {
-        console.log("Se reciben datos de los atributos.");
-        this.fields = res;
-      },
-      error: error => {
-        console.warn("Ha ocurrido un error con código: ", error);
-      }
-    }    
-    ));
-  }
+  // hacerGetEncabezado() {    
+  //   this.subscriptionField.add(this.jugadorFieldService.getFields().subscribe({
+  //     next: res => {
+  //       console.log("Se reciben datos de los atributos.");
+  //       this.fields = res;
+  //     },
+  //     error: error => {
+  //       console.warn("Ha ocurrido un error con código: ", error);
+  //     }
+  //   }    
+  //   ));
+  // }
 
   hacerGetDatos(pagina:number, limit:number, strFiltros$: string){    
     this.subscriptionJugadoresFiltro.add(this.jugadoresFiltroService.filtro$.subscribe({
@@ -179,6 +215,7 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
           console.log("Consulta vacía.");
         }       
         this.jugadores = res.data ;
+        console.log(this.jugadores);
         this.n_cantidad = res.count;
         this.n_paginas = res.pages;
         this.jugadoresMatrizFields = [[]];
@@ -207,8 +244,28 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(){
-    this.hacerGetEncabezado();
+    // this.hacerGetEncabezado();
+     // ARMAR campoKeys
+
+    this.jugadorFieldService.getFields().pipe(
+      filter(valor => valor !== null) // Espera a que el Observable emita un valor no nulo
+    ).subscribe(valor => {
+      for (const field of this.fields) {
+               
+       // en group[0] se encuentra el grupo principal al cual pertenece el campo
+        if (!this.campos[field.group[0]]) {
+          this.campos[field.group[0]] = {};
+        }
+        this.campos[field.group[0]][field.name] = field;
+      } 
+      console.log(this.campos);
+      for (let grupo of this.jugadorEtiquetaGrupo) {
+        this.campoKeys[grupo.codigo] = Object.keys(this.campos[grupo.codigo]);
+      }
+    });
+    
     this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
+    
   }
   
   ngOnDestroy(): void {

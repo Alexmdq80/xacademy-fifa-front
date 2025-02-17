@@ -36,9 +36,13 @@
 
     </div>
     <table>
-        <thead>
-            <tr>
-                <th *ngFor="let field of fields"> {{ field.viewName }} </th>
+        <thead style="display: flex; flex-wrap: nowrap;">
+            <tr *ngFor="let grupo of jugadorEtiquetaGrupo; let i = index">
+                <th
+                    *ngFor="let c of campoKeys[grupo.codigo]; let n = index">
+                    {{ campos[grupo.codigo][c].viewName }}
+                </th>
+                <!-- <th *ngFor="let field of fields"> {{ field.viewName }} </th> -->
             </tr>
         </thead>
         <tbody>
@@ -47,7 +51,14 @@
                 *ngFor="let player of jugadoresMatrizFields; let i = index"
                 (click)="seleccionarFila(player)">
 
-                <td *ngFor="let field of fields; let z = index">
+                <td
+                    *ngFor="let grupo of jugadorEtiquetaGrupo; let i = index">
+                    <div *ngFor="let campo of campoKeys[grupo.codigo];">
+
+                    </div>
+                </td>
+
+                <!-- <td *ngFor="let field of fields; let z = index">
                     <p *ngIf="field.name==='player_face_url'">
                         <img src="{{ jugadoresMatrizFields[i][z]}}"
                             alt="{{ jugadoresMatrizFields[i][4]}}">
@@ -55,7 +66,8 @@
                     <p *ngIf="field.name!='player_face_url'">
                         {{ jugadoresMatrizFields[i][z]}}
                     </p>
-                </td>
+                </td> -->
+
                 <!-- <td><img src="{{ jugador?.player_face_url }}"
                         alt="{{ jugador?.long_name }}">
                 </td> -->
