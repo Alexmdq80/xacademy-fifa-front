@@ -11,12 +11,15 @@ import { JugadorFiltro } from '../../../core/model/jugador-filtro.model';
 import { JugadoresFiltroService } from '../../../core/jugadores-filtro.service';
 // import { OutlineButtonComponent } from '../../../core/outline-button/outline-button.component';
 import { Chart, registerables } from 'chart.js';
-import { JugadoresModalComponent } from './jugadores-modal/jugadores-modal.component';
+// import { JugadoresModalComponent } from './jugadores-modal/jugadores-modal.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 //  import { Dialog } from '@angular/cdk/dialog';
 import { JugadorEtiquetas } from '../../../core/model/jugador-etiquetas.model';
 import { JugadorDatosService } from '../../../core/jugador-datos.service';
-import { filter } from 'rxjs/operators';
+import { MatTableModule } from '@angular/material/table';
+import { JugadorDatos } from '../../../core/model/jugador-datos.model';
+
+// import { filter } from 'rxjs/operators';
 Chart.register(...registerables);
 
 interface Campo {
@@ -31,13 +34,13 @@ interface CampoKeys {
   [key: string]: string[];
 }
 
-
 @Component({
     selector: 'app-jugadores-tabla',
     imports: [
         CommonModule,
         ReactiveFormsModule,
-        FormsModule
+        FormsModule,
+        MatTableModule
         // OutlineButtonComponent
     ],
     templateUrl: './jugadores-tabla.component.html',
@@ -48,6 +51,7 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
   @Output() jugadorId_EE = new EventEmitter<string>();
   keyArray: string []  = [];
   keyViewArray: string []  = [];
+  keyObjectArray: JugadorDatos[] = [];
 
   constructor(private jugadoresService : JugadoresService, 
               private jugadorFieldServicio: JugadorFieldService,
@@ -60,10 +64,11 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
                     this.jugadorFieldServicio.getFields(),
                     this.jugadorFieldServicio.getFieldsByGroup(),
                     this.jugadorFieldServicio.getKeysFieldsByGroup(),
+                    this.jugadorFieldServicio.getKeysFieldsObjectByGroup(),
                     this.jugadorFieldServicio.getKeysFieldsViewByGroup(),
-                    this.jugadorDatosServicio.getEtiquetasGrupo()    
+                    this.jugadorDatosServicio.getEtiquetasGrupo(),
                   ]).subscribe({
-                    next: ([resGetFields, resGetFieldsByGroup, resGetKeysFieldsByGroup, resGetKeysViewFieldsByGroup, resEtiquetasGrupo]) => {
+                    next: ([resGetFields, resGetFieldsByGroup, resGetKeysFieldsByGroup, resGetKeysFieldsObjectByGroup, resGetKeysViewFieldsByGroup, resEtiquetasGrupo]) => {
                       this.fields = resGetFields;
                       this.campos = resGetFieldsByGroup;
                       this.campoKeys = resGetKeysFieldsByGroup;
@@ -72,8 +77,11 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
                       // console.log('campoKeys');
                       // console.log(this.campoKeys);
                       this.keyArray = Object.values(this.campoKeys).flatMap(arr => arr);
+                      this.keyObjectArray = Object.values(resGetKeysFieldsObjectByGroup).flatMap(arr => arr);
                       this.keyViewArray = Object.values(this.campoKeysView).flatMap(arr => arr);
-                      console.log('viewArray', this.keyViewArray );
+                      console.log('keyObjectArray', this.keyObjectArray );
+                 
+                      this.displayedColumns = this.keyArray; 
                      },
                     error: error => {
                           console.warn("Ha ocurrido un error con código: ", error);
@@ -120,6 +128,8 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
 
   jugadores: Jugador[] = []; 
   jugador?: Jugador;
+  displayedColumns?: string[]; 
+  dataSource: Jugador[] = [];
 
 
   n_pagina_old: number = 1;
@@ -249,6 +259,7 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
               console.log("Consulta vacía.");
             }       
             this.jugadores = res.data ;
+            this.dataSource = this.jugadores;
             console.log(this.jugadores);
             console.log(this.campos);
             this.n_cantidad = res.count;

@@ -28,11 +28,31 @@ import { AgregarPersonaComponent } from "./jugadores-tabla/agregar-persona/agreg
 })
 
 export class JugadoresComponent implements OnInit, OnDestroy  {
- 
+  subscription = new Subscription();
+
   constructor(private jugadorFieldService: JugadorFieldService,
               private jugadoresFiltros: JugadoresFiltroService
-  ){}
+  ){
+    this.lista = true;
 
+    console.log(this.jugadorFieldService.getFields());
+    this.subscription.add(this.jugadorFieldService.getFields().subscribe({
+      next: res => {
+        console.log("Se reciben datos de los atributos.");
+        this.fields = res;
+      },
+      error: error => {
+        console.warn("Ha ocurrido un error con código: ", error);
+      }
+    }    
+    ));
+
+    this.subscription.add(this.jugadoresFiltros.data$.subscribe(data => {
+      if (data) {
+        this.filtros = data;
+      }  
+    }));
+  }
 
   lista: boolean = true;
 
@@ -48,7 +68,7 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
     value_max: 0
   };
 
-  subscription = new Subscription();
+
 
   @ViewChild(JugadoresTablaComponent) JugadorTabla?: JugadoresTablaComponent;
  
@@ -82,23 +102,7 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
   }
 
   ngOnInit(){
-    this.lista = true;
-    this.subscription.add(this.jugadorFieldService.getFields().subscribe({
-      next: res => {
-        console.log("Se reciben datos de los atributos.");
-        this.fields = res;
-      },
-      error: error => {
-        console.warn("Ha ocurrido un error con código: ", error);
-      }
-    }    
-    ));
-
-    this.subscription.add(this.jugadoresFiltros.data$.subscribe(data => {
-      if (data) {
-        this.filtros = data;
-      }  
-    }));
+   
   }
   
   ngOnDestroy(): void {

@@ -1,4 +1,4 @@
 export interface JugadorDatos {
-    codigo: string | null,
+    codigo: string,
     view: string
 }

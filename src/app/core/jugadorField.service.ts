@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { shareReplay, tap } from 'rxjs';
 import { Campos } from './model/campos.model';
 import { Keys } from './model/keys.model'; 
+import { KeysObject } from './model/keys-object.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +19,10 @@ export class JugadorFieldService {
   private getFieldsByGroup$?: Observable<Campos>;
   private keyCampos: Keys = {};
   private keyViewCampos: Keys = {};
+  private keyObjectCampos: KeysObject = { };
   private getKeysFieldsByGroup$?: Observable<Keys>;
   private getKeysFieldsViewByGroup$?: Observable<Keys>;
+  private getKeysFieldsObjectByGroup$?: Observable<KeysObject>;
   private keyArray: string []  = [];
   private getKeysArray$?: Observable<string[]>;
   
@@ -128,6 +131,31 @@ export class JugadorFieldService {
       );
     }
     return this.getKeysFieldsViewByGroup$;
+  }
+
+  getKeysFieldsObjectByGroup(): Observable<KeysObject> {
+    // DEVUELVE LAS NOS NOMBRES DE LOS CAMPOS AGRUPADOS POR ETIQUETAS...
+    if (!this.getKeysFieldsObjectByGroup$) { // Comprobar si ya existe el observable
+     
+      this.getKeysFieldsObjectByGroup$ = this.getFields().pipe(
+        tap(fields => {
+          fields.forEach(field => {
+            if (!this.keyObjectCampos[field.group[0]]) {
+              this.keyObjectCampos[field.group[0]] = [];
+            }
+            this.keyObjectCampos[field.group[0]].push(
+                                                      {
+                                                        codigo: field.name,
+                                                        view: field.viewName
+                                                      }
+                                                    );
+          });
+        }),
+        map(() => this.keyObjectCampos),
+        shareReplay(1) // Usar shareReplay aquí
+      );
+    }
+    return this.getKeysFieldsObjectByGroup$;
   }
 // NECESITO DEVOLVER LOS NOMBRES DE LOS CAMPOS SIN AGRUPAR, PERO ORDENADOS
 // DE ACUERDO A LAS ETIQUETAS
