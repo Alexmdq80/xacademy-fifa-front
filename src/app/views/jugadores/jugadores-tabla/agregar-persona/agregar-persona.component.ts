@@ -9,7 +9,7 @@ import { JugadorDatosService } from '../../../../core/jugador-datos.service';
 import { MatSliderModule } from '@angular/material/slider';
 import { JugadorFieldService } from '../../../../core/jugadorField.service';
 import { JugadorField } from '../../../../core/model/jugador-field.model';
-import { Subscription, merge } from 'rxjs';
+import { Subscription, merge, filter, tap, forkJoin } from 'rxjs';
 import { JugadorDatos } from '../../../../core/model/jugador-datos.model';
 import { MatStepperModule } from '@angular/material/stepper';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
@@ -79,7 +79,7 @@ interface PlayerForms {
 export class AgregarPersonaComponent implements OnInit, OnDestroy {
   @Input() jugadorId_INPUT: number = 0;
 
-  jugadorPositions: JugadorDatos[] = [];
+  jugadorPositions: JugadorDatos[] | undefined = [];
   jugadorWorkRate: JugadorDatos[] = [];
   jugadorBodyType: JugadorDatos[] = [];
   jugadorPlayerTraits: JugadorDatos[] = [];
@@ -180,67 +180,53 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
               private jugadorFieldServicio: JugadorFieldService,
               private jugadoresServicio: JugadoresService
              ) 
-    {
-    this.subscriptionField.add(this.jugadorFieldServicio.getFields().subscribe({
-        next: res => {
-          console.log("Se reciben datos de los atributos.");
-          this.fields = res;
-        },
-        error: error => {
-          console.warn("Ha ocurrido un error con código: ", error);
-        }
-      }    
-    ));
-
-    this.jugadorPositions = this.jugadorDatosServicio.getJugadorPositions();
-    this.jugadorWorkRate = this.jugadorDatosServicio.getJugadorWorkRate();
-    this.jugadorBodyType = this.jugadorDatosServicio.getJugadorBodyType();
-    this.jugadorPlayerTraits = this.jugadorDatosServicio.getJugadorPlayerTraits();
-    this.jugadorGender = this.jugadorDatosServicio.getJugadorGender();
-    this.jugadorPreferredFoot = this.jugadorDatosServicio.getJugadorPreferredFoot();
-    this.jugadorEtiquetaGrupo = this.jugadorDatosServicio.getEtiquetaGrupo();
-
-    this.opciones['player_positions'] = this.jugadorPositions;
-    this.opciones['work_rate'] = this.jugadorWorkRate;
-    this.opciones['body_type'] = this.jugadorBodyType;
-    this.opciones['player_traits'] = this.jugadorPlayerTraits;     
-    this.opciones['gender'] = this.jugadorGender;
-    this.opciones['preferred_foot'] = this.jugadorPreferredFoot;
-  
-    // AGREGA UNA OPCIÓN NULA PARA AQUELLOS ITEMS QUE PUEDEN SER NULOS, O SEA
-    // QUE NO SON REQUERIDOS.
-    for (const field of this.fields) {
-      if (field.esUnico && !field.required) {
-        this.opciones[field.name].unshift({
-          'codigo': null,
-          'view': 'Seleccione una Opción'
-        });
-      }
-    }
-    // console.log(this.opciones);
-    // *******************
-  };
+    {  };
 
 
   ngOnInit(): void {
-
+    // este tendría que ser una subscripción a un observable???
     if (this.jugadorId_INPUT != 0) {
       let datos: any;
       datos = this.jugadoresServicio.getDataxIdSync(this.jugadorId_INPUT);
       this.jugador = datos;
     }
 
+    forkJoin([
+      this.jugadorFieldServicio.getFields(),
+      this.jugadorFieldServicio.getFieldsByGroup(),
+      this.jugadorFieldServicio.getKeysFieldsByGroup(),
+      this.jugadorDatosServicio.getOpciones(),
+      this.jugadorDatosServicio.getEtiquetasGrupo()    
+    ]).subscribe({
+      next: ([resGetFields, resGetFieldsByGroup, resGetKeysFieldsByGroup, resGetOpciones, resEtiquetasGrupo]) => {
+        this.fields = resGetFields;
+        this.campos = resGetFieldsByGroup;
+        this.campoKeys = resGetKeysFieldsByGroup;
+        this.opciones = resGetOpciones;
+        this.jugadorEtiquetaGrupo = resEtiquetasGrupo;
+        this.inicializar();
+        this.armaBody_Type();
+      },
+      error: error => {
+            console.warn("Ha ocurrido un error con código: ", error);
+          }
+    });
 
-    // for (const field of this.fields) {
-    //   let cadena: any;
-    //   if (this.jugadorId_INPUT != 0) {
-    //     cadena = this.jugador[field.name] ;
-    //   } else {
-    //     cadena = null;
-    //   }
-    //   this.jugador[field.name] = cadena;
-    // }
-          
+  }
+  
+  inicializar() {
+
+     // /******************** */
+    // console.log(this.fields);
+    // console.log(this.campos);
+    // console.log(this.campoKeys);
+    // console.log(this.opciones);
+    // console.log(this.jugadorEtiquetaGrupo);
+    this.jugadorBodyType = this.opciones['body_type'];
+    // this.jugadorWorkRate = this.opciones['work_rate'];
+    // this.jugadorGender = this.opciones['gender'];
+    
+    
     for (const field of this.fields) {
       // *** ARMAR MENSAJES DE ERROR / VALIDADORES / Y SINGALS PARA INPUTS**
       // console.log(field.name);
@@ -329,10 +315,10 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
         }
       }  
       // en group[0] se encuentra el grupo principal al cual pertenece el campo
-      if (!this.campos[field.group[0]]) {
-        this.campos[field.group[0]] = {};
-      }
-      this.campos[field.group[0]][field.name] = field;
+      // if (!this.campos[field.group[0]]) {
+      //   this.campos[field.group[0]] = {};
+      // }
+      // this.campos[field.group[0]][field.name] = field;
 
       if (!this.formularios[field.group[0]]) {
       //  si no existe el formulario para esa etiqueta, entonces creo el objeto vacío
@@ -361,9 +347,11 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
       }
       
     } 
+
     for (let grupo of this.jugadorEtiquetaGrupo) {
+
       this.playerForms[grupo.codigo] = this.fb.group(this.formularios[grupo.codigo]);
-      this.campoKeys[grupo.codigo] = Object.keys(this.campos[grupo.codigo]);
+      // this.campoKeys[grupo.codigo] = Object.keys(this.campos[grupo.codigo]);
       this.subscription.add(merge(this.playerForms[grupo.codigo].statusChanges, this.playerForms[grupo.codigo].valueChanges)
       .subscribe(() => this.updateErrorMessage()));
         
@@ -416,7 +404,7 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.armaBody_Type();
+
 
   }
 

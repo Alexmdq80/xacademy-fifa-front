@@ -202,11 +202,6 @@
             <button mat-button matStepperPrevious>Previo</button>
             <button mat-button (click)="stepper.reset()">Reiniciar</button>
             <button type="submit" mat-button
-                [disabled]="!playerForms['personal'].valid || !playerForms['general'].valid ||
-                !playerForms['habilidad_global'].valid || !playerForms['ataque'].valid || 
-                !playerForms['defensa'].valid || !playerForms['movement'].valid ||
-                !playerForms['arco'].valid || !playerForms['skill'].valid ||
-                !playerForms['power'].valid || !playerForms['habilidad_mental'].valid"
                 (click)="guardar()">Guardar</button>
         </div>
     </mat-step>
@@ -216,3 +211,8 @@
 !playerForm[2].valid || !playerForm[3].valid || 
 !playerForm[4].valid || !playerForm[5].valid ||
 !playerForm[6].valid" -->
+<!-- [disabled]="!playerForms['personal'].valid || !playerForms['general'].valid ||
+                !playerForms['habilidad_global'].valid || !playerForms['ataque'].valid || 
+                !playerForms['defensa'].valid || !playerForms['movement'].valid ||
+                !playerForms['arco'].valid || !playerForms['skill'].valid ||
+                !playerForms['power'].valid || !playerForms['habilidad_mental'].valid" -->

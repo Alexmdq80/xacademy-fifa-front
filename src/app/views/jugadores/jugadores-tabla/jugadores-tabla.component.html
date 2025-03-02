@@ -35,50 +35,48 @@
             type="button">Fin</button>
 
     </div>
-    <table>
+
+    <!-- <table>
         <thead style="display: flex; flex-wrap: nowrap;">
-            <tr *ngFor="let grupo of jugadorEtiquetaGrupo; let i = index">
-                <th
-                    *ngFor="let c of campoKeys[grupo.codigo]; let n = index">
-                    {{ campos[grupo.codigo][c].viewName }}
+            <tr *ngFor="let c of keyArray; let z = index">
+                <th>
+                    <span> {{ c }} </span>
                 </th>
-                <!-- <th *ngFor="let field of fields"> {{ field.viewName }} </th> -->
             </tr>
         </thead>
         <tbody>
-            <tr [class.resaltado]="isHovered" (mouseenter)="onMouseEnter()"
+            <tr *ngFor="let player of jugadores; let i = index"
+                [class.resaltado]="isHovered"
+                (mouseenter)="onMouseEnter()"
                 (mouseleave)="onMouseLeave()"
-                *ngFor="let player of jugadoresMatrizFields; let i = index"
-                (click)="seleccionarFila(player)">
+                (click)="seleccionarFila(player[i])">
 
-                <td
-                    *ngFor="let grupo of jugadorEtiquetaGrupo; let i = index">
-                    <div *ngFor="let campo of campoKeys[grupo.codigo];">
-
-                    </div>
+                <td>
+                    <span *ngFor="let c of keyArray;"> {{
+                        this.jugadores[i][c] }} </span>
                 </td>
-
-                <!-- <td *ngFor="let field of fields; let z = index">
-                    <p *ngIf="field.name==='player_face_url'">
-                        <img src="{{ jugadoresMatrizFields[i][z]}}"
-                            alt="{{ jugadoresMatrizFields[i][4]}}">
-                    </p>
-                    <p *ngIf="field.name!='player_face_url'">
-                        {{ jugadoresMatrizFields[i][z]}}
-                    </p>
-                </td> -->
-
-                <!-- <td><img src="{{ jugador?.player_face_url }}"
-                        alt="{{ jugador?.long_name }}">
-                </td> -->
-                <!-- <td *ngFor="let item of jugadorArrayFields">
-                    {{ item }}
-                </td> -->
-
-                <!-- <td> {{ jugadorF.id }} </td>
-                <td> {{ jugadorF.fifa_version }} </td> -->
-
+            </tr>
+        </tbody>
+    </table> -->
+    <table>
+        <thead>
+            <tr>
+                <th *ngFor="let c of keyViewArray">
+                    <span> {{ c }} </span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let player of jugadores; let i = index"
+                [class.resaltado]="isHovered"
+                (mouseenter)="onMouseEnter()"
+                (mouseleave)="onMouseLeave()"
+                (click)="seleccionarFila(player)">
+                <td *ngFor="let c of keyArray">
+                    <span> {{ player[c] }} </span>
+                </td>
             </tr>
         </tbody>
     </table>
+
 </div>

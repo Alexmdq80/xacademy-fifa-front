@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { JugadorField } from './model/jugador-field.model';
 import { map, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { shareReplay } from 'rxjs';
+import { shareReplay, tap } from 'rxjs';
+import { Campos } from './model/campos.model';
+import { Keys } from './model/keys.model'; 
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +14,15 @@ export class JugadorFieldService {
   apiUrl = 'http://localhost:8080/player/atributos';
 
   private getFields$?: Observable<JugadorField[]>;
+  private campos: Campos = {};
+  private getFieldsByGroup$?: Observable<Campos>;
+  private keyCampos: Keys = {};
+  private keyViewCampos: Keys = {};
+  private getKeysFieldsByGroup$?: Observable<Keys>;
+  private getKeysFieldsViewByGroup$?: Observable<Keys>;
+  private keyArray: string []  = [];
+  private getKeysArray$?: Observable<string[]>;
+  
   
   constructor(private httpClient: HttpClient) { }
  
@@ -59,4 +70,88 @@ export class JugadorFieldService {
         return this.getFields$;
   }
 
-}
+  getFieldsByGroup(): Observable<Campos> {
+    // DEVUELVE LOS CAMPOS (jugadorField) AGRUPADOS POR ETIQUETA
+    if (!this.getFieldsByGroup$) { // Comprobar si ya existe el observable
+      this.getFieldsByGroup$ = this.getFields().pipe(
+        tap(fields => {
+          fields.forEach(field => {
+            if (!this.campos[field.group[0]]) {
+              this.campos[field.group[0]] = {};
+            }
+            this.campos[field.group[0]][field.name] = field;
+          });
+        }),
+        map(() => this.campos),
+        shareReplay(1) // Usar shareReplay aquí
+      );
+    }
+    return this.getFieldsByGroup$;
+  }
+
+  getKeysFieldsByGroup(): Observable<Keys> {
+    // DEVUELVE LAS NOS NOMBRES DE LOS CAMPOS AGRUPADOS POR ETIQUETAS...
+    if (!this.getKeysFieldsByGroup$) { // Comprobar si ya existe el observable
+     
+      this.getKeysFieldsByGroup$ = this.getFields().pipe(
+        tap(fields => {
+          fields.forEach(field => {
+            if (!this.keyCampos[field.group[0]]) {
+              this.keyCampos[field.group[0]] = [];
+            }
+            this.keyCampos[field.group[0]].push(field.name);
+          });
+        }),
+        map(() => this.keyCampos),
+        shareReplay(1) // Usar shareReplay aquí
+      );
+    }
+    return this.getKeysFieldsByGroup$;
+  }
+
+
+  getKeysFieldsViewByGroup(): Observable<Keys> {
+    // DEVUELVE LAS NOS NOMBRES DE LOS CAMPOS AGRUPADOS POR ETIQUETAS...
+    if (!this.getKeysFieldsViewByGroup$) { // Comprobar si ya existe el observable
+     
+      this.getKeysFieldsViewByGroup$ = this.getFields().pipe(
+        tap(fields => {
+          fields.forEach(field => {
+            if (!this.keyViewCampos[field.group[0]]) {
+              this.keyViewCampos[field.group[0]] = [];
+            }
+            this.keyViewCampos[field.group[0]].push(field.viewName);
+          });
+        }),
+        map(() => this.keyViewCampos),
+        shareReplay(1) // Usar shareReplay aquí
+      );
+    }
+    return this.getKeysFieldsViewByGroup$;
+  }
+// NECESITO DEVOLVER LOS NOMBRES DE LOS CAMPOS SIN AGRUPAR, PERO ORDENADOS
+// DE ACUERDO A LAS ETIQUETAS
+  getKeysArray(): Observable<string[]> {
+    // DEVUELVE LAS NOS NOMBRES DE LOS CAMPOS AGRUPADOS POR ETIQUETAS...
+    if (!this.getKeysArray$) { // Comprobar si ya existe el observable
+    // HAY QUE RECORRER EL OBJETO KEYSBYGROUP
+      this.getKeysArray$ = this.getKeysFieldsByGroup().pipe(
+        tap(fields => {
+          for (const clave in fields) {
+            fields[clave].forEach(field => {
+              this.keyArray.push(field);
+            });
+          }
+        }),
+        map(() => this.keyArray),
+        shareReplay(1) // Usar shareReplay aquí
+      );
+    }
+
+    // console.log(this.keyArray);
+    return this.getKeysArray$;
+  }
+
+ }
+  
+  
