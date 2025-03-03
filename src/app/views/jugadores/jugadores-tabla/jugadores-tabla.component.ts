@@ -18,21 +18,11 @@ import { JugadorEtiquetas } from '../../../core/model/jugador-etiquetas.model';
 import { JugadorDatosService } from '../../../core/jugador-datos.service';
 import { MatTableModule } from '@angular/material/table';
 import { JugadorDatos } from '../../../core/model/jugador-datos.model';
+import { Campos } from '../../../core/model/campos.model';
 
 // import { filter } from 'rxjs/operators';
 Chart.register(...registerables);
 
-interface Campo {
-  [key: string]: JugadorField;
-};
-
-interface Campos {
-  [key: string]: Campo;
-}
-
-interface CampoKeys {
-  [key: string]: string[];
-}
 
 @Component({
     selector: 'app-jugadores-tabla',
@@ -46,12 +36,15 @@ interface CampoKeys {
     templateUrl: './jugadores-tabla.component.html',
     styleUrl: './jugadores-tabla.component.scss'
 })
-// export class JugadoresTablaComponent implements OnInit, OnDestroy, OnChanges {
+
 export class JugadoresTablaComponent implements OnInit, OnDestroy {
   @Output() jugadorId_EE = new EventEmitter<string>();
-  keyArray: string []  = [];
-  keyViewArray: string []  = [];
+ 
   keyObjectArray: JugadorDatos[] = [];
+
+  fieldsOrderByGroup: JugadorField[] = [];
+  
+  fieldIndex: { [name: string]: number } = {};
 
   constructor(private jugadoresService : JugadoresService, 
               private jugadorFieldServicio: JugadorFieldService,
@@ -63,67 +56,51 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
               forkJoin([
                     this.jugadorFieldServicio.getFields(),
                     this.jugadorFieldServicio.getFieldsByGroup(),
-                    this.jugadorFieldServicio.getKeysFieldsByGroup(),
+                    this.jugadorFieldServicio.getFieldNameToIndex(),
+                    // this.jugadorFieldServicio.getKeysFieldsByGroup(),
                     this.jugadorFieldServicio.getKeysFieldsObjectByGroup(),
-                    this.jugadorFieldServicio.getKeysFieldsViewByGroup(),
+                    // this.jugadorFieldServicio.getKeysFieldsViewByGroup(),
                     this.jugadorDatosServicio.getEtiquetasGrupo(),
                   ]).subscribe({
-                    next: ([resGetFields, resGetFieldsByGroup, resGetKeysFieldsByGroup, resGetKeysFieldsObjectByGroup, resGetKeysViewFieldsByGroup, resEtiquetasGrupo]) => {
+                    // next: ([resGetFields, resGetFieldsByGroup, resGetKeysFieldsByGroup, resGetKeysFieldsObjectByGroup, resGetKeysViewFieldsByGroup, resEtiquetasGrupo]) => {
+                    next: ([resGetFields, resGetFieldsByGroup, resGetFieldNameToIndex,resGetKeysFieldsObjectByGroup, resEtiquetasGrupo]) => {
                       this.fields = resGetFields;
                       this.campos = resGetFieldsByGroup;
-                      this.campoKeys = resGetKeysFieldsByGroup;
-                      this.campoKeysView = resGetKeysViewFieldsByGroup;
+                      this.fieldIndex = resGetFieldNameToIndex;
+                      // this.campoKeys = resGetKeysFieldsByGroup;
+                      // this.campoKeysView = resGetKeysViewFieldsByGroup;
                       this.jugadorEtiquetaGrupo = resEtiquetasGrupo;
                       // console.log('campoKeys');
                       // console.log(this.campoKeys);
-                      this.keyArray = Object.values(this.campoKeys).flatMap(arr => arr);
+                      // this.keyArray = Object.values(this.campoKeys).flatMap(arr => arr);
                       this.keyObjectArray = Object.values(resGetKeysFieldsObjectByGroup).flatMap(arr => arr);
-                      this.keyViewArray = Object.values(this.campoKeysView).flatMap(arr => arr);
-                      console.log('keyObjectArray', this.keyObjectArray );
-                 
-                      this.displayedColumns = this.keyArray; 
+                      // this.keyViewArray = Object.values(this.campoKeysView).flatMap(arr => arr);
+                      // console.log('keyObjectArray', this.keyObjectArray );
+                      for (let grupo of this.jugadorEtiquetaGrupo) {
+                        for (let c in this.campos[grupo.codigo]) {
+                          // const i = this.fields.findIndex(n => n.name === c);
+                          const index = this.fieldIndex[c];
+                          this.fieldsOrderByGroup.push(this.fields[index]);
+                        }
+                      }
+
+                      console.log('fieldsOrderByGroup', this.fieldsOrderByGroup );
+                    
+                      this.displayedColumns = this.keyObjectArray.map(o => o.codigo)
                      },
                     error: error => {
                           console.warn("Ha ocurrido un error con código: ", error);
                         }
                   });
               
-
-              // this.subscriptionField.add(this.jugadorFieldService.getFields().subscribe({
-              //   next: res => {
-              //     console.log("Se reciben datos de los atributos.");
-              //     this.fields = res;
-              //   },
-              //   error: error => {
-              //     console.warn("Ha ocurrido un error con código: ", error);
-              //   }
-              // }    
-              // ));
-
-              // this.subscriptionField.add(this.jugadorFieldService.getKeysArray().pipe(
-              //   filter(valor => valor !== null) // Espera a que el Observable emita un valor no nulo
-              // ).subscribe({
-              //   next: res => {
-              //     console.log("Se reciben las claves en un arreglo, ordenadas según las etiquetas.");
-              //     this.keyArray = res;
-           
-              //   },
-              //   error: error => {
-              //     console.warn("Ha ocurrido un error con código: ", error);
-              //   }
-              // }    
-              // ));         
-          
-              // 27/02/2025 this.jugadorEtiquetaGrupo = this.jugadorDatosServicio.getEtiquetasGrupo();
-              
-            }
+            
+              }
 
   // *************
   fields: JugadorField[] = [];
 
   jugadorEtiquetaGrupo: JugadorEtiquetas[] = [];
-  campoKeys: CampoKeys = {};
-  campoKeysView: CampoKeys = {};
+
   campos: Campos = {};
 
   jugadores: Jugador[] = []; 
@@ -143,8 +120,6 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
   filtros: JugadorFiltro[] = [];
 
   subscription = new Subscription();
-  subscriptionField = new Subscription();
-  subscriptionJugadoresFiltro = new Subscription();
 
   amountView: number = 5;
   strFiltros: string = '';
@@ -227,28 +202,8 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
 
   }  
 
-  // ngOnChanges(changes: SimpleChanges) {
-  //   if (changes['valor']) {
-  //     this.playerId = changes['valor'].currentValue;
-  //     // this.hacerGet();
-  //   }
-  // }
-
-  // hacerGetEncabezado() {    
-  //   this.subscriptionField.add(this.jugadorFieldService.getFields().subscribe({
-  //     next: res => {
-  //       console.log("Se reciben datos de los atributos.");
-  //       this.fields = res;
-  //     },
-  //     error: error => {
-  //       console.warn("Ha ocurrido un error con código: ", error);
-  //     }
-  //   }    
-  //   ));
-  // }
-
   hacerGetDatos(pagina:number, limit:number, strFiltros$: string){    
-    this.subscriptionJugadoresFiltro.add(this.jugadoresFiltroService.filtro$.subscribe({
+    this.subscription.add(this.jugadoresFiltroService.filtro$.subscribe({
       next: res => {
         console.log("Se reciben filtros.");
         this.strFiltros = res;
@@ -264,23 +219,6 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
             console.log(this.campos);
             this.n_cantidad = res.count;
             this.n_paginas = res.pages;
-            // this.jugadoresMatrizFields = [[]];
-            // console.log(this.jugadores.length);
-            // for (let x = 0; x < this.jugadores.length; x++) {
-            //   // this.jugador = this.jugadores[x];
-            //   this.jugadorArrayFields = [];
-            //   this.jugadorArrayFields = Object.values(this.jugadores[x]);
-            //   // console.log(this.jugadorArrayFields);
-            //   // console.log(this.jugadoresMatrizFields);
-            //   for (let z = 0; z < this.jugadorArrayFields.length; z++ ){
-            //     this.jugadoresMatrizFields[x].push(this.jugadorArrayFields[z]);
-            //   }
-            //   if (x < this.jugadores.length - 1) {
-            //     this.jugadoresMatrizFields.push([]);
-            //   }
-            // }
-            // console.log(this.jugadorArrayFields);
-            // console.log(this.jugadoresMatrizFields);
           },
           error: error => {
             console.warn("Ha ocurrido un error con código: ", error);
@@ -292,40 +230,14 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
         console.warn("Ha ocurrido un error con código: ", error);
       }
     }    
-    ));
-
-    
+    ));    
   }
 
-  ngOnInit(){
-    // this.hacerGetEncabezado();
-     // ARMAR campoKeys
-
-    // this.jugadorFieldServicio.getFields().pipe(
-    //   filter(valor => valor !== null) // Espera a que el Observable emita un valor no nulo
-    // ).subscribe(valor => {
-    //   for (const field of this.fields) {
-               
-    //    // en group[0] se encuentra el grupo principal al cual pertenece el campo
-    //     if (!this.campos[field.group[0]]) {
-    //       this.campos[field.group[0]] = {};
-    //     }
-    //     this.campos[field.group[0]][field.name] = field;
-    //   } 
-    //   console.log(this.campos);
-    //   for (let grupo of this.jugadorEtiquetaGrupo) {
-    //     this.campoKeys[grupo.codigo] = Object.keys(this.campos[grupo.codigo]);
-    //   }
-    // });
-
-    
-    
+  ngOnInit(){    
     this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
   }
   
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
-    this.subscriptionField.unsubscribe();
-    this.subscriptionJugadoresFiltro.unsubscribe();
   } 
 }

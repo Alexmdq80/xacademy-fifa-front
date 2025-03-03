@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { JugadorField } from './model/jugador-field.model';
 import { map, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { shareReplay, tap } from 'rxjs';
+import { shareReplay, tap, of } from 'rxjs';
 import { Campos } from './model/campos.model';
 import { Keys } from './model/keys.model'; 
 import { KeysObject } from './model/keys-object.model';
@@ -25,8 +25,8 @@ export class JugadorFieldService {
   private getKeysFieldsObjectByGroup$?: Observable<KeysObject>;
   private keyArray: string []  = [];
   private getKeysArray$?: Observable<string[]>;
-  
-  
+  private getFieldNameToIndex$?: Observable< { [name: string]: number }>;
+
   constructor(private httpClient: HttpClient) { }
  
   getFields(): Observable<JugadorField[]> {
@@ -180,6 +180,28 @@ export class JugadorFieldService {
     return this.getKeysArray$;
   }
 
+
+  getFieldNameToIndex(): Observable<{ [name: string]: number }> {
+    if (!this.getFieldNameToIndex$) {
+      this.getFieldNameToIndex$ = this.getFields().pipe(
+        tap(fields => console.log('Fields received:', fields)), // Para depuración
+        map(fields => {
+          const fieldNameToIndex: { [name: string]: number } = {};
+          fields.forEach((field, index) => {
+            fieldNameToIndex[field.name] = index;
+          });
+          return fieldNameToIndex;
+        }),
+        shareReplay(1)
+      );
+    }
+    return this.getFieldNameToIndex$;
+  }
+
+  // getFieldsS(): Observable<JugadorField[]> {
+  //   // Aquí puedes simular una llamada a una API o devolver los datos directamente
+  //   return of(this.fields);
+  // }
  }
   
   

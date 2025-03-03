@@ -80,17 +80,27 @@
     </table> -->
 
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-
         <!--- Note that these columns can be defined in any order.
               The actual rendered columns are set as a property on the row definition" -->
 
         <ng-container *ngFor="let item of keyObjectArray; let i = index;"
             matColumnDef="{{ item.codigo
             }}">
-            <th mat-header-cell *matHeaderCellDef> {{ keyObjectArray[i].view }}
+            <th mat-header-cell *matHeaderCellDef> {{ keyObjectArray[i].view
+                }}
             </th>
-            <td mat-cell *matCellDef="let element"> {{ element[item.codigo] }}
-            </td>
+            <div *ngIf="fieldsOrderByGroup[i].esUrl">
+                <td mat-cell *matCellDef="let element">
+                    <img src="{{ element[item.codigo] }}"
+                        alt="{{ element[item.codigo] }}">
+                </td>
+            </div>
+            <div *ngIf="!fieldsOrderByGroup[i].esUrl">
+                <td mat-cell *matCellDef="let element"> {{ element[item.codigo]
+                    }}
+                </td>
+            </div>
+
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
