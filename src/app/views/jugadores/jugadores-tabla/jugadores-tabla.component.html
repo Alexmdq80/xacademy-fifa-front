@@ -1,83 +1,4 @@
 <div>
-    <div>
-        <span>Mostrar</span>
-        <select id="paginacion" [(ngModel)]="amountView"
-            (change)="mostrarItems()">
-            <option [value]=5>5</option>
-            <option [value]=10>10</option>
-            <option [value]=15>15</option>
-            <option [value]=20>20</option>
-        </select>
-
-        <button (click)="primerPagina()"
-            type="button">Inicio</button>
-
-        <button (click)="cambiarPagina(-1)" type="button">Previa</button>
-        <span>- Total: {{ n_cantidad }} - Página: </span>
-
-        <!-- <select>
-            <option *ngFor="let i = 1; i < 10; i++">
-                {{ i }}
-            </option>
-        </select> -->
-        <input type="number" id="v_pagina" name="valor" placeholder="número"
-            [min]="1" [max]="(n_paginas)"
-            (change)="mostrarPagina($event)" [value]="n_pagina"
-            [(ngModel)]="n_pagina">
-
-        <span> de {{ n_paginas }} </span>
-        <!-- <button outline-button (click)="cambiarPagina(1)"
-            type="button">Siguiente</button> -->
-        <button (click)="cambiarPagina(1)"
-            type="button">Siguiente</button>
-
-        <button (click)="ultimaPagina()"
-            type="button">Fin</button>
-
-    </div>
-
-    <!-- <table>
-        <thead style="display: flex; flex-wrap: nowrap;">
-            <tr *ngFor="let c of keyArray; let z = index">
-                <th>
-                    <span> {{ c }} </span>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let player of jugadores; let i = index"
-                [class.resaltado]="isHovered"
-                (mouseenter)="onMouseEnter()"
-                (mouseleave)="onMouseLeave()"
-                (click)="seleccionarFila(player[i])">
-
-                <td>
-                    <span *ngFor="let c of keyArray;"> {{
-                        this.jugadores[i][c] }} </span>
-                </td>
-            </tr>
-        </tbody>
-    </table> -->
-    <!-- <table>
-        <thead>
-            <tr>
-                <th *ngFor="let c of keyViewArray">
-                    <span> {{ c }} </span>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let player of jugadores; let i = index"
-                [class.resaltado]="isHovered"
-                (mouseenter)="onMouseEnter()"
-                (mouseleave)="onMouseLeave()"
-                (click)="seleccionarFila(player)">
-                <td *ngFor="let c of keyArray">
-                    <span> {{ player[c] }} </span>
-                </td>
-            </tr>
-        </tbody>
-    </table> -->
 
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <!--- Note that these columns can be defined in any order.
@@ -106,5 +27,15 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
+
+    <mat-paginator #paginator
+        class="paginator"
+        (page)="handlePageEvent($event)"
+        [length]="length"
+        [pageSizeOptions]="[5, 10, 20]"
+        [pageIndex]="pageIndex"
+        aria-label="Select page"
+        showFirstLastButtons>
+    </mat-paginator>
 
 </div>

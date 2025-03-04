@@ -15,6 +15,7 @@
     <app-filtro *ngFor="let filtroView of this.filtros">
         {{ filtroView }}
     </app-filtro>
+
     <button *ngIf="this.filtros.length > 0" (click)="aplicarFiltro()"> Aplicar
         Filtro </button>
 

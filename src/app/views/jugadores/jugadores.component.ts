@@ -52,6 +52,10 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
         this.filtros = data;
       }  
     }));
+
+    this.jugadoresFiltros.eventoAplicarFiltro.subscribe(() => {
+      this.aplicarFiltro();
+    });
   }
 
   lista: boolean = true;

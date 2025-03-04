@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { JugadorFiltro } from './model/jugador-filtro.model';
 import { BehaviorSubject } from 'rxjs';
 
@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class JugadoresFiltroService {
+  eventoAplicarFiltro = new EventEmitter<void>();
 
   constructor() { }
 

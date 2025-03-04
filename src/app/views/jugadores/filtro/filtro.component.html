@@ -4,7 +4,7 @@
         value="st"> -->
 
     <button (click)="removeFiltro()"
-        id="{{ filtro.id }}  ">- Filtro</button>
+        id="{{ filtro.id }}">- Filtro</button>
 
     <!-- <select [(ngModel)]="selectedOption" [disabled]="!isEnabled.value" -->
     <select [(ngModel)]="selectedOption[filtro.id]"

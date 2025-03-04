@@ -23,6 +23,8 @@ import { JugadoresFiltroService  } from '../../../core/jugadores-filtro.service'
 
 export class FiltroComponent implements OnInit, OnDestroy {
 
+  // @Output() eventoAplicarFiltro = new EventEmitter<void>();
+
   // @Input() n_filtro = 0;
   
   // @Output() valorNumero = new EventEmitter<any>();
@@ -99,6 +101,7 @@ export class FiltroComponent implements OnInit, OnDestroy {
   removeFiltro() {
     console.log('filtro.id ' + this.filtro.id)
     this.jugadoresFiltros.removeFiltro(this.filtro.id);   
+    this.jugadoresFiltros.eventoAplicarFiltro.emit();
     // this.filtros = this.jugadoresFiltros.getFiltros();
   }
 

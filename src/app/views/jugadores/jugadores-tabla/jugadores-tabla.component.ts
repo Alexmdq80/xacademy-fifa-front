@@ -1,5 +1,5 @@
 // import { Component, OnDestroy, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Component, OnDestroy, OnInit, EventEmitter, Output  } from '@angular/core';
+import { Component, OnDestroy, OnInit, EventEmitter, Output, ViewChild  } from '@angular/core';
 import { Subscription, forkJoin } from 'rxjs';
 import { JugadoresService } from '../../../core/jugadores.service';
 import { Jugador } from '../../../core/model/jugador.model';
@@ -16,9 +16,10 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 //  import { Dialog } from '@angular/cdk/dialog';
 import { JugadorEtiquetas } from '../../../core/model/jugador-etiquetas.model';
 import { JugadorDatosService } from '../../../core/jugador-datos.service';
-import { MatTableModule } from '@angular/material/table';
 import { JugadorDatos } from '../../../core/model/jugador-datos.model';
 import { Campos } from '../../../core/model/campos.model';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
 // import { filter } from 'rxjs/operators';
 Chart.register(...registerables);
@@ -30,7 +31,8 @@ Chart.register(...registerables);
         CommonModule,
         ReactiveFormsModule,
         FormsModule,
-        MatTableModule
+        MatTableModule,
+        MatPaginatorModule
         // OutlineButtonComponent
     ],
     templateUrl: './jugadores-tabla.component.html',
@@ -39,20 +41,25 @@ Chart.register(...registerables);
 
 export class JugadoresTablaComponent implements OnInit, OnDestroy {
   @Output() jugadorId_EE = new EventEmitter<string>();
+  
+  displayedColumns?: string[]; 
+  jugadores: Jugador[] = []; 
+  dataSource = new MatTableDataSource<Jugador>(this.jugadores);
+  
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
  
   keyObjectArray: JugadorDatos[] = [];
 
   fieldsOrderByGroup: JugadorField[] = [];
   
   fieldIndex: { [name: string]: number } = {};
-
+  
   constructor(private jugadoresService : JugadoresService, 
               private jugadorFieldServicio: JugadorFieldService,
               private jugadoresFiltroService: JugadoresFiltroService,
               public dialog: MatDialog,
-              private jugadorDatosServicio: JugadorDatosService
+              private jugadorDatosServicio: JugadorDatosService,
             ){
-
               forkJoin([
                     this.jugadorFieldServicio.getFields(),
                     this.jugadorFieldServicio.getFieldsByGroup(),
@@ -84,9 +91,10 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
                         }
                       }
 
-                      console.log('fieldsOrderByGroup', this.fieldsOrderByGroup );
+                      // console.log('fieldsOrderByGroup', this.fieldsOrderByGroup );
                     
-                      this.displayedColumns = this.keyObjectArray.map(o => o.codigo)
+                      this.displayedColumns = this.keyObjectArray.map(o => o.codigo);
+                      this.dataSource.paginator = this.paginator; 
                      },
                     error: error => {
                           console.warn("Ha ocurrido un error con código: ", error);
@@ -103,19 +111,30 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
 
   campos: Campos = {};
 
-  jugadores: Jugador[] = []; 
   jugador?: Jugador;
-  displayedColumns?: string[]; 
-  dataSource: Jugador[] = [];
+
+  // n_pagina_old: number = 1;
+  // n_pagina: number = 1;
+  // n_paginas: number = 1;
+  // n_cantidad?: number;
+
+  // ***paginator 
+  length!: number;
+  pageSize = 5;
+  pageIndex = 0;
+  pageSizeOptions = [5, 10, 25];
+
+  hidePageSize = false;
+  showPageSizeOptions = true;
+  showFirstLastButtons = true;
+  disabled = false;
+
+  pageEvent!: PageEvent;
 
 
-  n_pagina_old: number = 1;
-  n_pagina: number = 1;
-  n_paginas: number = 1;
-  n_cantidad?: number;
-
-  jugadoresMatrizFields: string[][] = [[]];
-  jugadorArrayFields: string[] = [];
+  // ***************
+  // jugadoresMatrizFields: string[][] = [[]];
+  // jugadorArrayFields: string[] = [];
 
   filtros: JugadorFiltro[] = [];
 
@@ -163,62 +182,71 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
   // **************MODAL CON RADARCHART
   }
 
-  cambiarPagina(movimiento:number){
-    this.n_pagina = this.n_pagina + movimiento;
-    if (this.n_pagina < 1) {
-      this.n_pagina = 1;
-    } else if (this.n_pagina > this.n_paginas) {
-      this.n_pagina = this.n_paginas;
-    }
-    this.n_pagina_old = this.n_pagina;
+  // cambiarPagina(movimiento:number){
+  //   this.n_pagina = this.n_pagina + movimiento;
+  //   if (this.n_pagina < 1) {
+  //     this.n_pagina = 1;
+  //   } else if (this.n_pagina > this.n_paginas) {
+  //     this.n_pagina = this.n_paginas;
+  //   }
+  //   this.n_pagina_old = this.n_pagina;
     
-    this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
-  }  
+  //   this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
+  // }  
 
   mostrarItems(){
-    this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros);   }
+    console.log('mostrarItems');
+    this.pageIndex = 0;
 
-  ultimaPagina(){
-    this.n_pagina = this.n_paginas;
-    this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
+    this.hacerGetDatos(this.pageIndex + 1, this.pageSize, this.strFiltros); 
+     
+    // this.dataSource.paginator = this.paginator; 
   }
+
+  // ultimaPagina(){
+  //   this.n_pagina = this.n_paginas;
+  //   this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
+  // }
   
-  primerPagina(){
-    this.n_pagina = 1;
-    this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
-  }
+  // primerPagina(){
+  //   this.n_pagina = 1;
+  //   this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
+  // }
 
 
-  mostrarPagina(event: any){
-    const valor = Number(event.target.value); // Convertimos el valor a número
+  // mostrarPagina(event: any){
+  //   const valor = Number(event.target.value); // Convertimos el valor a número
 
-    if (valor < 1 || valor > this.n_paginas) {
-      this.n_pagina = this.n_pagina_old;
-    } else {
-      this.n_pagina = valor;
-      this.n_pagina_old= valor;
-      this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
-    }
+  //   if (valor < 1 || valor > this.n_paginas) {
+  //     this.n_pagina = this.n_pagina_old;
+  //   } else {
+  //     this.n_pagina = valor;
+  //     this.n_pagina_old= valor;
+  //     this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
+  //   }
 
-  }  
+  // }  
 
   hacerGetDatos(pagina:number, limit:number, strFiltros$: string){    
     this.subscription.add(this.jugadoresFiltroService.filtro$.subscribe({
       next: res => {
         console.log("Se reciben filtros.");
-        this.strFiltros = res;
-        this.subscription.add(this.jugadoresService.getDataFiltrada(pagina,limit, strFiltros$).subscribe({
+        this.strFiltros = res;  
+        this.subscription.add(this.jugadoresService.getDataFiltrada(pagina,limit, this.strFiltros).subscribe({
           next: res => {
             console.log("Se reciben datos de jugador.");
             if (!res) {
               console.log("Consulta vacía.");
             }       
             this.jugadores = res.data ;
-            this.dataSource = this.jugadores;
+            
+            this.dataSource =  new MatTableDataSource<Jugador>(this.jugadores);
+            // this.dataSource.paginator = this.paginator; 
             console.log(this.jugadores);
-            console.log(this.campos);
-            this.n_cantidad = res.count;
-            this.n_paginas = res.pages;
+            // this.n_cantidad = res.count;
+            // this.n_paginas = res.pages;
+            this.length = res.count;
+
           },
           error: error => {
             console.warn("Ha ocurrido un error con código: ", error);
@@ -233,11 +261,27 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
     ));    
   }
 
+
   ngOnInit(){    
-    this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
+    console.log('inicializa');
+    this.hacerGetDatos(this.pageIndex + 1, this.pageSize, this.strFiltros);
+
+
   }
+
   
   ngOnDestroy(): void {
+    console.log('destroy');
     this.subscription.unsubscribe();
   } 
+
+  handlePageEvent(e: PageEvent) {
+    console.log('handle');
+    console.log(e);
+    this.pageEvent = e;
+    this.length = e.length;
+    this.pageSize = e.pageSize;
+    this.pageIndex = e.pageIndex;
+    this.hacerGetDatos(this.pageIndex + 1, this.pageSize, this.strFiltros); 
+  }
 }
