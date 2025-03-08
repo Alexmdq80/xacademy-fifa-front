@@ -1,5 +1,5 @@
 // import { Component, OnDestroy, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Component, OnDestroy, OnInit, EventEmitter, Output, ViewChild  } from '@angular/core';
+import { Component, OnDestroy, OnInit, EventEmitter, Output, ViewChild, inject, AfterViewInit  } from '@angular/core';
 import { Subscription, forkJoin } from 'rxjs';
 import { JugadoresService } from '../../../core/jugadores.service';
 import { Jugador } from '../../../core/model/jugador.model';
@@ -20,6 +20,9 @@ import { JugadorDatos } from '../../../core/model/jugador-datos.model';
 import { Campos } from '../../../core/model/campos.model';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatSort, Sort, MatSortModule} from '@angular/material/sort';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
 
 // import { filter } from 'rxjs/operators';
 Chart.register(...registerables);
@@ -32,22 +35,32 @@ Chart.register(...registerables);
         ReactiveFormsModule,
         FormsModule,
         MatTableModule,
-        MatPaginatorModule
+        MatPaginatorModule,
+        MatSortModule,
+        CdkDropList,
+        CdkDrag
         // OutlineButtonComponent
     ],
     templateUrl: './jugadores-tabla.component.html',
     styleUrl: './jugadores-tabla.component.scss'
 })
 
-export class JugadoresTablaComponent implements OnInit, OnDestroy {
+export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy {
+  private _liveAnnouncer = inject(LiveAnnouncer);
+
   @Output() jugadorId_EE = new EventEmitter<string>();
   
   displayedColumns?: string[]; 
   jugadores: Jugador[] = []; 
   dataSource = new MatTableDataSource<Jugador>(this.jugadores);
-  
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
- 
+  @ViewChild(MatSort) sort!: MatSort;  
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.displayedColumns!, event.previousIndex, event.currentIndex);
+  }
+
   keyObjectArray: JugadorDatos[] = [];
 
   fieldsOrderByGroup: JugadorField[] = [];
@@ -94,7 +107,8 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
                       // console.log('fieldsOrderByGroup', this.fieldsOrderByGroup );
                     
                       this.displayedColumns = this.keyObjectArray.map(o => o.codigo);
-                      this.dataSource.paginator = this.paginator; 
+                      // funciona igual con este o sin este???
+                      // this.dataSource.paginator = this.paginator; 
                      },
                     error: error => {
                           console.warn("Ha ocurrido un error con código: ", error);
@@ -119,10 +133,10 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
   // n_cantidad?: number;
 
   // ***paginator 
-  length!: number;
-  pageSize = 5;
-  pageIndex = 0;
-  pageSizeOptions = [5, 10, 25];
+  // length!: number;
+  // pageSize = 5;
+  // pageIndex = 0;
+  pageSizeOptions = [5, 10, 15];
 
   hidePageSize = false;
   showPageSizeOptions = true;
@@ -137,6 +151,7 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
   // jugadorArrayFields: string[] = [];
 
   filtros: JugadorFiltro[] = [];
+  sorting: string = '';
 
   subscription = new Subscription();
 
@@ -196,10 +211,11 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
 
   mostrarItems(){
     console.log('mostrarItems');
-    this.pageIndex = 0;
+    // this.pageIndex = 0;
 
-    this.hacerGetDatos(this.pageIndex + 1, this.pageSize, this.strFiltros); 
+    // this.hacerGetDatos(pageIndex + 1, this.pageSize, this.strFiltros); 
      
+    this.hacerGetDatos(this.paginator.pageIndex + 1, this.paginator.pageSize); 
     // this.dataSource.paginator = this.paginator; 
   }
 
@@ -227,12 +243,15 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
 
   // }  
 
-  hacerGetDatos(pagina:number, limit:number, strFiltros$: string){    
+  // hacerGetDatos(pagina:number, limit:number, strFiltros$: string){    
+  hacerGetDatos(pagina:number, limit:number){        
+  
     this.subscription.add(this.jugadoresFiltroService.filtro$.subscribe({
       next: res => {
         console.log("Se reciben filtros.");
         this.strFiltros = res;  
-        this.subscription.add(this.jugadoresService.getDataFiltrada(pagina,limit, this.strFiltros).subscribe({
+        // this.subscription.add(this.jugadoresService.getDataFiltrada(pagina,limit, this.strFiltros).subscribe({
+        this.subscription.add(this.jugadoresService.getData(pagina,limit, this.strFiltros, this.sorting).subscribe({
           next: res => {
             console.log("Se reciben datos de jugador.");
             if (!res) {
@@ -240,12 +259,20 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
             }       
             this.jugadores = res.data ;
             
-            this.dataSource =  new MatTableDataSource<Jugador>(this.jugadores);
-            // this.dataSource.paginator = this.paginator; 
-            console.log(this.jugadores);
+            // this.dataSource =  new MatTableDataSource<Jugador>(this.jugadores);
+            // this.dataSource =  this.jugadores;
+         
+            // console.log(this.jugadores);
             // this.n_cantidad = res.count;
             // this.n_paginas = res.pages;
-            this.length = res.count;
+            // this.length = res.count;
+            // this.dataSource.paginator = this.paginator; 
+            this.paginator.length = res.count;
+            // this.dataSource.sort = this.sort;
+            // this.dataSource.data = this.jugadores;
+            
+
+            // this.dataSource.sort = this.sort;
 
           },
           error: error => {
@@ -264,11 +291,15 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
 
   ngOnInit(){    
     console.log('inicializa');
-    this.hacerGetDatos(this.pageIndex + 1, this.pageSize, this.strFiltros);
+    // this.hacerGetDatos(this.pageIndex + 1, this.pageSize, this.strFiltros);
+    this.hacerGetDatos(0, 5);
 
 
   }
-
+  
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+  }
   
   ngOnDestroy(): void {
     console.log('destroy');
@@ -276,12 +307,33 @@ export class JugadoresTablaComponent implements OnInit, OnDestroy {
   } 
 
   handlePageEvent(e: PageEvent) {
-    console.log('handle');
-    console.log(e);
+    // console.log('handle');
+    // console.log(e);
     this.pageEvent = e;
-    this.length = e.length;
-    this.pageSize = e.pageSize;
-    this.pageIndex = e.pageIndex;
-    this.hacerGetDatos(this.pageIndex + 1, this.pageSize, this.strFiltros); 
+    // this.length = e.length;
+    // this.pageSize = e.pageSize;
+    // this.pageIndex = e.pageIndex;
+    // this.hacerGetDatos(this.pageIndex + 1, this.pageSize, this.strFiltros); 
+    this.hacerGetDatos(e.pageIndex, e.pageSize); 
   }
+
+ /** Announce the change in sort state for assistive technology. */
+ announceSortChange(sortState: Sort) {
+  // This example uses English messages. If your application supports
+  // multiple language, you would internationalize these strings.
+  // Furthermore, you can customize the message to add additional
+  // details about the values being sorted.
+  // console.log(sortState.direction);
+  // console.log(sortState);
+  //  ACÁ TENDRÍA QUE HACER EL GET PASANDO EL PARÁMETRO DE ORDENAMIENTO.
+  if (sortState.direction) {
+    this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    this.sorting = '&sort[1]=' + sortState.active + '&direction[1]=' + sortState.direction;
+    // console.log(this.sorting);
+    this.hacerGetDatos(0, this.paginator.pageSize); 
+  } else {
+    this.sorting = '';
+    this._liveAnnouncer.announce('Sorting cleared');
+  }
+}
 }
