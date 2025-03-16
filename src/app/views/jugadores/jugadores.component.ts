@@ -13,7 +13,9 @@ import { Subscription } from 'rxjs';
 import { JugadorField } from '../../core/model/jugador-field.model';
 import { JugadorFiltro } from '../../core/model/jugador-filtro.model';
 import { AgregarPersonaComponent } from "./jugadores-tabla/agregar-persona/agregar-persona.component";
-
+import { Jugador } from '../../core/model/jugador.model';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'app-jugadores',
@@ -21,7 +23,9 @@ import { AgregarPersonaComponent } from "./jugadores-tabla/agregar-persona/agreg
     FiltroComponent,
     JugadoresTablaComponent,
     CommonModule,
-    AgregarPersonaComponent
+    AgregarPersonaComponent,
+    MatButtonModule,
+    MatIconModule
 ],
     templateUrl: './jugadores.component.html',
     styleUrl: './jugadores.component.scss'
@@ -34,7 +38,6 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
               private jugadoresFiltros: JugadoresFiltroService
   ){
     this.lista = true;
-
     console.log(this.jugadorFieldService.getFields());
     this.subscription.add(this.jugadorFieldService.getFields().subscribe({
       next: res => {
@@ -73,10 +76,11 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
   };
 
 
-
   @ViewChild(JugadoresTablaComponent) JugadorTabla?: JugadoresTablaComponent;
- 
+  @ViewChild(AgregarPersonaComponent) mostrar_formulario?: AgregarPersonaComponent;
+
   jugadorId: number = 0;
+  
   // n_filtro = 1;
 
   // recibirValor($event: any) {
@@ -84,9 +88,16 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
   //   this.valorNumeroRecibido = $event;
 
   // }
-  recibirJugadorId(datos: string) { 
-    this.jugadorId = Number(datos);
+  recibirJugadorId(jugador: Jugador) { 
+    console.log(this.jugadorId);
+    this.jugadorId = Number(jugador.id);
     this.lista = !this.lista;
+  }
+
+  cerrar_formulario() { 
+    // NO PASO EL VALOR COMO PARÁMETRO, YA QUE SIEMPRE QUE AGREGAR_PERSONA
+    // EMITA UN VALOR, SE DEBE CERRAR EL FORMULARIO
+    this.lista = true;
   }
 
   agregarPersona() {

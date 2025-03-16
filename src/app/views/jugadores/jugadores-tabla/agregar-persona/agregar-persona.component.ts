@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, signal, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, signal, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators, ValidationErrors  } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -78,6 +78,8 @@ interface PlayerForms {
 
 export class AgregarPersonaComponent implements OnInit, OnDestroy {
   @Input() jugadorId_INPUT: number = 0;
+
+  @Output() mostrar_formulario = new EventEmitter<Boolean>(false);
 
   jugadorPositions: JugadorDatos[] | undefined = [];
   jugadorWorkRate: JugadorDatos[] = [];
@@ -471,6 +473,10 @@ export class AgregarPersonaComponent implements OnInit, OnDestroy {
       console.log("actualizado");
     }
   };
+
+  cancelar() {
+    this.mostrar_formulario.emit(false);
+  }
 
   getValueFromSlider(campo: JugadorField, sliderValue: string, codigo: boolean): string | null {
     const index = Number(sliderValue);

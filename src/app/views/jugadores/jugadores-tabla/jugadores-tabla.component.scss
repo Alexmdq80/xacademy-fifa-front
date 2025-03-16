@@ -2,8 +2,9 @@
 //     background-color: #22e710; 
 //   }
 
-.table {
+.tabla {
   width: 100%;
+  padding-bottom: 70px;
 }
 
 .mat-mdc-row .mat-mdc-cell {
@@ -16,3 +17,40 @@
   border-color: currentColor;
 }
 
+mat-menu {
+  display: flex;  
+  justify-content: left;
+  align-items: left;
+  padding: 10px 10px;
+  margin: 10px 10px;
+
+} 
+
+button {
+  // display: flex;
+  // justify-content: space-between;
+  padding: 10px 10px;
+  margin: 10px 10px;
+  // background-color: #fa593c;
+  // color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  // justify-content: space-between;
+  padding: 10px 20px;
+  // background-color: transparent;
+  // border: solid 2px #000000;
+  // color: #343f44
+  border: none;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+  span{
+    text-align: left;
+  }
+
+}
+
+mat-icon {
+  margin-right: 10px;
+  color: #2e86fd;
+}

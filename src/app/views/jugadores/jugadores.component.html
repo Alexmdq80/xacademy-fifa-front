@@ -3,11 +3,11 @@
         Filtro</button>
 </section> -->
 
-<div>
-    <button (click)="agregarPersona()">
-        <i class="material-icons-outlined">person_add</i>
-    </button>
-</div>
+<button *ngIf="lista" mat-fab class="floating-button"
+    (click)="agregarPersona()">
+    <!-- <mat-icon class="material-icons-outlined">person_add</mat-icon> -->
+    <mat-icon>person_add</mat-icon>
+</button>
 <div *ngIf="lista" class="filtro">
 
     <button (click)="addFiltro()"> + Filtro </button>
@@ -32,6 +32,7 @@
 
 <div *ngIf="!lista">
     <app-agregar-persona
-        [jugadorId_INPUT]="jugadorId">
+        [jugadorId_INPUT]="jugadorId"
+        (mostrar_formulario)="cerrar_formulario()">
     </app-agregar-persona>
 </div>

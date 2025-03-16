@@ -23,7 +23,9 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort, Sort, MatSortModule} from '@angular/material/sort';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
-
+import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { EventManager } from '@angular/platform-browser';
 // import { filter } from 'rxjs/operators';
 Chart.register(...registerables);
 
@@ -38,7 +40,11 @@ Chart.register(...registerables);
         MatPaginatorModule,
         MatSortModule,
         CdkDropList,
-        CdkDrag
+        CdkDrag,
+        MatMenu,
+        MatMenuTrigger,
+        MatIconModule
+
         // OutlineButtonComponent
     ],
     templateUrl: './jugadores-tabla.component.html',
@@ -48,8 +54,9 @@ Chart.register(...registerables);
 export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy {
   private _liveAnnouncer = inject(LiveAnnouncer);
 
-  @Output() jugadorId_EE = new EventEmitter<string>();
-  
+  @Output() jugadorId_EE = new EventEmitter<Jugador>();
+  @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
+
   displayedColumns?: string[]; 
   jugadores: Jugador[] = []; 
   dataSource = new MatTableDataSource<Jugador>(this.jugadores);
@@ -125,7 +132,7 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
 
   campos: Campos = {};
 
-  jugador?: Jugador;
+  jugador?: Jugador ;
 
   // n_pagina_old: number = 1;
   // n_pagina: number = 1;
@@ -159,6 +166,88 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
   strFiltros: string = '';
 
   isHovered = false;
+
+  // '*****************'
+  // MEŃU CONTEXTUAL
+  selectedRow: any;
+  selectedCell?: JugadorField;
+  boton: number = 0;
+  contextMenuPosition = { x: '0px', y: '0px' };
+
+  // onRowClicked(row: any, event: MouseEvent) {
+   
+  //   console.log(row);
+  //   this.selectedRow = row;
+   
+  //   // this.contextMenuPosition.x = event.clientX + 'px';
+  //   // this.contextMenuPosition.y = event.clientY + 'px';
+  //   // this.contextMenuPosition.x = 'after';
+  //   // this.contextMenuPosition.y = 'below';
+  //   //  this.contextMenu.menuData = { 'item': row };
+  //   //  if (this.contextMenu) {
+  //   //   this.contextMenu.menu?.focusFirstItem('mouse');
+  //   //   // console.log(this.contextMenuPosition);
+  //   //   console.log(this.contextMenu);
+  //   //    this.contextMenu.openMenu();
+  //   //  }
+  // }
+
+  onTriggerClick(cell: JugadorField, row: any, event: MouseEvent) {
+    event.stopPropagation(); // Evita la propagación del clic
+    // event.preventDefault(); 
+
+    this.selectedCell = cell;
+    this.selectedRow = row;
+    this.boton = event.button;
+    console.log(this.boton);
+    if (event.button === 1) {
+      
+    } else if (event.button === 2) {
+
+    }
+    // this.contextMenuPosition.x = event.clientX + 'px';
+    // this.contextMenuPosition.y = event.clientY + 'px';
+    // // this.contextMenu.openMenu();
+    // if (this.contextMenu && this.contextMenu.menu) {
+    //     this.contextMenu.menuData = { 'item': row };
+    //     this.contextMenu.menu.focusFirstItem('mouse');
+    //     this.contextMenu.updatePosition();
+    //     this.contextMenu.openMenu();
+    // }
+}
+
+  onContextMenu(cell: JugadorField, row: any, event: MouseEvent) {
+    event.stopPropagation(); // Evita la propagación del clic
+    event.preventDefault(); // Evita el menú contextual del navegador
+    this.selectedRow = row;
+    this.selectedCell = cell;
+
+    this.boton = event.button;
+
+    this.contextMenuPosition.x = event.clientX + 'px';
+    this.contextMenuPosition.y = event.clientY + 'px';
+    // this.contextMenu.menuData = { 'item': row };
+    // if (this.contextMenu) {
+      // this.contextMenu.menu?.focusFirstItem('mouse');
+  
+    this.contextMenu.openMenu();
+    // }
+  }
+
+  editarItem(item: any) {
+    console.log('Editar', item);
+  }
+
+  eliminarItem(item: any) {
+    console.log('Eliminar', item);
+  }
+
+  verDetalles(item: any) {
+    console.log('Ver detalles', item);
+  }
+
+  // FIN MENÚ CONTEXTUAL  
+
   
   onMouseEnter() {
     this.isHovered = true;
@@ -168,9 +257,11 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
     this.isHovered = false;
   }
 
-  seleccionarFila(player: Jugador){
-
-    this.jugadorId_EE.emit(player[0]);
+  seleccionarFila(jugador: Jugador){    
+    
+    if (jugador) {
+      this.jugadorId_EE.emit(jugador);
+    }
 
   // *********MODAL CON RADARCHART
     // const config = new MatDialogConfig();
