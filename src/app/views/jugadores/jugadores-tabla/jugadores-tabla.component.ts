@@ -11,7 +11,7 @@ import { JugadorFiltro } from '../../../core/model/jugador-filtro.model';
 import { JugadoresFiltroService } from '../../../core/jugadores-filtro.service';
 // import { OutlineButtonComponent } from '../../../core/outline-button/outline-button.component';
 import { Chart, registerables } from 'chart.js';
-// import { JugadoresModalComponent } from './jugadores-modal/jugadores-modal.component';
+import { JugadoresModalComponent } from './jugadores-modal/jugadores-modal.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 //  import { Dialog } from '@angular/cdk/dialog';
 import { JugadorEtiquetas } from '../../../core/model/jugador-etiquetas.model';
@@ -22,12 +22,12 @@ import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/p
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort, Sort, MatSortModule} from '@angular/material/sort';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
-import { EventManager } from '@angular/platform-browser';
+// import { EventManager } from '@angular/platform-browser';
 // import { filter } from 'rxjs/operators';
-Chart.register(...registerables);
+// Chart.register(...registerables);
 
 
 @Component({
@@ -127,22 +127,9 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
 
   // *************
   fields: JugadorField[] = [];
-
   jugadorEtiquetaGrupo: JugadorEtiquetas[] = [];
-
   campos: Campos = {};
-
   jugador?: Jugador ;
-
-  // n_pagina_old: number = 1;
-  // n_pagina: number = 1;
-  // n_paginas: number = 1;
-  // n_cantidad?: number;
-
-  // ***paginator 
-  // length!: number;
-  // pageSize = 5;
-  // pageIndex = 0;
   pageSizeOptions = [5, 10, 15];
 
   hidePageSize = false;
@@ -151,11 +138,6 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
   disabled = false;
 
   pageEvent!: PageEvent;
-
-
-  // ***************
-  // jugadoresMatrizFields: string[][] = [[]];
-  // jugadorArrayFields: string[] = [];
 
   filtros: JugadorFiltro[] = [];
   sorting: string = '';
@@ -169,179 +151,100 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
 
   // '*****************'
   // MEŃU CONTEXTUAL
+  mostrar_boton: boolean = false;
   selectedRow: any;
   selectedCell?: JugadorField;
-  boton: number = 0;
-  contextMenuPosition = { x: '0px', y: '0px' };
 
-  // onRowClicked(row: any, event: MouseEvent) {
-   
-  //   console.log(row);
-  //   this.selectedRow = row;
-   
-  //   // this.contextMenuPosition.x = event.clientX + 'px';
-  //   // this.contextMenuPosition.y = event.clientY + 'px';
-  //   // this.contextMenuPosition.x = 'after';
-  //   // this.contextMenuPosition.y = 'below';
-  //   //  this.contextMenu.menuData = { 'item': row };
-  //   //  if (this.contextMenu) {
-  //   //   this.contextMenu.menu?.focusFirstItem('mouse');
-  //   //   // console.log(this.contextMenuPosition);
-  //   //   console.log(this.contextMenu);
-  //   //    this.contextMenu.openMenu();
-  //   //  }
-  // }
-
+ 
   onTriggerClick(cell: JugadorField, row: any, event: MouseEvent) {
     event.stopPropagation(); // Evita la propagación del clic
     // event.preventDefault(); 
 
     this.selectedCell = cell;
-    this.selectedRow = row;
-    this.boton = event.button;
-    console.log(this.boton);
-    if (event.button === 1) {
-      
-    } else if (event.button === 2) {
+    this.selectedRow = row;  
 
-    }
-    // this.contextMenuPosition.x = event.clientX + 'px';
-    // this.contextMenuPosition.y = event.clientY + 'px';
-    // // this.contextMenu.openMenu();
-    // if (this.contextMenu && this.contextMenu.menu) {
-    //     this.contextMenu.menuData = { 'item': row };
-    //     this.contextMenu.menu.focusFirstItem('mouse');
-    //     this.contextMenu.updatePosition();
-    //     this.contextMenu.openMenu();
-    // }
 }
 
-  onContextMenu(cell: JugadorField, row: any, event: MouseEvent) {
-    event.stopPropagation(); // Evita la propagación del clic
-    event.preventDefault(); // Evita el menú contextual del navegador
-    this.selectedRow = row;
-    this.selectedCell = cell;
-
-    this.boton = event.button;
-
-    this.contextMenuPosition.x = event.clientX + 'px';
-    this.contextMenuPosition.y = event.clientY + 'px';
-    // this.contextMenu.menuData = { 'item': row };
-    // if (this.contextMenu) {
-      // this.contextMenu.menu?.focusFirstItem('mouse');
-  
-    this.contextMenu.openMenu();
-    // }
+  onContextMenu(event: MouseEvent) {
+     event.stopPropagation(); // Evita la propagación del clic
+     event.preventDefault(); // Evita el menú contextual del navegador
   }
-
-  editarItem(item: any) {
-    console.log('Editar', item);
-  }
-
-  eliminarItem(item: any) {
-    console.log('Eliminar', item);
-  }
-
-  verDetalles(item: any) {
-    console.log('Ver detalles', item);
-  }
-
-  // FIN MENÚ CONTEXTUAL  
-
-  
-  onMouseEnter() {
-    this.isHovered = true;
-  }
-
-  onMouseLeave() {
-    this.isHovered = false;
-  }
-
-  seleccionarFila(jugador: Jugador){    
     
+  editarJugador(jugador: any) {
+    console.log('Editar', jugador);       
     if (jugador) {
       this.jugadorId_EE.emit(jugador);
     }
 
-  // *********MODAL CON RADARCHART
-    // const config = new MatDialogConfig();
-    // config.enterAnimationDuration = 500;
-    // config.maxHeight = '100%';
-    // config.maxWidth = '100%';
-    // config.width = '70%';
-    // config.height = '100%';
-    // config.id = 'graficoHabilidades';
-    // config.hasBackdrop = true;
-    // config.disableClose = false;
-    // config.panelClass = "grafico"
- 
-    // config.data = { player: player,
-    //                 fields: this.fields
-    //               };
+  }
 
-    // const dialogRef = this.dialog.open(JugadoresModalComponent, config); 
+  verHabilidades(jugador: Jugador) {
+    console.log('Visualizar habilidades', jugador);
+      // *********MODAL CON RADARCHART
+    const config = new MatDialogConfig();
+    config.enterAnimationDuration = 500;
+    config.maxHeight = '100%';
+    config.maxWidth = '100%';
+    config.width = '70%';
+    config.height = '100%';
+    config.id = 'graficoHabilidades';
+    config.hasBackdrop = true;
+    config.disableClose = false;
+    config.panelClass = "grafico"
+ 
+    config.data = { player: jugador,
+                    fields: this.fields
+                  };
+
+    const dialogRef = this.dialog.open(JugadoresModalComponent, config); 
     
 
-    // dialogRef.afterClosed().subscribe(result => {
-    //   console.log('El diálogo se cerró con:', result);
-    // });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('El diálogo se cerró con:', result);
+    });
   // **************MODAL CON RADARCHART
   }
 
-  // cambiarPagina(movimiento:number){
-  //   this.n_pagina = this.n_pagina + movimiento;
-  //   if (this.n_pagina < 1) {
-  //     this.n_pagina = 1;
-  //   } else if (this.n_pagina > this.n_paginas) {
-  //     this.n_pagina = this.n_paginas;
-  //   }
-  //   this.n_pagina_old = this.n_pagina;
+  verLineaTiempo(jugador: Jugador) {
+    console.log('Visualizar Linea de Tiempo', jugador);
+      // *********MODAL CON RADARCHART
+    const config = new MatDialogConfig();
+    config.enterAnimationDuration = 500;
+    config.maxHeight = '100%';
+    config.maxWidth = '100%';
+    config.width = '70%';
+    config.height = '100%';
+    config.id = 'graficoLineaTiempo';
+    config.hasBackdrop = true;
+    config.disableClose = false;
+    config.panelClass = "grafico"
+ 
+    '********HAY QUE BUSCAR EL HISTORIAL DE DATOS DE LA HABILIDAD SELECCIONADA'
+    config.data = { player: jugador,
+                    fields: this.fields
+                  };
+
+    const dialogRef = this.dialog.open(JugadoresModalComponent, config); 
     
-  //   this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
-  // }  
 
-  mostrarItems(){
-    console.log('mostrarItems');
-    // this.pageIndex = 0;
-
-    // this.hacerGetDatos(pageIndex + 1, this.pageSize, this.strFiltros); 
-     
-    this.hacerGetDatos(this.paginator.pageIndex + 1, this.paginator.pageSize); 
-    // this.dataSource.paginator = this.paginator; 
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('El diálogo se cerró con:', result);
+    });
+  // **************MODAL CON RADARCHART
   }
 
-  // ultimaPagina(){
-  //   this.n_pagina = this.n_paginas;
-  //   this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
-  // }
   
-  // primerPagina(){
-  //   this.n_pagina = 1;
-  //   this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
-  // }
-
-
-  // mostrarPagina(event: any){
-  //   const valor = Number(event.target.value); // Convertimos el valor a número
-
-  //   if (valor < 1 || valor > this.n_paginas) {
-  //     this.n_pagina = this.n_pagina_old;
-  //   } else {
-  //     this.n_pagina = valor;
-  //     this.n_pagina_old= valor;
-  //     this.hacerGetDatos(this.n_pagina, this.amountView, this.strFiltros); 
-  //   }
-
-  // }  
-
-  // hacerGetDatos(pagina:number, limit:number, strFiltros$: string){    
+  mostrarItems(){
+    console.log('mostrarItems');     
+    this.hacerGetDatos(this.paginator.pageIndex + 1, this.paginator.pageSize); 
+  }
+  
   hacerGetDatos(pagina:number, limit:number){        
   
     this.subscription.add(this.jugadoresFiltroService.filtro$.subscribe({
       next: res => {
         console.log("Se reciben filtros.");
         this.strFiltros = res;  
-        // this.subscription.add(this.jugadoresService.getDataFiltrada(pagina,limit, this.strFiltros).subscribe({
         this.subscription.add(this.jugadoresService.getData(pagina,limit, this.strFiltros, this.sorting).subscribe({
           next: res => {
             console.log("Se reciben datos de jugador.");
@@ -361,8 +264,6 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
             this.paginator.length = res.count;
             // this.dataSource.sort = this.sort;
             // this.dataSource.data = this.jugadores;
-            
-
             // this.dataSource.sort = this.sort;
 
           },
@@ -382,10 +283,7 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
 
   ngOnInit(){    
     console.log('inicializa');
-    // this.hacerGetDatos(this.pageIndex + 1, this.pageSize, this.strFiltros);
     this.hacerGetDatos(0, 5);
-
-
   }
   
   ngAfterViewInit() {
@@ -398,13 +296,7 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
   } 
 
   handlePageEvent(e: PageEvent) {
-    // console.log('handle');
-    // console.log(e);
     this.pageEvent = e;
-    // this.length = e.length;
-    // this.pageSize = e.pageSize;
-    // this.pageIndex = e.pageIndex;
-    // this.hacerGetDatos(this.pageIndex + 1, this.pageSize, this.strFiltros); 
     this.hacerGetDatos(e.pageIndex, e.pageSize); 
   }
 
@@ -417,14 +309,13 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
   // console.log(sortState.direction);
   // console.log(sortState);
   //  ACÁ TENDRÍA QUE HACER EL GET PASANDO EL PARÁMETRO DE ORDENAMIENTO.
-  if (sortState.direction) {
-    this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
-    this.sorting = '&sort[1]=' + sortState.active + '&direction[1]=' + sortState.direction;
-    // console.log(this.sorting);
-    this.hacerGetDatos(0, this.paginator.pageSize); 
-  } else {
-    this.sorting = '';
-    this._liveAnnouncer.announce('Sorting cleared');
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+      this.sorting = '&sort[1]=' + sortState.active + '&direction[1]=' + sortState.direction;
+      this.hacerGetDatos(0, this.paginator.pageSize); 
+    } else {
+      this.sorting = '';
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
-}
 }

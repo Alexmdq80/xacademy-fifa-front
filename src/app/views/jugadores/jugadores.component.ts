@@ -91,9 +91,14 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
   recibirJugadorId(jugador: Jugador) { 
     console.log(this.jugadorId);
     this.jugadorId = Number(jugador.id);
-    this.lista = !this.lista;
-  }
 
+    if (this.jugadorId > 0) { 
+      this.lista = !this.lista;
+    } else {
+      this.lista = false;
+      
+    }
+  }
   cerrar_formulario() { 
     // NO PASO EL VALOR COMO PARÁMETRO, YA QUE SIEMPRE QUE AGREGAR_PERSONA
     // EMITA UN VALOR, SE DEBE CERRAR EL FORMULARIO

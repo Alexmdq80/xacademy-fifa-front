@@ -31,8 +31,7 @@
                         *matCellDef="let row">
                         <div [matMenuTriggerFor]="rowMenu"
                             #contextMenu="matMenuTrigger"
-                            (click)="onTriggerClick(fieldsOrderByGroup[i], row, $event)"
-                            (contextmenu)="onContextMenu(fieldsOrderByGroup[i], row, $event)">
+                            (click)="onTriggerClick(fieldsOrderByGroup[i], row, $event)">
 
                             <img src="{{ row[item.codigo] }}"
                                 alt="{{ row[item.codigo] }}">
@@ -44,8 +43,7 @@
                     <td mat-cell *matCellDef="let row">
                         <div [matMenuTriggerFor]="rowMenu"
                             #contextMenu="matMenuTrigger"
-                            (click)="onTriggerClick(fieldsOrderByGroup[i], row, $event)"
-                            (contextmenu)="onContextMenu(fieldsOrderByGroup[i], row, $event)">
+                            (click)="onTriggerClick(fieldsOrderByGroup[i], row, $event)">
                             {{ row[item.codigo]
                             }}
                         </div>
@@ -80,34 +78,39 @@
     </mat-menu> -->
 
 </div>
-<div [style.position]="'fixed'" [style.left]="contextMenuPosition.x"
-    [style.top]="contextMenuPosition.y" style="z-index: 1001;">
-    <mat-menu #rowMenu="matMenu" xPosition="after"
-        style="z-index: 1000;">
-        <button *ngIf="boton === 0" mat-menu-item
-            (click)="editarItem(selectedRow)">
-            <mat-icon>add</mat-icon>
-            <span>Agregar Jugador</span>
-        </button>
-        <button *ngIf="boton === 0" mat-menu-item
-            (click)="editarItem(selectedRow)">
-            <mat-icon>edit</mat-icon>
-            <span>Editar Jugador</span>
-        </button>
-        <button *ngIf="boton === 0" mat-menu-item
-            (click)="eliminarItem(selectedRow)">
-            <mat-icon>delete</mat-icon>
-            <span>Eliminar</span>
-        </button>
-        <button *ngIf="boton === 2" mat-menu-item
-            (click)="editarItem(selectedRow)">
-            <mat-icon>visibility</mat-icon>
-            <span>Gráfico de Habilidades</span>
-        </button>
-        <button *ngIf="boton === 2" mat-menu-item
-            (click)="editarItem(selectedRow)">
-            <mat-icon>timeline</mat-icon>
-            <span>Línea de Tiempo de la Habilidad</span>
-        </button>
-    </mat-menu>
-</div>
+<!-- <div [style.position]="'fixed'" [style.left]="contextMenuPosition.x"
+    [style.top]="contextMenuPosition.y" style="z-index: 1001;"> -->
+<mat-menu #rowMenu="matMenu" xPosition="after">
+    <!-- <button mat-menu-item
+        (click)="agregarJugador(selectedRow)"
+        (contextmenu)="onContextMenu($event)">
+        <mat-icon>add</mat-icon>
+        <span>Agregar Jugador</span> -->
+    <!-- </button> -->
+    <button mat-menu-item
+        (click)="editarJugador(selectedRow)"
+        (contextmenu)="onContextMenu($event)">
+        <mat-icon>edit</mat-icon>
+        <span>Editar Jugador</span>
+    </button>
+    <!-- <button mat-menu-item
+        (click)="eliminarJugador(selectedRow)"
+        (contextmenu)="onContextMenu($event)">
+        <mat-icon>delete</mat-icon>
+        <span>Eliminar</span>
+    </button> -->
+    <button mat-menu-item
+        (click)="verHabilidades(selectedRow)"
+        (contextmenu)="onContextMenu($event)">
+        <mat-icon>visibility</mat-icon>
+        <span>Gráfico de Habilidades</span>
+    </button>
+    <button mat-menu-item
+        (click)="verLineaTiempo(selectedRow)"
+        (contextmenu)="onContextMenu($event)">
+        <mat-icon>timeline</mat-icon>
+        <span>Línea de Tiempo de la Habilidad {{ selectedCell?.viewName }}
+        </span>
+    </button>
+</mat-menu>
+<!-- </div> -->
