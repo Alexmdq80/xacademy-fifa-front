@@ -105,11 +105,13 @@
         <mat-icon>visibility</mat-icon>
         <span>Gráfico de Habilidades</span>
     </button>
-    <button mat-menu-item
+    <button
+        *ngIf="selectedCell?.esSkill || (selectedCell?.esNumeroPequenio && selectedCell?.type === 'integer')"
+        mat-menu-item
         (click)="verLineaTiempo(selectedRow)"
         (contextmenu)="onContextMenu($event)">
         <mat-icon>timeline</mat-icon>
-        <span>Línea de Tiempo de la Habilidad {{ selectedCell?.viewName }}
+        <span>Línea de Tiempo {{ selectedCell?.viewName }}
         </span>
     </button>
 </mat-menu>

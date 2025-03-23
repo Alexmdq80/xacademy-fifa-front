@@ -54,7 +54,7 @@ export class JugadorFieldService {
                  esKey: field.group.find(c => c === 'key')? true:false, 
                  esGlobalSkill: field.group.find(c => c === 'habilidad_global')? true:false,
                  esSpecifSkill: field.group.find(c => c === 'habilidad_específica')? true:false,
-                 esSkill: field.group.find(c => c === 'skill')? true:false,
+                 esSkill: field.group.find(c => c === 'habilidad')? true:false,
                  esPower: field.group.find(c => c === 'power')? true:false,
                  esMovement: field.group.find(c => c === 'movement')? true:false,
                  esAttackSkill: field.group.find(c => c === 'ataque')? true:false,

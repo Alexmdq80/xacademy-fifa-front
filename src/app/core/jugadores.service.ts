@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Jugador } from './model/jugador.model';
+import { LineaTiempo } from './model/linea-tiempo.model';
 
 
 @Injectable({
@@ -30,10 +31,19 @@ export class JugadoresService {
     return this.httpClient.get<any>(this.apiUrl + '?' + strFiltro + '&page=' + page + '&limit=' + limit + sorting);
 
   }
+
   getDataxID(id: number): Observable<Jugador[]> {
     // return this.httpClient.get<any>(this.apiUrl + '?filtros[1]=id&valores_min[1]=1&valores_max[1]=100&limit=100');
     // console.log(strFiltro);
     return this.httpClient.get<Jugador[]>(this.apiUrl + '/' + id);
+
+  }
+
+  getDataLineaTiempo(long_name: string, atributo: string): Observable<LineaTiempo[]> {
+    // return this.httpClient.get<any>(this.apiUrl + '?filtros[1]=id&valores_min[1]=1&valores_max[1]=100&limit=100');
+    // console.log(strFiltro);
+    const consulta = 'long_name=' + long_name + '&atributo=' + atributo; 
+    return this.httpClient.get<LineaTiempo[]>(this.apiUrl + '/linea_tiempo?' + consulta);
 
   }
 

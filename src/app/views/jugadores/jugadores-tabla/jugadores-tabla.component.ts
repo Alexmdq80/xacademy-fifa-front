@@ -25,6 +25,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
+import { LineaTiempo } from '../../../core/model/linea-tiempo.model';
 // import { EventManager } from '@angular/platform-browser';
 // import { filter } from 'rxjs/operators';
 // Chart.register(...registerables);
@@ -101,15 +102,23 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
                       // console.log(this.campoKeys);
                       // this.keyArray = Object.values(this.campoKeys).flatMap(arr => arr);
                       this.keyObjectArray = Object.values(resGetKeysFieldsObjectByGroup).flatMap(arr => arr);
+                      
                       // this.keyViewArray = Object.values(this.campoKeysView).flatMap(arr => arr);
-                      // console.log('keyObjectArray', this.keyObjectArray );
-                      for (let grupo of this.jugadorEtiquetaGrupo) {
-                        for (let c in this.campos[grupo.codigo]) {
-                          // const i = this.fields.findIndex(n => n.name === c);
-                          const index = this.fieldIndex[c];
-                          this.fieldsOrderByGroup.push(this.fields[index]);
-                        }
-                      }
+                      // // console.log('keyObjectArray', this.keyObjectArray );
+                      let i = 0;
+                      console.log('keyObject', this.keyObjectArray);
+                      // for (let grupo of this.jugadorEtiquetaGrupo) {
+                      //   console.log('grupo', grupo);
+                      //   for (let c in this.campos[grupo.codigo]) {
+                      //     console.log('campo:', c);
+                      //     const index = this.fieldIndex[c];
+                      //     this.fieldsOrderByGroup.push(this.fields[index]);
+                      //   }
+                      // }
+                      for (let item in this.keyObjectArray) {
+                        const index = this.fieldIndex[this.keyObjectArray[item].codigo]; 
+                        this.fieldsOrderByGroup.push(this.fields[index]);
+                      }                        
 
                       // console.log('fieldsOrderByGroup', this.fieldsOrderByGroup );
                     
@@ -162,6 +171,7 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
 
     this.selectedCell = cell;
     this.selectedRow = row;  
+    
 
 }
 
@@ -192,7 +202,8 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
     config.disableClose = false;
     config.panelClass = "grafico"
  
-    config.data = { player: jugador,
+    config.data = { grafico: 'radar_habilidades',
+                    player: jugador,
                     fields: this.fields
                   };
 
@@ -206,31 +217,54 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   verLineaTiempo(jugador: Jugador) {
+    let dataLineaTiempo: LineaTiempo[] = [];
     console.log('Visualizar Linea de Tiempo', jugador);
-      // *********MODAL CON RADARCHART
-    const config = new MatDialogConfig();
-    config.enterAnimationDuration = 500;
-    config.maxHeight = '100%';
-    config.maxWidth = '100%';
-    config.width = '70%';
-    config.height = '100%';
-    config.id = 'graficoLineaTiempo';
-    config.hasBackdrop = true;
-    config.disableClose = false;
-    config.panelClass = "grafico"
+    // ***suscribirse al servicio
+    this.subscription.add(this.jugadoresService.
+      getDataLineaTiempo(jugador.long_name, this.selectedCell!.name).subscribe({
+        next: res => {
+          console.log("Se reciben datos de linea de tiempo.");
+          if (!res) {
+            console.log("Consulta vacía.");
+          }       
+          dataLineaTiempo = res;
+
+          //           *********MODAL CON RADARCHART
+          const config = new MatDialogConfig();
+          config.enterAnimationDuration = 500;
+          config.maxHeight = '100%';
+          config.maxWidth = '100%';
+          config.width = '70%';
+          config.height = '100%';
+          config.id = 'graficoLineaTiempo';
+          config.hasBackdrop = true;
+          config.disableClose = false;
+          config.panelClass = "grafico"
+
+  //    '********HAY QUE BUSCAR EL HISTORIAL DE DATOS DE LA HABILIDAD SELECCIONADA'
  
-    '********HAY QUE BUSCAR EL HISTORIAL DE DATOS DE LA HABILIDAD SELECCIONADA'
-    config.data = { player: jugador,
-                    fields: this.fields
-                  };
-
-    const dialogRef = this.dialog.open(JugadoresModalComponent, config); 
-    
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('El diálogo se cerró con:', result);
-    });
-  // **************MODAL CON RADARCHART
+          config.data = { 
+            grafico: 'linea_tiempo',
+            player: jugador,
+            fields: this.fields,
+            dataLineaTiempo: dataLineaTiempo,
+          };
+      
+          const dialogRef = this.dialog.open(JugadoresModalComponent, config); 
+          
+      
+          dialogRef.afterClosed().subscribe(result => {
+            console.log('El diálogo se cerró con:', result);
+          });
+  //  **************MODAL CON RADARCHART
+ 
+        },
+        error: error => {
+          console.warn("Ha ocurrido un error con código: ", error);
+        }
+      }    
+    ));
+   
   }
 
   
