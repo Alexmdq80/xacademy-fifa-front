@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Jugador } from './model/jugador.model';
 import { LineaTiempo } from './model/linea-tiempo.model';
@@ -10,7 +10,9 @@ import { LineaTiempo } from './model/linea-tiempo.model';
 })
 export class JugadoresService {
 
-  apiUrl = 'http://localhost:8080/player';
+  localHost = 'http://localhost:8080';
+  apiUrl = this.localHost + '/player';
+  
   // jugadores? : Jugador[];
 
   constructor(private httpClient: HttpClient) { }
@@ -83,5 +85,29 @@ export class JugadoresService {
     return data[0];
   
   }
-  
+
+  exportar() {
+    // Define el objeto Observer
+    console.log('Exportando...');
+    const observer: Observer<Blob> = {
+      next: (data: Blob) => {
+        const url = window.URL.createObjectURL(data);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'data.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('Error al exportar:', error);
+      },
+      complete: () => {
+        console.log('Exportación completada'); // Opcional: Manejar la finalización
+      },
+    };
+    this.httpClient.get(this.apiUrl, { responseType: 'blob' }).subscribe(observer); // Pasa el Observer a subscribe
+
+  }
 }

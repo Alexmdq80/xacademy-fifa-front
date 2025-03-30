@@ -16,6 +16,7 @@ import { AgregarPersonaComponent } from "./jugadores-tabla/agregar-persona/agreg
 import { Jugador } from '../../core/model/jugador.model';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { JugadoresService } from '../../core/jugadores.service';
 
 @Component({
     selector: 'app-jugadores',
@@ -35,7 +36,8 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
   subscription = new Subscription();
 
   constructor(private jugadorFieldService: JugadorFieldService,
-              private jugadoresFiltros: JugadoresFiltroService
+              private jugadoresFiltros: JugadoresFiltroService,
+              private jugadoresService: JugadoresService
   ){
     this.lista = true;
     console.log(this.jugadorFieldService.getFields());
@@ -88,6 +90,16 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
   //   this.valorNumeroRecibido = $event;
 
   // }
+
+  descargar() {
+    this.jugadoresFiltros.descargar('csv');
+    if (this.JugadorTabla) {
+      this.JugadorTabla.descargar();
+      this.jugadoresService.exportar();      
+    }
+  }
+
+
   recibirJugadorId(jugador: Jugador) { 
     console.log(this.jugadorId);
     this.jugadorId = Number(jugador.id);

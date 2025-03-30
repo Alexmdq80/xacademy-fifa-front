@@ -270,9 +270,41 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
   
   mostrarItems(){
     console.log('mostrarItems');     
-    this.hacerGetDatos(this.paginator.pageIndex + 1, this.paginator.pageSize); 
+    this.hacerGetDatos(0, this.paginator.pageSize); 
+  }
+
+  descargar(){
+    console.log('desgargar' + this.paginator.pageIndex, this.paginator.pageSize);     
+    this.GetDatosDD(this.paginator.pageIndex, this.paginator.pageSize); 
   }
   
+  GetDatosDD(pagina:number, limit:number){
+    this.subscription.add(this.jugadoresFiltroService.filtroDD$.subscribe({
+      next: res => {
+        console.log("Se reciben filtros para descargar.");
+        // this.strFiltros = res;  
+        console.log(res);
+        this.subscription.add(this.jugadoresService.getData(pagina,limit, res, this.sorting).subscribe({
+          next: res => {
+            console.log("Se reciben datos de jugador para descargar.");
+            if (!res) {
+              console.log("Consulta vacía.");
+            }       
+          },
+          error: error => {
+            console.warn("Ha ocurrido un error con código: ", error);
+          }
+        }    
+        ));
+      },
+      error: error => {
+        console.warn("Ha ocurrido un error con código: ", error);
+      }
+    }    
+    ));    
+  }
+
+
   hacerGetDatos(pagina:number, limit:number){        
   
     this.subscription.add(this.jugadoresFiltroService.filtro$.subscribe({

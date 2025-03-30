@@ -18,6 +18,10 @@ export class JugadoresFiltroService {
   private filtroSubject = new BehaviorSubject<string>('');
   filtro$ = this.filtroSubject.asObservable();
   
+  // '***EN filtro$ almaceno la  strFiltro para generar la query que enviaré a la API
+  private filtroSubjectDD = new BehaviorSubject<string>('');
+  filtroDD$ = this.filtroSubjectDD.asObservable();
+
   // private contadorSubject = new BehaviorSubject<number>(0);
   // contador$ = this.contadorSubject.asObservable();
   // contador$ = this.contadorSubject;
@@ -94,9 +98,44 @@ export class JugadoresFiltroService {
     this.filtroSubject.next(strFiltro);
   }
 
+
+  descargar(archivo: string) {
+    let strFiltro: string = '';
+    let n: number = 1;
+
+    // TRANSFORMAR EL ARREGLO DE FILTROS EN UNA CADENA
+    for (let filtro of this.filtros) {
+      if (n > 1) {
+        strFiltro =   strFiltro + '&'
+      } 
+      strFiltro =   strFiltro + 'filtros[' + n + ']=' + filtro.field + '&';
+      if (filtro.value !== '') {
+        strFiltro =   strFiltro + 'valores_min[' + n + ']=' + filtro.value + '&';
+        strFiltro =   strFiltro + 'valores_max[' + n + ']=0';
+      } else {
+        strFiltro =   strFiltro + 'valores_min[' + n + ']=' + filtro.value_min + '&';
+        strFiltro =   strFiltro + 'valores_max[' + n + ']=' + filtro.value_max;
+      }      
+      n++;
+    }
+
+    // const strFiltroBack = strFiltro
+
+    strFiltro = strFiltro + '&archivo=' + archivo;
+    // console.log(strFiltro);
+    this.filtroSubjectDD.next(strFiltro);
+    
+    
+    // this.filtroSubject.next(strFiltroBack);
+
+  }
+
+
   updateData(newData: any) {
     this.dataSubject.next(newData);
   }
+
+  
 
 
 }

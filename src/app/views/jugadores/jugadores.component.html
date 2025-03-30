@@ -8,9 +8,14 @@
     <!-- <mat-icon class="material-icons-outlined">person_add</mat-icon> -->
     <mat-icon>person_add</mat-icon>
 </button>
+
 <div *ngIf="lista" class="filtro">
 
     <button (click)="addFiltro()"> + Filtro </button>
+
+    <button (click)="descargar()">
+        Exportar a Excel - CSV
+    </button>
 
     <app-filtro *ngFor="let filtroView of this.filtros">
         {{ filtroView }}
