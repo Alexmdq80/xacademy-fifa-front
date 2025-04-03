@@ -92,10 +92,10 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
   // }
 
   descargar() {
-    this.jugadoresFiltros.descargar('csv');
+    this.jugadoresFiltros.aplicarFiltro();
     if (this.JugadorTabla) {
       this.JugadorTabla.descargar();
-      this.jugadoresService.exportar();      
+      // this.jugadoresService.exportar_csv();      
     }
   }
 

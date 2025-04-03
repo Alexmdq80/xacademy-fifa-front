@@ -1,6 +1,6 @@
 // import { Component, OnDestroy, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Component, OnDestroy, OnInit, EventEmitter, Output, ViewChild, inject, AfterViewInit  } from '@angular/core';
-import { Subscription, forkJoin } from 'rxjs';
+import { Subscription, forkJoin, take, switchMap, Subject } from 'rxjs';
 import { JugadoresService } from '../../../core/jugadores.service';
 import { Jugador } from '../../../core/model/jugador.model';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -26,6 +26,7 @@ import { CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray } from '@angular/cdk
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { LineaTiempo } from '../../../core/model/linea-tiempo.model';
+import { saveAs } from 'file-saver';
 // import { EventManager } from '@angular/platform-browser';
 // import { filter } from 'rxjs/operators';
 // Chart.register(...registerables);
@@ -157,7 +158,7 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
   strFiltros: string = '';
 
   isHovered = false;
-
+  private destroy$ = new Subject<void>();
   // '*****************'
   // MEŃU CONTEXTUAL
   mostrar_boton: boolean = false;
@@ -274,34 +275,65 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   descargar(){
-    console.log('desgargar' + this.paginator.pageIndex, this.paginator.pageSize);     
-    this.GetDatosDD(this.paginator.pageIndex, this.paginator.pageSize); 
-  }
-  
-  GetDatosDD(pagina:number, limit:number){
-    this.subscription.add(this.jugadoresFiltroService.filtroDD$.subscribe({
-      next: res => {
-        console.log("Se reciben filtros para descargar.");
-        // this.strFiltros = res;  
-        console.log(res);
-        this.subscription.add(this.jugadoresService.getData(pagina,limit, res, this.sorting).subscribe({
-          next: res => {
-            console.log("Se reciben datos de jugador para descargar.");
-            if (!res) {
-              console.log("Consulta vacía.");
-            }       
-          },
-          error: error => {
-            console.warn("Ha ocurrido un error con código: ", error);
-          }
-        }    
-        ));
-      },
-      error: error => {
-        console.warn("Ha ocurrido un error con código: ", error);
-      }
-    }    
-    ));    
+    console.log('desgargar ' + this.paginator.pageIndex + this.paginator.pageSize );     
+    console.log(this.strFiltros);
+    return this.jugadoresService.exportar_csv(
+            this.paginator.pageIndex,
+            this.paginator.pageSize,
+            this.strFiltros,
+            this.sorting
+    ).subscribe({
+        next: (response: Blob) => {
+          saveAs(response, 'data.csv');
+        },
+        error: (error) => {
+          console.error('Error al descargar CSV:', error);
+        },
+    });;
+
+    // this.jugadoresFiltroService.filtro$
+    // .pipe(
+    //   take(1),
+    //   switchMap((res) => {
+    //     console.log('Se reciben filtros para descargar.');
+    //     this.strFiltros = res;
+    //     return this.jugadoresService.exportar_csv(
+    //       this.paginator.pageIndex,
+    //       this.paginator.pageSize,
+    //       this.strFiltros,
+    //       this.sorting
+    //     );
+    //   })
+    // )
+    // .subscribe({
+    //   next: (response: Blob) => {
+    //     saveAs(response, 'data.csv');
+    //   },
+    //   error: (error) => {
+    //     console.error('Error al descargar CSV:', error);
+    //   },
+    // });
+
+    // this.subscription.add(this.jugadoresFiltroService.filtro$.subscribe({
+    //   next: res => {
+    //     console.log("Se reciben filtros para descargar.");
+    //     this.strFiltros = res;  
+    //     this.subscription.add(this.jugadoresService.exportar_csv(this.paginator.pageIndex,this.paginator.pageSize, this.strFiltros, this.sorting).subscribe(
+    //       (response: Blob) => {
+    //         saveAs(response, 'data.csv');
+    //       },
+    //       (error) => {
+    //         console.error('Error al descargar CSV:', error);
+    //       }
+    //     ));
+    //   },
+    //   error: error => {
+    //     console.warn("Ha ocurrido un error con código: ", error);
+    //   }
+    // }    
+    // ));    
+
+
   }
 
 
@@ -358,6 +390,8 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
   
   ngOnDestroy(): void {
     console.log('destroy');
+    this.destroy$.next();
+    this.destroy$.complete();
     this.subscription.unsubscribe();
   } 
 

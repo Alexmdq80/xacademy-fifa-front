@@ -3,7 +3,7 @@ import { Observable, Observer } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Jugador } from './model/jugador.model';
 import { LineaTiempo } from './model/linea-tiempo.model';
-
+import { take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,8 @@ export class JugadoresService {
 
   localHost = 'http://localhost:8080';
   apiUrl = this.localHost + '/player';
-  
+  // exportar_csv$?: Blob;
+
   // jugadores? : Jugador[];
 
   constructor(private httpClient: HttpClient) { }
@@ -30,10 +31,12 @@ export class JugadoresService {
   getData(page:number, limit:number, strFiltro:string, sorting: string): Observable<any> {
     // return this.httpClient.get<any>(this.apiUrl + '?filtros[1]=id&valores_min[1]=1&valores_max[1]=100&limit=100');
     // console.log(strFiltro);
+    console.log(this.apiUrl + '?' + strFiltro + '&page=' + page + '&limit=' + limit + sorting);
     return this.httpClient.get<any>(this.apiUrl + '?' + strFiltro + '&page=' + page + '&limit=' + limit + sorting);
 
   }
 
+ 
   getDataxID(id: number): Observable<Jugador[]> {
     // return this.httpClient.get<any>(this.apiUrl + '?filtros[1]=id&valores_min[1]=1&valores_max[1]=100&limit=100');
     // console.log(strFiltro);
@@ -86,28 +89,57 @@ export class JugadoresService {
   
   }
 
-  exportar() {
+  exportar_csv(page:number, limit:number, strFiltro:string, sorting: string) {
     // Define el objeto Observer
-    console.log('Exportando...');
-    const observer: Observer<Blob> = {
-      next: (data: Blob) => {
-        const url = window.URL.createObjectURL(data);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'data.csv';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      },
-      error: (error) => {
-        console.error('Error al exportar:', error);
-      },
-      complete: () => {
-        console.log('Exportación completada'); // Opcional: Manejar la finalización
-      },
-    };
-    this.httpClient.get(this.apiUrl, { responseType: 'blob' }).subscribe(observer); // Pasa el Observer a subscribe
+    console.log('Exportando .CSV...');
+    // const observer: Observer<Blob> = {
+    //   next: (data: Blob) => {
+    //     const url = window.URL.createObjectURL(data);
+    //     const a = document.createElement('a');
+    //     a.href = url;
+    //     a.download = 'data.json';
+    //     // document.body.appendChild(a);
+    //     a.click();
+    //     // document.body.removeChild(a);
+    //     window.URL.revokeObjectURL(url);
+    //   },
+    //   error: (error) => {
+    //     console.error('Error al exportar:', error);
+    //   },
+    //   complete: () => {
+    //     console.log('Exportación completada'); // Opcional: Manejar la finalización
+    //   },
+    // };
+    // this.httpClient.get(this.apuUrlExportar_csv, { responseType: 'blob' }).subscribe(observer); // Pasa el Observer a subscribe
+    // this.httpClient.get(this.apuUrlExportar_csv + '?' + strFiltro + '&page=' + page + '&limit=' + limit + sorting, { responseType: 'blob' }).subscribe(observer);
+    // let url: string;
+    // if (strFiltro) {
+    //   console.log('con filtro');
+    //   url = `${this.apiUrl}/exportar_csv?filtro=${strFiltro}&page=${page}&limit=${limit}`;
+    // } else {
+    //   console.log('sin filtro');
+    //   url = `${this.apiUrl}/exportar_csv?page=${page}&limit=${limit}`;
+    // }    
+    // if (sorting) {
+    //   url = url + `&sorting=${sorting}`;      
+    // }
 
+    const url = `${this.apiUrl}/exportar_csv?filtro=${strFiltro}&page=${page}&limit=${limit}&sorting=${sorting}`;
+  
+    // this.exportar_csv$ = this.httpClient.get(url, { responseType: 'blob' });
+
+    return this.httpClient.get(url, { responseType: 'blob' });
+
+  
+
+    // this.httpClient.get(this.apuUrlExportar_csv + '?' + strFiltro + '&page=' + page + '&limit=' + limit + sorting, { responseType: 'blob' }).subscribe((response: Blob) => {
+    //   saveAs(response, 'data.csv');
+    // });
+    
   }
+
+  // getDataDescargar_csv(page:number, limit:number, strFiltro:string, sorting: string): Observable<any> {
+  //   return this.httpClient.get<any>(this.apuUrlExportar_csv + '?' + strFiltro + '&page=' + page + '&limit=' + limit + sorting);
+  // }
+ 
 }
