@@ -123,9 +123,10 @@ export class JugadoresService {
     // if (sorting) {
     //   url = url + `&sorting=${sorting}`;      
     // }
-
-    const url = `${this.apiUrl}/exportar_csv?filtro=${strFiltro}&page=${page}&limit=${limit}&sorting=${sorting}`;
+    console.log(sorting);
+    const url = `${this.apiUrl}/exportar_csv?${strFiltro}&page=${page}&limit=${limit}&sorting=${sorting}`;
   
+    console.log(url);
     // this.exportar_csv$ = this.httpClient.get(url, { responseType: 'blob' });
 
     return this.httpClient.get(url, { responseType: 'blob' });

@@ -414,7 +414,8 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
       this.sorting = '&sort[1]=' + sortState.active + '&direction[1]=' + sortState.direction;
       this.hacerGetDatos(0, this.paginator.pageSize); 
     } else {
-      this.sorting = '';
+      // this.sorting = '';
+      this.hacerGetDatos(0, this.paginator.pageSize); 
       this._liveAnnouncer.announce('Sorting cleared');
     }
   }
