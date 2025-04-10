@@ -12,9 +12,6 @@ export class JugadoresService {
 
   localHost = 'http://localhost:8080';
   apiUrl = this.localHost + '/player';
-  // exportar_csv$?: Blob;
-
-  // jugadores? : Jugador[];
 
   constructor(private httpClient: HttpClient) { }
 
@@ -90,53 +87,15 @@ export class JugadoresService {
   }
 
   exportar_csv(page:number, limit:number, strFiltro:string, sorting: string) {
-    // Define el objeto Observer
     console.log('Exportando .CSV...');
-    // const observer: Observer<Blob> = {
-    //   next: (data: Blob) => {
-    //     const url = window.URL.createObjectURL(data);
-    //     const a = document.createElement('a');
-    //     a.href = url;
-    //     a.download = 'data.json';
-    //     // document.body.appendChild(a);
-    //     a.click();
-    //     // document.body.removeChild(a);
-    //     window.URL.revokeObjectURL(url);
-    //   },
-    //   error: (error) => {
-    //     console.error('Error al exportar:', error);
-    //   },
-    //   complete: () => {
-    //     console.log('Exportación completada'); // Opcional: Manejar la finalización
-    //   },
-    // };
-    // this.httpClient.get(this.apuUrlExportar_csv, { responseType: 'blob' }).subscribe(observer); // Pasa el Observer a subscribe
-    // this.httpClient.get(this.apuUrlExportar_csv + '?' + strFiltro + '&page=' + page + '&limit=' + limit + sorting, { responseType: 'blob' }).subscribe(observer);
-    // let url: string;
-    // if (strFiltro) {
-    //   console.log('con filtro');
-    //   url = `${this.apiUrl}/exportar_csv?filtro=${strFiltro}&page=${page}&limit=${limit}`;
-    // } else {
-    //   console.log('sin filtro');
-    //   url = `${this.apiUrl}/exportar_csv?page=${page}&limit=${limit}`;
-    // }    
-    // if (sorting) {
-    //   url = url + `&sorting=${sorting}`;      
-    // }
-    console.log(sorting);
     const url = `${this.apiUrl}/exportar_csv?${strFiltro}&page=${page}&limit=${limit}&sorting=${sorting}`;
-  
-    console.log(url);
-    // this.exportar_csv$ = this.httpClient.get(url, { responseType: 'blob' });
-
     return this.httpClient.get(url, { responseType: 'blob' });
+  }
 
-  
-
-    // this.httpClient.get(this.apuUrlExportar_csv + '?' + strFiltro + '&page=' + page + '&limit=' + limit + sorting, { responseType: 'blob' }).subscribe((response: Blob) => {
-    //   saveAs(response, 'data.csv');
-    // });
-    
+  exportar_xlsx(page:number, limit:number, strFiltro:string, sorting: string) {
+    console.log('Exportando .XLSX...');
+    const url = `${this.apiUrl}/exportar_xlsx?${strFiltro}&page=${page}&limit=${limit}&sorting=${sorting}`;
+    return this.httpClient.get(url, { responseType: 'blob' });
   }
 
   // getDataDescargar_csv(page:number, limit:number, strFiltro:string, sorting: string): Observable<any> {

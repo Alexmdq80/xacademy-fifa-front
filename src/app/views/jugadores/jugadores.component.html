@@ -13,9 +13,36 @@
 
     <button (click)="addFiltro()"> + Filtro </button>
 
-    <button (click)="descargar()">
-        Exportar a Excel - CSV
+    <!-- <button (click)="descargar()">
+        Exportar a
+    </button> -->
+    <!-- <button mat-button [matMenuTriggerFor]="menu"
+        #contextMenu="matMenuTrigger"
+        (contextmenu)="onContextMenu($event)"
+        (click)="onTriggerClick($event)">
+        Exportar a
+        <span class="material-symbols-outlined">
+            file_export
+        </span>
+    </button> -->
+    <button mat-button [matMenuTriggerFor]="menu"
+        #contextMenu="matMenuTrigger"
+        (contextmenu)="onContextMenu($event)"
+        (click)="onTriggerClick($event)">
+
+        <div style="display: flex; align-items: center;">
+            <span class="material-symbols-outlined"
+                style="padding-left: 8px; padding-right: 8px;">
+                file_export
+            </span>
+            Exportar tabla actual a ...
+        </div>
     </button>
+
+    <mat-menu #menu="matMenu" [xPosition]="'before'">
+        <button mat-menu-item (click)="descargar('csv')">.CSV</button>
+        <button mat-menu-item (click)="descargar('xlsx')">.XLSX</button>
+    </mat-menu>
 
     <app-filtro *ngFor="let filtroView of this.filtros">
         {{ filtroView }}

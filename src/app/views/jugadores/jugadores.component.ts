@@ -17,6 +17,9 @@ import { Jugador } from '../../core/model/jugador.model';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { JugadoresService } from '../../core/jugadores.service';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
+
 
 @Component({
     selector: 'app-jugadores',
@@ -26,13 +29,16 @@ import { JugadoresService } from '../../core/jugadores.service';
     CommonModule,
     AgregarPersonaComponent,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatMenuModule,
+    MatButtonModule
 ],
     templateUrl: './jugadores.component.html',
     styleUrl: './jugadores.component.scss'
 })
 
 export class JugadoresComponent implements OnInit, OnDestroy  {
+  @ViewChild(MatMenuTrigger) menuTrigger!: MatMenuTrigger;
   subscription = new Subscription();
 
   constructor(private jugadorFieldService: JugadorFieldService,
@@ -91,11 +97,16 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
 
   // }
 
-  descargar() {
-    this.jugadoresFiltros.aplicarFiltro();
+  descargar(formato: string) {
+    // this.jugadoresFiltros.aplicarFiltro();
     if (this.JugadorTabla) {
-      this.JugadorTabla.descargar();
-      // this.jugadoresService.exportar_csv();      
+      if (formato === 'csv') {
+        this.JugadorTabla.descargar_csv();
+      } else if (formato === 'xlsx') {
+        this.JugadorTabla.descargar_xlsx();
+      } else {
+        console.warn('Formato no soportado');
+      }
     }
   }
 
@@ -107,8 +118,7 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
     if (this.jugadorId > 0) { 
       this.lista = !this.lista;
     } else {
-      this.lista = false;
-      
+      this.lista = false;      
     }
   }
   cerrar_formulario() { 
@@ -142,5 +152,17 @@ export class JugadoresComponent implements OnInit, OnDestroy  {
   
   } 
 
+  onTriggerClick(event: MouseEvent) {
+    event.stopPropagation(); // Evita la propagación del clic
+    // event.preventDefault(); 
+
+    
+
+}
+
+  onContextMenu(event: MouseEvent) {
+     event.stopPropagation(); // Evita la propagación del clic
+     event.preventDefault(); // Evita el menú contextual del navegador
+  }
 
 }

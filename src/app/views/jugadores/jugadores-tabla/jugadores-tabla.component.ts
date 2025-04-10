@@ -10,7 +10,7 @@ import { JugadorFieldService } from '../../../core/jugadorField.service';
 import { JugadorFiltro } from '../../../core/model/jugador-filtro.model';
 import { JugadoresFiltroService } from '../../../core/jugadores-filtro.service';
 // import { OutlineButtonComponent } from '../../../core/outline-button/outline-button.component';
-import { Chart, registerables } from 'chart.js';
+// import { Chart, registerables } from 'chart.js';
 import { JugadoresModalComponent } from './jugadores-modal/jugadores-modal.component';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 //  import { Dialog } from '@angular/cdk/dialog';
@@ -27,6 +27,7 @@ import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { LineaTiempo } from '../../../core/model/linea-tiempo.model';
 import { saveAs } from 'file-saver';
+
 // import { EventManager } from '@angular/platform-browser';
 // import { filter } from 'rxjs/operators';
 // Chart.register(...registerables);
@@ -46,6 +47,7 @@ import { saveAs } from 'file-saver';
         MatMenu,
         MatMenuTrigger,
         MatIconModule
+        // MatMenuTrigger
 
         // OutlineButtonComponent
     ],
@@ -158,23 +160,20 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
   strFiltros: string = '';
 
   isHovered = false;
-  private destroy$ = new Subject<void>();
   // '*****************'
   // MEŃU CONTEXTUAL
   mostrar_boton: boolean = false;
   selectedRow: any;
   selectedCell?: JugadorField;
-
  
   onTriggerClick(cell: JugadorField, row: any, event: MouseEvent) {
-    event.stopPropagation(); // Evita la propagación del clic
+    event.stopPropagation(); 
     // event.preventDefault(); 
 
     this.selectedCell = cell;
     this.selectedRow = row;  
-    
-
-}
+   
+  }
 
   onContextMenu(event: MouseEvent) {
      event.stopPropagation(); // Evita la propagación del clic
@@ -271,12 +270,14 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
   
   mostrarItems(){
     console.log('mostrarItems');     
-    this.hacerGetDatos(0, this.paginator.pageSize); 
+    this.hacerGetDatos(this.paginator.pageIndex, this.paginator.pageSize); 
   }
 
-  descargar(){
+  descargar_csv(){
     console.log('desgargar ' + this.paginator.pageIndex + this.paginator.pageSize );     
     console.log(this.strFiltros);
+    console.log(this.sorting);
+  
     return this.jugadoresService.exportar_csv(
             this.paginator.pageIndex,
             this.paginator.pageSize,
@@ -289,56 +290,73 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
         error: (error) => {
           console.error('Error al descargar CSV:', error);
         },
-    });;
+    });  
+  }
 
-    // this.jugadoresFiltroService.filtro$
-    // .pipe(
-    //   take(1),
-    //   switchMap((res) => {
-    //     console.log('Se reciben filtros para descargar.');
-    //     this.strFiltros = res;
-    //     return this.jugadoresService.exportar_csv(
-    //       this.paginator.pageIndex,
-    //       this.paginator.pageSize,
-    //       this.strFiltros,
-    //       this.sorting
-    //     );
-    //   })
-    // )
-    // .subscribe({
-    //   next: (response: Blob) => {
-    //     saveAs(response, 'data.csv');
-    //   },
-    //   error: (error) => {
-    //     console.error('Error al descargar CSV:', error);
-    //   },
-    // });
+  descargar_xlsx(){
+    console.log('desgargar ' + this.paginator.pageIndex + this.paginator.pageSize );     
+    console.log(this.strFiltros);
+    console.log(this.sorting);
+  
+    return this.jugadoresService.exportar_csv(
+            this.paginator.pageIndex,
+            this.paginator.pageSize,
+            this.strFiltros,
+            this.sorting
+    ).subscribe({
+        next: (response: Blob) => {
+          saveAs(response, 'data.xlsx');
+        },
+        error: (error) => {
+          console.error('Error al descargar XLSX:', error);
+        },
+    });  
+  }
 
-    // this.subscription.add(this.jugadoresFiltroService.filtro$.subscribe({
-    //   next: res => {
-    //     console.log("Se reciben filtros para descargar.");
-    //     this.strFiltros = res;  
-    //     this.subscription.add(this.jugadoresService.exportar_csv(this.paginator.pageIndex,this.paginator.pageSize, this.strFiltros, this.sorting).subscribe(
-    //       (response: Blob) => {
-    //         saveAs(response, 'data.csv');
-    //       },
-    //       (error) => {
-    //         console.error('Error al descargar CSV:', error);
-    //       }
-    //     ));
-    //   },
-    //   error: error => {
-    //     console.warn("Ha ocurrido un error con código: ", error);
-    //   }
-    // }    
-    // ));    
+  exportar_csv(jugador: Jugador){
+    const filtro: string = 'filtros[1]=id&valores_min[1]=' + jugador.id + '&valores_max[1]=0';
+    console.log('exportar csv' + jugador.id );     
+    console.log(filtro);
 
-
+    return this.jugadoresService.exportar_csv(
+            0,
+            1,
+            filtro,
+            ''
+    ).subscribe({
+        next: (response: Blob) => {
+          saveAs(response, 'jugador.csv');
+        },
+        error: (error) => {
+          console.error('Error al descargar CSV:', error);
+        },
+    });  
   }
 
 
-  hacerGetDatos(pagina:number, limit:number){        
+  exportar_xlsx(jugador: Jugador){
+    const filtro: string = 'filtros[1]=id&valores_min[1]=' + jugador.id + '&valores_max[1]=0';
+    console.log('exportar csv' + jugador.id );     
+    console.log(filtro);
   
+
+    return this.jugadoresService.exportar_xlsx(
+            0,
+            1,
+            filtro,
+            ''
+    ).subscribe({
+        next: (response: Blob) => {
+          saveAs(response, 'jugador.xlsx');
+        },
+        error: (error) => {
+          console.error('Error al descargar XLSX:', error);
+        },
+    });  
+  }
+
+
+  hacerGetDatos(pagina:number, limit:number){
     this.subscription.add(this.jugadoresFiltroService.filtro$.subscribe({
       next: res => {
         console.log("Se reciben filtros.");
@@ -350,20 +368,7 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
               console.log("Consulta vacía.");
             }       
             this.jugadores = res.data ;
-            
-            // this.dataSource =  new MatTableDataSource<Jugador>(this.jugadores);
-            // this.dataSource =  this.jugadores;
-         
-            // console.log(this.jugadores);
-            // this.n_cantidad = res.count;
-            // this.n_paginas = res.pages;
-            // this.length = res.count;
-            // this.dataSource.paginator = this.paginator; 
             this.paginator.length = res.count;
-            // this.dataSource.sort = this.sort;
-            // this.dataSource.data = this.jugadores;
-            // this.dataSource.sort = this.sort;
-
           },
           error: error => {
             console.warn("Ha ocurrido un error con código: ", error);
@@ -389,14 +394,13 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
   }
   
   ngOnDestroy(): void {
-    console.log('destroy');
-    this.destroy$.next();
-    this.destroy$.complete();
     this.subscription.unsubscribe();
   } 
 
   handlePageEvent(e: PageEvent) {
+    //  se activa cuando se modifica el paginador
     this.pageEvent = e;
+    // console.log('handlePageEvent', e);
     this.hacerGetDatos(e.pageIndex, e.pageSize); 
   }
 
@@ -412,11 +416,12 @@ export class JugadoresTablaComponent implements OnInit, AfterViewInit, OnDestroy
     if (sortState.direction) {
       this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
       this.sorting = '&sort[1]=' + sortState.active + '&direction[1]=' + sortState.direction;
-      this.hacerGetDatos(0, this.paginator.pageSize); 
+      // this.hacerGetDatos(0, this.paginator.pageSize); 
     } else {
-      // this.sorting = '';
-      this.hacerGetDatos(0, this.paginator.pageSize); 
+      this.sorting = '';
       this._liveAnnouncer.announce('Sorting cleared');
     }
+    this.hacerGetDatos(this.paginator.pageIndex, this.paginator.pageSize); 
+ 
   }
 }

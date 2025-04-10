@@ -113,5 +113,34 @@
         <span>Línea de Tiempo {{ selectedCell?.viewName }}
         </span>
     </button>
+    <button mat-menu-item
+        [matMenuTriggerFor]="subMenu"
+        (contextmenu)="onContextMenu($event)"
+        (click)="$event.stopPropagation()">
+        <mat-icon>
+            <span class="material-symbols-outlined">
+                file_export
+            </span>
+        </mat-icon>
+        <span>Exportar jugador a ...</span>
+    </button>
 </mat-menu>
+
+<mat-menu #subMenu="matMenu">
+    <button mat-menu-item (click)="exportar_csv(selectedRow)">a CSV</button>
+    <button mat-menu-item (click)="exportar_xlsx(selectedRow)">a XLSX</button>
+</mat-menu>
+
 <!-- </div> -->
+
+<!-- (click)="exportar_xlsx(selectedRow)" -->
+<!-- <button mat-menu-item
+(click)="exportar_csv(selectedRow)"
+(contextmenu)="onContextMenu($event)">
+<mat-icon>
+    <span class="material-symbols-outlined">
+        file_export
+    </span>
+</mat-icon>
+<span>Exportar a CSV</span>
+</button> -->
